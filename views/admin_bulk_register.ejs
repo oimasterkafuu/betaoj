@@ -1,0 +1,151 @@
+<% this.adminPage = 'bulk_register'; %>
+<%- include('admin_header'); %>
+
+<div class="ui error message" id="error" data-am-alert hidden style="flex-grow: 0; -webkit-flex-grow: 0;">
+    <p id="error_info"></p>
+</div>
+<div class="ui form">
+  <div class="field">
+    <label>用户名格式（用 # 表示插入编号，至少出现一个 #）</label>
+    <input name="username" type="text" value="" required>
+  </div>
+  <div class="three fields">
+    <div class="field">
+      <label>编号范围（最小值）</label>
+      <input name="number_min" type="number" min="0" max="999999" step="1" value="" required>
+    </div>
+    <div class="field">
+      <label>编号范围（最大值）</label>
+      <input name="number_max" type="number" min="0" max="999999" step="1" value="" required>
+    </div>
+    <div class="field">
+      <label>编号位数（不足自动补零）</label>
+      <input name="number_length" type="number" min="0" max="6" step="1" value="" required>
+    </div>
+  </div>
+  <div class="field">
+    <label>邮箱（用 # 表示插入编号）</label>
+    <input name="email" type="text" value="" required>
+  </div>
+  <div class="field">
+    <label>初始密码（用 # 表示插入编号）</label>
+    <input name="password" type="text" value="" required>
+  </div>
+  <div style="text-align: center;">
+    <a id="btn_preview" class="ui button" href="javascript:preview();">预览</a>
+    <a id="btn_submit" class="ui button" href="javascript:submit();">确定</a>
+  </div>
+</div>
+
+<table id="preview" class="ui very basic center aligned table" style="display: none;">
+  <thead>
+    <tr>
+      <th>用户名</th>
+      <th>邮箱</th>
+      <th>密码</th>
+    </tr>
+  </thead>
+  <tbody></tbody>
+</table>
+
+<script src="<%- lib('blueimp-md5/2.10.0/js/md5.min.js') %>"></script>
+
+<script type="text/javascript">
+  function show_error(error) {
+    var $error = $('#error');
+    $("#error_info").text(error);
+    if ($error.is(':visible')) {
+      $error.transition('pulse');
+    } else {
+      $error.transition('scale');
+    }
+  }
+  function get_input() {
+    var result = {};
+    var $inputs = $('.ui.form input[name]');
+    for (var i = 0; i < $inputs.length; ++i) {
+      var input = $inputs.get(i);
+      if (input.required && !input.value) {
+        input.focus();
+        throw new Error("请填写字段");
+      }
+      result[input.name] = input.value;
+    }
+    return result;
+  }
+  function generate_data(options) {
+    var reNumber = /#/g;
+    if (options.username.match(reNumber).length < 1) throw new Error("用户名格式错误");
+    var l = parseInt(options.number_min),
+        r = parseInt(options.number_max),
+        len = parseInt(options.number_length);
+    if (l > r) throw new Error("编号范围有误");
+    var data = [];
+    for (let i = l; i <= r; ++i) {
+      var str = i.toString();
+      while (str.length < len) str = '0' + str;
+      data.push({
+        username: options.username.replace(reNumber, str),
+        email: options.email.replace(reNumber, str),
+        password: options.password.replace(reNumber, str)
+      });
+    }
+    return data;
+  }
+  function preview() {
+    var options, data;
+    try {
+      options = get_input();
+      data = generate_data(options);
+    } catch (err) {
+      show_error(err.message);
+      return;
+    }
+    var $table = $('#preview');
+    $table.show();
+    $table.find('tbody').html('');
+    data.forEach(function(user) {
+      $table.append($('<tr>')
+        .append($('<td>').text(user.username))
+        .append($('<td>').text(user.email))
+        .append($('<td>').text(user.password))
+      );
+    });
+  }
+  function submit() {
+    var options, data;
+    try {
+      options = get_input();
+      data = generate_data(options);
+    } catch (err) {
+      show_error(err.message);
+      return;
+    }
+    $("#btn_submit").addClass("loading");
+    data.forEach(function(a) {
+      a.password = md5(a.password + 'syzoj2_xxx');
+    });
+    $.ajax({
+      method: 'POST',
+      url: '/admin/bulk_register',
+      data: {
+        users: data
+      },
+      success: function(data) {
+        if (data.error) {
+          show_error(data.error);
+        } else {
+          alert('批量注册成功！')
+        }
+        $("#btn_submit").removeClass("loading");
+      },
+      error: function(XMLHttpRequest, textStatus, errorThrown) {
+        alert(XMLHttpRequest.responseText);
+        show_error("未知错误");
+        $("#btn_submit").removeClass("loading");
+      }
+    })
+  }
+</script>
+
+<%- include('admin_footer'); %>

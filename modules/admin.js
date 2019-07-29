@@ -677,3 +677,53 @@ app.post('/admin/exportdb', async (req, res) => {
         });
     }
 });
+
+app.get('/admin/bulk_register', async (req, res) => {
+  try {
+    if (!res.locals.user || !res.locals.user.is_admin) throw new ErrorMessage('您没有权限进行此操作。');
+    res.render('admin_bulk_register');
+  } catch (e) {
+    syzoj.log(e);
+    res.render('error', {
+      err: e
+    })
+  }
+});
+
+app.post('/admin/bulk_register', async (req, res) => {
+  try {
+    if (!res.locals.user || !res.locals.user.is_admin) throw new ErrorMessage('您没有权限进行此操作。');
+    
+    var users = req.body.users;
+    await users.forEachAsync(async (info, index) => {
+      var username = info.username;
+      if (typeof username !== 'string') throw new ErrorMessage("参数错误");
+      if (!syzoj.utils.isValidUsername(username)) throw new ErrorMessage(username + " 不是一个合法的用户名");
+      if (index !== users.findIndex((a) => a.username === username)) throw new ErrorMessage("用户名不能相同");
+      if (await User.fromName(username)) throw new ErrorMessage("用户 " + username + " 已存在");
+      if (typeof info.email !== 'string' || !info.email) throw new ErrorMessage("参数错误");
+      if (typeof info.password !== 'string' || !/^[0-9a-fA-F]{32}$/.test(info.password)) throw new ErrorMessage("参数错误");
+    });
+
+    var currentTime = parseInt((new Date()).getTime() / 1000);
+    await users.forEachAsync(async (info) => {
+      var user = await User.create({
+        username: info.username,
+        password: info.password,
+        email: info.email,
+        is_show: syzoj.config.default.user.show,
+        rating: syzoj.config.default.user.rating,
+        register_time: currentTime
+      });
+      await user.save();
+    });
+
+    res.send({ error: null });
+
+  } catch (e) {
+    syzoj.log(e);
+    res.send({
+      error: e.message
+    });
+  }
+});
