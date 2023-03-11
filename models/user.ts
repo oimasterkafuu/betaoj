@@ -207,4 +207,29 @@ export default class User extends Model {
 
     return null;
   }
+
+  async skipSubmissions(){
+    let submissions = await JudgeState.find({
+      where: {
+	user_id: this.id
+      }
+    });
+    for(let submission of submissions){
+      await submission.skip();
+    }
+    this.ac_num=0;
+    await this.save();
+  }
+  async setBan(){
+    this.username = 'bannedUser' + require('randomstring').generate(6);
+    this.email = '';
+    this.password = require('randomstring').generate(100);
+    this.nickname = this.username;
+    this.information = '用户已经被封禁。';
+    await this.skipSubmissions();
+    this.is_admin = false;
+    this.is_show = false;
+    this.public_email = false;
+    await this.save();
+  }
 }

@@ -99,6 +99,13 @@
           <label>管理用户</label>
         </div>
       </div>
+      <% if(user.allowedManage) { %>
+        <center>
+        <strong>危险操作，不可逆转，请勿乱动！</strong><br>
+        <a id="cheater_button" onclick="check_cheater()" class="ui negative labeled icon button tiny"><i class="ui icon remove"></i>清除所有 AC 记录</a>
+        <a id="ban_button" onclick="check_ban()" class="ui negative labeled icon button tiny"><i class="ui icon ban"></i>封禁用户</a>
+        </center>
+      <% } %>
       <div style="text-align: center; margin-top: 30px; ">
         <button id="submit_button" type="submit" class="ui blue labeled icon button"><i class="ui icon edit"></i>修改</button>
         <a href="<%= syzoj.utils.makeUrl(['user', edited_user.id]) %>" class="ui labeled icon button"><i class="ui icon angle left"></i>返回</a>
@@ -107,6 +114,54 @@
 		</form>
 	</div>
 </div>
+
+<div class="ui basic modal" id="modal-cheater">
+  <div class="ui icon header">
+    <i class="remove icon"></i>
+    <p style="margin-top: 15px; ">清空 AC</p>
+  </div>
+  <div class="content" style="text-align: center; ">
+    <p>确认清空该用户所有 AC 记录吗？</p>
+    <p id="warning_pending"><strong>警告：该操作不可逆，请谨慎操作！</strong></p>
+  </div>
+  <div class="actions">
+    <div class="ui red basic cancel inverted button">
+      <i class="remove icon"></i>
+      否
+    </div>
+    <a class="ui green ok inverted button" href-post="<%= syzoj.utils.makeUrl(['user', edited_user.id]) %>/cheater">
+      <i class="checkmark icon"></i>
+      是
+    </a>
+  </div>
+</div>
+<div class="ui basic modal" id="modal-ban">
+  <div class="ui icon header">
+    <i class="ban icon"></i>
+    <p style="margin-top: 15px; ">封禁用户</p>
+  </div>
+  <div class="content" style="text-align: center; ">
+    <p>确认封禁该用户吗？</p>    <p id="warning_pending"><strong>警告：该操作不可逆，请谨慎操作！</strong></p>
+  </div>
+  <div class="actions">
+    <div class="ui red basic cancel inverted button">
+      <i class="remove icon"></i>
+      否
+    </div>
+    <a class="ui green ok inverted button" href-post="<%= syzoj.utils.makeUrl(['user', edited_user.id]) %>/ban">
+      <i class="checkmark icon"></i>
+      是
+    </a>
+  </div>
+</div>
+<script>
+function check_cheater(){
+$('#modal-cheater').modal('show');
+}
+function check_ban(){
+$('#modal-ban').modal('show');
+}
+</script>
 <script>
 var bakDefine = define;
 define = undefined;

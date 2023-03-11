@@ -223,3 +223,46 @@ app.post('/user/:id/edit', async (req, res) => {
     });
   }
 });
+
+app.post('/user/:id/cheater', async (req, res) => {
+  try {
+    let id = parseInt(req.params.id);
+    if(id == 1){
+	    throw new ErrorMessage('你想干什么呢？')
+    }
+    let user = await User.findById(id);
+    if (!user) throw new ErrorMessage('无此用户。');
+
+    if(!await res.locals.user.hasPrivilege('manage_user'))
+      throw new ErrorMessage('您没有权限进行此操作。');
+
+    await user.skipSubmissions();
+    res.redirect('/submissions?contest=&problem_id=&submitter=' + user.username + '&min_score=0&max_score=100&language=&status=');
+  } catch (e) {
+    syzoj.log(e);
+    res.render('error', {
+      err: e
+    });
+  }
+});
+app.post('/user/:id/ban', async (req, res) => {
+  try {
+    let id = parseInt(req.params.id);
+    if(id == 1){
+            throw new ErrorMessage('你想干什么呢？')
+    }
+    let user = await User.findById(id);
+    if (!user) throw new ErrorMessage('无此用户。');
+
+    if(!await res.locals.user.hasPrivilege('manage_user'))
+      throw new ErrorMessage('您没有权限进行此操作。');
+
+    await user.setBan();
+    res.redirect('/user/' + id);
+  } catch (e) {
+    syzoj.log(e);
+    res.render('error', {
+      err: e
+    });
+  }
+});
