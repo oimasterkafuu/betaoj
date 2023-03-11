@@ -30,7 +30,7 @@
 }
 </style>
 <span id="submission_content">
-<div class="padding" id="vueAppFuckSafari">
+<div class="padding" id="app">
   <table class="ui very basic center aligned table" id="status_table">
     <thead>
       <tr>
@@ -44,6 +44,7 @@
         <th>提交者</th>
         <th>提交时间</th>
         <th v-if="showRejudge">重新评测</th>
+        <th v-if="showRejudge">取消成绩</th>
       </tr>
     </thead>
     <tbody>
@@ -210,7 +211,7 @@ function toggleFormattedCode() {
 }
 
 const vueApp = new Vue({
-  el: '#vueAppFuckSafari',
+  el: '#app',
   data: {
     roughData: {
       info: <%- serializejs(info) %>,

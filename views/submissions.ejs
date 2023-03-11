@@ -82,7 +82,7 @@
       <% } %>
     </div>
   </form>
-  <table id="vueAppFuckSafari" class="ui very basic center aligned table" style="white-space: nowrap; " id="table">
+  <table id="app" class="ui very basic center aligned table" style="white-space: nowrap; " id="table">
     <thead>
       <tr>
         <th>编号</th>
@@ -138,7 +138,7 @@ const socketUrl = "/<%= pushType %>";
 const displayConfig = <%- serializejs(displayConfig) %>;
 
 const vueApp = new Vue({
-  el: '#vueAppFuckSafari',
+  el: '#app',
   data: {
     items: itemList,
     displayConfig: displayConfig
