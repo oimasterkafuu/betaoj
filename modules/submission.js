@@ -158,6 +158,9 @@ app.get('/submission/:id', async (req, res) => {
     if (!judge) throw new ErrorMessage("提交记录 ID 不正确。");
     const curUser = res.locals.user;
     if (!await judge.isAllowedVisitBy(curUser)) throw new ErrorMessage('您没有权限进行此操作。');
+    
+    if(!curUser || !await judge.problem.isAllowedUseBy(curUser))
+        throw new ErrorMessage('您没有权限进行此操作。');
 
     let contest;
     if (judge.type === 1) {
