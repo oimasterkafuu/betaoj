@@ -328,6 +328,97 @@ app.post('/admin/other', async (req, res) => {
     })
   }
 });
+
+app.post('/admin/sortprob', async (req, res) => {
+  try {
+    if (!res.locals.user || !res.locals.user.is_admin) throw new ErrorMessage('您没有权限进行此操作。');
+    const problems = await Problem.find();
+    for(let p of problems){
+      if(p.is_public == true){
+        let new_id = 1;
+        while(new_id < 1000 && new_id != p.id && await Problem.findById(new_id)){
+            ++new_id;
+        }
+
+        if(new_id == 1000)
+            throw new ErrorMessage('空余 ID 不足。');
+        
+        await p.changeID(new_id);
+      }
+      else{
+        let new_id = p.user_id * 1000;
+        while(new_id < (p.user_id + 1) * 1000 && new_id != p.id && await Problem.findById(new_id)){
+            ++new_id;
+        }
+        
+        if(new_id == (p.user_id + 1) * 1000)
+            throw new ErrorMessage('空余 ID 不足。');
+        
+        await p.changeID(new_id);
+      }
+    }
+    res.redirect(syzoj.utils.makeUrl(['problems']));
+  } catch (e) {
+    syzoj.log(e);
+    res.render('error', {
+      err: e
+    })
+  }
+});
+
+app.post('/admin/fixtags', async (req, res) => {
+  try {
+    if (!res.locals.user || !res.locals.user.is_admin) throw new ErrorMessage('您没有权限进行此操作。');
+    const problems = await Problem.find();
+    // let result = '';
+    for(let p of problems){
+      let tags = await p.getTags();
+      let newTags = [];
+      let origin = ['', ''];
+      for(let tag of tags){
+        // 删除难度 tags
+        if(tag.name.startsWith('*')){
+          let difficulty = tag.name.substr(1);
+          difficulty = parseInt(difficulty);
+          if(difficulty){
+            p.difficulty = difficulty;
+            await p.save();
+            continue;
+          }
+        }
+        // 删除信息 tags
+        if(tag.color == 'orange')
+          continue;
+        // 删除来源等 tags
+        if(tag.color == 'red'){
+          origin[0] = tag.name;
+          continue;
+        }
+        if(tag.color == 'blue'){
+          origin[1] = tag.name;
+          continue;
+        }
+        newTags.push(tag.id);
+      }
+      origin = origin.join(' ').trim();
+      if(origin != ''){
+        p.title = '「' + origin + '」' + p.title;
+        p.save();
+      }
+      await p.setTags(newTags);
+      // result += JSON.stringify(tags) + '\n';
+    }
+    // res.send(result);
+    res.redirect(syzoj.utils.makeUrl(['problems']));
+  } catch (e) {
+    syzoj.log(e);
+    res.render('error', {
+      err: e
+    })
+  }
+});
+
+
 app.post('/admin/rejudge', async (req, res) => {
   try {
     if (!res.locals.user || !res.locals.user.is_admin) throw new ErrorMessage('您没有权限进行此操作。');
