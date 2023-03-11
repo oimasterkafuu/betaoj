@@ -206,7 +206,7 @@
                                     <% for (const history of ratingHistories) { %>
                                     <tr>
                                         <td><%= history.contestName %></td>
-                                        <td><%= history.rank != null ? history.rank + " / " + history.participants : '' %></td>
+                                        <td><%= history.rank != null ? history.rank + (history.participants ? (" / " + history.participants) : '') : '' %></td>
                                         <td><div class="user-<%= syzoj.utils.makeUserColor(history.value, false) %>"><%= history.value %></div> 
                                             <% if(history.delta != null) { %> 
                                                 <span class="<%= history.delta >= 0 ? 'rating_up' : 'rating_down' %>">
