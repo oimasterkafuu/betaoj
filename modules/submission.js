@@ -233,3 +233,25 @@ app.post('/submission/:id/rejudge', async (req, res) => {
     });
   }
 });
+app.post('/submission/:id/skip', async (req, res) => {
+  try {
+    let id = parseInt(req.params.id);
+    let judge = await JudgeState.findById(id);
+
+    if (judge.pending && !(res.locals.user && await res.locals.user.hasPrivilege('manage_problem'))) throw new ErrorMessage('无法跳过一个评测中的提交。');
+
+    await judge.loadRelationships();
+
+    let allowedSkip = await judge.problem.isAllowedEditBy(res.locals.user);
+    if (!allowedSkip) throw new ErrorMessage('您没有权限进行此操作。');
+
+    await judge.skip();
+
+    res.redirect(syzoj.utils.makeUrl(['submission', id]));
+  } catch (e) {
+    syzoj.log(e);
+    res.render('error', {
+      err: e
+    });
+  }
+});

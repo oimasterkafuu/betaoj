@@ -126,6 +126,31 @@ Vue.component('submission-item', {
     </div>
     <% } %>
   </td>
+  <td v-if="showRejudge">
+    <a id="skip-button" :onclick="'check_skip(' + (statusString === 'Waiting' || statusString.startsWith('Running')).toString() + ')'" style="color: #000; " href="#"><i class="remove icon"></i></a>
+    <% if (active === 'submission') { %>
+    <div class="ui basic modal" id="modal-skip">
+      <div class="ui icon header">
+        <i class="fast forward icon"></i>
+        <p style="margin-top: 15px; ">取消成绩</p>
+      </div>
+      <div class="content" style="text-align: center; ">
+        <p>确认取消该提交记录成绩吗？</p>
+        <p id="warning_spending"><strong>警告：如果一个提交正在被评测，则将其取消评测会导致系统错乱！</strong></p>
+      </div>
+      <div class="actions">
+        <div class="ui red basic cancel inverted button">
+          <i class="remove icon"></i>
+          否
+        </div>
+        <a class="ui green ok inverted button" :href-post="submissionLink + '/skip'">
+          <i class="checkmark icon"></i>
+          是
+        </a>
+      </div>
+    </div>
+    <% } %>
+</td>
 </tr>
 </script>
 <% if (active === 'submission') { %>
@@ -137,6 +162,14 @@ function check_rejudge(pending) {
     $('#warning_pending').css('display', 'none');
   }
   $('#modal-rejudge').modal('show');
+}
+function check_skip(pending) {
+  if (pending) {
+    $('#warning_spending').css('display', '');
+  } else {
+    $('#warning_spending').css('display', 'none');
+  }
+  $('#modal-skip').modal('show');
 }
 </script>
 <% } %>

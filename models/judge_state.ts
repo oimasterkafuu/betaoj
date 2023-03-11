@@ -183,7 +183,25 @@ export default class JudgeState extends Model {
       }
     });
   }
+  async skip(){
+    await syzoj.utils.lock(['JudgeState::skip', this.id], async () => {
+      await this.loadRelationships();
 
+      this.pending = false;
+      this.score = 0;
+      if (this.language) {
+        // language is empty if it's a submit-answer problem
+        this.total_time = null;
+        this.max_memory = null;
+      }
+      this.result = {};
+      this.task_id = require('randomstring').generate(10);
+      await this.save();
+      
+      await this.updateRelatedInfo(false);
+    });
+  }
+  
   async getProblemType() {
     await this.loadRelationships();
     return this.problem.type;
