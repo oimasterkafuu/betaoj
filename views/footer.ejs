@@ -1,12 +1,18 @@
 </div>
     <div class="ui vertical footer segment" style="margin-top: 15px; ">
       <div class="ui center aligned container">
-        <span style="color: #999;"><%= syzoj.config.title %> Powered by <a href="https://github.com/syzoj/syzoj" target="_blank">SYZOJ</a>.</span>
+        <span style="color: #999;"><%= syzoj.config.title %> Powered by <a href="https://github.com/oimasterakioi/betaoj" target="_blank">BetaOJ</a>.</span>
       </div>
     </div>
 </div>
 <script data-cfasync="false" src="<%- lib('semantic-ui/2.4.1/semantic.min.js') %>"></script>
 <script src="<%- lib('Chart.js/2.7.3/Chart.bundle.min.js') %>"></script>
 <script src="<%- selfLib('script.js') %>?20170710"></script>
+<script src="https://cdn.jsdelivr.net/npm/pangu@4.0.7/dist/browser/pangu.min.js"></script>
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    pangu.autoSpacingPage();
+  });
+</script>
 </body>
 </html>
