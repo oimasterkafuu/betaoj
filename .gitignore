@@ -1,5 +1,4 @@
 sessions
-uploads
 config.json
 *.db
 .git.*
@@ -70,3 +69,5 @@ static/bg.svg
 static/gutcoj.png
 static/logo.png
 static/favicon.ico
+uploads
+!.gitkeep
