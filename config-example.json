@@ -1,5 +1,5 @@
 {
-  "title": "SYZOJ",
+  "title": "BetaOJ",
   "hostname": "127.0.0.1",
   "port": "5283",
   "db": {
@@ -127,5 +127,7 @@
   "username_regex": "^[a-zA-Z0-9\\-\\_]+$",
   "site_for_download": "",
   "renderer_cache_size": "30000",
-  "divine": true
+  "divine": true,
+  "hitokoto": false,
+  "blackboard": ""
 }

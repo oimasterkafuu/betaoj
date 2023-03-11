@@ -64,3 +64,8 @@ Session.vim
 tags
 
 # End of https://www.gitignore.io/api/vim
+
+static/bg.svg
+static/gutcoj.png
+static/logo.png
+static/favicon.ico
