@@ -16,7 +16,7 @@ app.get('/problems', async (req, res) => {
   try {
     const sort = req.query.sort || syzoj.config.sorting.problem.field;
     const order = req.query.order || syzoj.config.sorting.problem.order;
-    if (!['id', 'title', 'rating', 'ac_num', 'submit_num', 'ac_rate', 'publicize_time'].includes(sort) || !['asc', 'desc'].includes(order)) {
+    if (!['id', 'title', 'rating', 'ac_num', 'submit_num', 'ac_rate', 'publicize_time', 'difficulty'].includes(sort) || !['asc', 'desc'].includes(order)) {
       throw new ErrorMessage('错误的排序参数。');
     }
 
@@ -65,7 +65,7 @@ app.get('/problems/search', async (req, res) => {
     let id = parseInt(req.query.keyword) || 0;
     const sort = req.query.sort || syzoj.config.sorting.problem.field;
     const order = req.query.order || syzoj.config.sorting.problem.order;
-    if (!['id', 'title', 'rating', 'ac_num', 'submit_num', 'ac_rate'].includes(sort) || !['asc', 'desc'].includes(order)) {
+    if (!['id', 'title', 'rating', 'ac_num', 'submit_num', 'ac_rate', 'difficulty'].includes(sort) || !['asc', 'desc'].includes(order)) {
       throw new ErrorMessage('错误的排序参数。');
     }
 
@@ -129,7 +129,7 @@ app.get('/problems/tag/:tagIDs', async (req, res) => {
     let tags = await tagIDs.mapAsync(async tagID => ProblemTag.findById(tagID));
     const sort = req.query.sort || syzoj.config.sorting.problem.field;
     const order = req.query.order || syzoj.config.sorting.problem.order;
-    if (!['id', 'title', 'rating', 'ac_num', 'submit_num', 'ac_rate'].includes(sort) || !['asc', 'desc'].includes(order)) {
+    if (!['id', 'title', 'rating', 'ac_num', 'submit_num', 'ac_rate', 'difficulty'].includes(sort) || !['asc', 'desc'].includes(order)) {
       throw new ErrorMessage('错误的排序参数。');
     }
     let sortVal;
@@ -181,6 +181,63 @@ app.get('/problems/tag/:tagIDs', async (req, res) => {
       allowedManageTag: res.locals.user && await res.locals.user.hasPrivilege('manage_problem_tag'),
       problems: problems,
       tags: tags,
+      paginate: paginate,
+      curSort: sort,
+      curOrder: order === 'asc'
+    });
+  } catch (e) {
+    syzoj.log(e);
+    res.render('error', {
+      err: e
+    });
+  }
+});
+
+app.get('/problems/difficulty/:diff', async (req, res) => {
+  try {
+    let diff = parseInt(req.params.diff);
+    const sort = req.query.sort || syzoj.config.sorting.problem.field;
+    const order = req.query.order || syzoj.config.sorting.problem.order;
+    if (!['id', 'title', 'rating', 'ac_num', 'submit_num', 'ac_rate', 'difficulty'].includes(sort) || !['asc', 'desc'].includes(order)) {
+      throw new ErrorMessage('错误的排序参数。');
+    }
+    let sortVal;
+    if (sort === 'ac_rate') {
+      sortVal = '`problem`.`ac_num` / `problem`.`submit_num`';
+    } else {
+      sortVal = '`problem`.`' + sort + '`';
+    }
+    
+    if(diff < 800 || diff > 3200 || diff % 100 != 0)
+        return res.redirect(syzoj.utils.makeUrl(['problems']));
+
+    let sql = 'SELECT `id` FROM `problem` WHERE `difficulty` = ' + diff;
+
+    if (!res.locals.user || !await res.locals.user.hasPrivilege('manage_problem')) {
+      if (res.locals.user) {
+        sql += ' AND (`problem`.`is_public` = 1 OR `problem`.`user_id` = ' + res.locals.user.id + ')';
+      } else {
+        sql += ' AND (`problem`.`is_public` = 1)';
+      }
+    }
+
+    let paginate = syzoj.utils.paginate(await Problem.countQuery(sql), req.query.page, syzoj.config.page.problem);
+    let problems = await Problem.query(sql + ` ORDER BY ${sortVal} ${order} ` + paginate.toSQL());
+
+    problems = await problems.mapAsync(async problem => {
+      // query() returns plain objects.
+      problem = await Problem.findById(problem.id);
+
+      problem.allowedEdit = await problem.isAllowedEditBy(res.locals.user);
+      problem.judge_state = await problem.getJudgeState(res.locals.user, true);
+      problem.tags = await problem.getTags();
+
+      return problem;
+    });
+
+    res.render('problems', {
+      allowedManageTag: res.locals.user && await res.locals.user.hasPrivilege('manage_problem_tag'),
+      problems: problems,
       paginate: paginate,
       curSort: sort,
       curOrder: order === 'asc'
@@ -305,11 +362,13 @@ app.get('/problem/:id/edit', async (req, res) => {
       problem.allowedEdit = true;
       problem.tags = [];
       problem.new = true;
+      problem.difficulty = 1600;
       problem.example = [];
     } else {
       if (!await problem.isAllowedUseBy(res.locals.user)) throw new ErrorMessage('您没有权限进行此操作。');
       problem.allowedEdit = await problem.isAllowedEditBy(res.locals.user);
       problem.tags = await problem.getTags();
+      problem.example = JSON.parse(problem.example);
     }
 
     problem.allowedManage = await problem.isAllowedManageBy(res.locals.user);
@@ -379,6 +438,7 @@ app.post('/problem/:id/edit', async (req, res) => {
     
     problem.limit_and_hint = req.body.limit_and_hint;
     problem.is_anonymous = (req.body.is_anonymous === 'on');
+    problem.difficulty = parseInt(req.body.difficulty);
 
     // Save the problem first, to have the `id` allocated
     await problem.save();

@@ -69,12 +69,13 @@ if (typeof tags !== 'undefined') tagIDs = tags.map(x => x.id);
             <a style="margin-left: 10px; " href="<%= syzoj.utils.makeUrl(['problems', 'tag', 0, 'edit']) %>" class="ui labeled icon mini green button"><i class="plus icon"></i> 添加标签</a>
           <% } %>
           <div style="margin-left: 10px; " class="ui mini buttons">
-            <div class="ui labeled icon mini dropdown button" id="add_problem_dropdown"><i class="plus icon"></i> 添加题目
-            <div class="menu">
+            <!--div class="ui labeled icon mini dropdown button" id="add_problem_dropdown"><i class="plus icon"></i> 添加题目
+            <!--div class="menu">
               <a class="item" href="<%= syzoj.utils.makeUrl(['problem', 0, 'edit']) %>"><i class="file icon"></i> 新建题目</a>
               <a class="item" href="<%= syzoj.utils.makeUrl(['problem', 0, 'import']) %>"><i class="cloud download icon"></i> 导入题目</a>
-            </div>
-            </div>
+            </div-->
+            </div-->
+            <a class="ui labeled icon mini dropdown button" href="<%= syzoj.utils.makeUrl(['problem', 0, 'edit']) %>"><i class="plus icon"></i> 新建题目</a>
           </div>
         </div>
       </div>
@@ -93,9 +94,10 @@ if (typeof tags !== 'undefined') tagIDs = tags.map(x => x.id);
         <% } %>
         <th class="one wide"><%- createSortableTitle('id', '编号', true) %></th>
         <th class="left aligned"><%- createSortableTitle('title', '题目名称', true) %></th>
+        <th class="one wide"><%- createSortableTitle('difficulty', '难度', false) %></th>
         <th class="one wide"><%- createSortableTitle('ac_num', '通过', false) %></th>
         <th class="one wide"><%- createSortableTitle('submit_num', '提交', false) %></th>
-        <th class="one wide">通过率</th>
+        <th class="one wide"><%- createSortableTitle('ac_rate', '通过率', false) %></th>
       </tr>
     </thead>
     <tbody>
@@ -113,10 +115,18 @@ if (typeof tags !== 'undefined') tagIDs = tags.map(x => x.id);
                 <% } %>
                 </td>
             <% } %>
-            <td><b><%= problem.id %></b></td>
+            <td>
+            <b><%= problem.id %></b></td>
             <td class="left aligned">
               <a style="vertical-align: middle; " href="<%= syzoj.utils.makeUrl(['problem', problem.id]) %>"><%= problem.title %>
                 <% if (!problem.is_public) { %><span class="ui header"><span class="ui tiny red label">未公开</span></span><% } %>
+          <% if (problem.type === 'interaction') { %>
+                  <span class="ui header">
+            <span class="ui orange tiny label">交互</span></span>
+          <% } else if(problem.type == 'submit-answer') { %>
+                  <span class="ui header">
+            <span class="ui orange tiny label">提交答案</span></span>
+          <% } %>
               </a>
               <div class="show_tag_controled" style="float: right; ">
                 <%
@@ -139,6 +149,11 @@ if (typeof tags !== 'undefined') tagIDs = tags.map(x => x.id);
                 }
                 %>
               </div>
+            </td>
+            <td>
+                  <span class="ui header">
+                  <a class="ui tiny blue label" href="<%= syzoj.utils.makeUrl(['problems', 'difficulty', problem.difficulty]) %>">*<%= problem.difficulty %></a>
+                  </span>
             </td>
             <td><%= problem.ac_num %></td>
             <td><%= problem.submit_num %></td>

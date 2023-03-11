@@ -28,6 +28,7 @@ if (contest) {
           <%= this.alpha(pid) %>. <%= syzoj.utils.removeTitleTag(problem.title) %>
         <% } else { %>
           #<%= problem.id %>. <%= problem.title %><% if (problem.allowedEdit && !problem.is_public) { %><span class="ui tiny red label">未公开</span><% } %>
+        <span class="ui tiny blue label">*<%= problem.difficulty %></span>
         <% } %>
       </h1>
     </div>
@@ -45,13 +46,7 @@ if (contest) {
           <% } %>
       </div>
     <% } %>
-    <% if (problem.type !== 'interaction') { %>
-      <div class="row" style="margin-top: -<%= problem.type === 'submit-answer' ? 15 : 23 %>px">
-          <span class="ui label">题目类型：<%= { 'submit-answer': '答案提交', 'interaction': '交互', 'traditional': '传统' }[problem.type] %></span>
-          <span class="ui label">评测方式：<%= (testcases && !testcases.error) ? (testcases.spj ? 'Special Judge' : '文本比较') : '无测试数据' %></span>
-      </div>
-    <% } %>
-    <% if (!contest) { %>
+    <% if (!contest && problem.allowedManage) { %>
         <div class="row" style="margin-top: -23px">
             <span class="ui label">上传者：
             <% if (problem.is_anonymous && !problem.allowedManage) { %>
@@ -60,7 +55,7 @@ if (contest) {
               <a href="<%= syzoj.utils.makeUrl(['user', problem.user_id]) %>"><div class="user-<%= syzoj.utils.makeUserColor(problem.user.rating, problem.user.is_admin) %>"><%= problem.user.username %></div></a>
             <% } %>
             </span>
-            <% if (problem.allowedManage) { %>
+            <% if (true && problem.allowedManage) { %>
                 <span class="ui label">公开者：
                 <% if (problem.publicizer) { %>
                   <a href="<%= syzoj.utils.makeUrl(['user', problem.publicizer_id]) %>"><div class="user-<%= syzoj.utils.makeUserColor(problem.publicizer.rating, problem.publicizer.is_admin) %>"><%= problem.publicizer.username %></div></a>
@@ -71,6 +66,13 @@ if (contest) {
             <% } %>
         </div>
     <% } %>
+    <!--div class="row" style="margin-top: -23px">
+        <% if (state && state.status == 'Accepted' ) { %>
+            <span class="ui tiny green label">Accepted</span>
+        <% } else if (state) { %>
+            <span class="ui tiny red label"><%= state.status %></span>
+        <% } %>
+    </div-->
 </div>
 <div class="ui grid">
   <div class="row">

@@ -26,7 +26,7 @@
             <div style="margin-top: 15px; "></div>
           <% } %>
           <label for="title">题目名称</label>
-          <input class="font-content" type="text" id="title" name="title" value="<%= problem.title %>">
+          <input class="font-content" type="text" id="title" name="title" value="<%= problem.title %>" placeholder="「来源」名称">
         
           <label style="margin-top: 15px; " for="description">题目描述</label>
           <textarea class="markdown-edit" rows="15" id="description" name="description"><%= problem.description %></textarea>
@@ -60,6 +60,11 @@
               <option value="<%= tag.id %>" selected><%= tag.name %></option>
             <% } %>
           </select>
+          
+          <label style="margin-top: 15px; ">难度</label>
+          <input class="font-content" readonly type="text" id="difficulty-show" value="*<%= problem.difficulty %>">
+          <input style="width: 100%" type="range" id="difficulty" name="difficulty" value="<%= problem.difficulty %>" step="100" min="800" max="3200">
+          
           <div class="ui <% if (problem.is_anonymous) { %>checked <% } %>checkbox" style="margin-top: 15px; ">
             <input <% if (problem.is_anonymous) { %>checked=""<% } %> name="is_anonymous" type="checkbox">
             <label><strong>匿名上传</strong></label>
@@ -91,6 +96,27 @@
 </div>
 <script type="text/javascript">
 $(function () {
+    function renderExample(output, input){
+      let data = input.val();
+      data = JSON.parse(data);
+      let ori = '';
+      for(let i = 0; i < data.length; ++i){
+      
+        if(data[i].input == '' && data[i].output == '') continue;
+        
+        ori += '### 样例输入 ' + (i + 1) + '\n';
+        ori += '```cpp\n';
+        ori += data[i].input.trim().replaceAll('`', '\\`');
+        ori += '\n```\n\n'
+        ori += '### 样例输出 ' + (i + 1) + '\n';
+        ori += '```cpp\n';
+        ori += data[i].output.trim().replaceAll('`', '\\`');
+        ori += '\n```\n\n'
+      }
+      $.post('/api/markdown', { async: false, s: ori }, function (s) {
+        output.html(s.replaceAll('\\`', '`'));
+      });
+    }
     function render(output, input) {
       $.post('/api/markdown', { s: input.val() }, function (s) {
         output.html(s);
@@ -127,6 +153,13 @@ $(function () {
       }
     });
 });
+</script>
+
+<script>
+  $('#difficulty')
+    .on('mousemove', () => {
+        $('#difficulty-show').val('*' + $('#difficulty').val());
+    });
 </script>
 
 <script>
