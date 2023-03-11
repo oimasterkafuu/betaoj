@@ -7,6 +7,7 @@ import User from "./user";
 import File from "./file";
 import JudgeState from "./judge_state";
 import Contest from "./contest";
+import ContestPlayer from "./contest_player";
 import ProblemTag from "./problem_tag";
 import ProblemTagMap from "./problem_tag_map";
 import SubmissionStatistics, { StatisticsType } from "./submission_statistics";
@@ -533,6 +534,7 @@ export default class Problem extends Model {
     const entityManager = TypeORM.getManager();
 
     id = parseInt(id);
+
     await entityManager.query('UPDATE `problem`               SET `id`         = ' + id + ' WHERE `id`         = ' + this.id);
     await entityManager.query('UPDATE `judge_state`           SET `problem_id` = ' + id + ' WHERE `problem_id` = ' + this.id);
     await entityManager.query('UPDATE `problem_tag_map`       SET `problem_id` = ' + id + ' WHERE `problem_id` = ' + this.id);
@@ -554,6 +556,28 @@ export default class Problem extends Model {
       if (flag) {
         await contest.setProblemsNoCheck(problemIDs);
         await contest.save();
+      }
+    }
+
+    let contestPlayers = await ContestPlayer.find();
+    for (let contestPlayer of contestPlayers) {
+      let flag = false;
+
+      let details = contestPlayer.score_details;
+      let newDetails = {};
+      
+      for(let key in details){
+        let newKey = key;
+        if(key == '' + this.id){
+          newKey = '' + id;
+          flag = true;
+        }
+        newDetails[newKey] = details[key];
+      }
+
+      if (flag) {
+        contestPlayer.score_details = newDetails;
+        await contestPlayer.save();
       }
     }
 
