@@ -16,6 +16,8 @@
     <% } else { %>
       <a href="<%= syzoj.utils.makeUrl(['discussion', 'global']) %>" class="section">全局板块</a>
     <% } %>
+            <i class="right angle icon divider"></i>
+            <div class="section"><%= article.title %></div>
   </div>
   <h1><%= article.title %></h1>
  	<p style="margin-bottom: -5px; ">
@@ -59,7 +61,7 @@
           <img src="<%= syzoj.utils.gravatar(comment.user.email, 120) %>">
         </a>
         <div class="content">
-          <a class="author" href="<%= syzoj.utils.makeUrl(['user', comment.user_id]) %>"><%= comment.user.username %></a><% if (comment.user.nameplate) { %><%- comment.user.nameplate %><% } %>
+          <a class="author" href="<%= syzoj.utils.makeUrl(['user', comment.user_id]) %>"><div class="user-<%= syzoj.utils.makeUserColor(comment.user.rating, comment.user.is_admin) %>"><%= comment.user.username %></div></a><% if (comment.user.nameplate) { %><span class="user-tag bg-<%= syzoj.utils.makeUserColor(comment.user.rating, comment.user.is_admin) %>"><%- comment.user.nameplate %></span><% } %>
           <div class="metadata">
             <span class="date"><%= syzoj.utils.formatDate(comment.public_time) %></span>
           </div>

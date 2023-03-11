@@ -41,9 +41,41 @@
             <a class="ui small button" href="<%= syzoj.utils.makeUrl(['contest', contest.id, 'edit']) %>">编辑比赛</a>
             </div>
           <% } %>
+      </div>
+    </div>
+  <% if (admins) { %>
+    <div class="row">
+      <div class="column">
+        <h4 class="ui top attached block header">比赛团队</h4>
+        <div class="ui bottom attached segment font-content">
+        <table class="ui very basic center aligned table">
+        <thead>
+        <tr>
+          <th>用户</th>
+          <th>通过数量</th>
+          <th>积分</th>
+        </tr>
+        </thead>
+        <tbody>
+          <% for(let admin of admins) { %>
+        <tr>
+          <td>
+              <a href="<%= syzoj.utils.makeUrl(['user', admin.id]) %>"><div class="user-<%= syzoj.utils.makeUserColor(admin.rating, admin.is_admin) %>"><%= admin.username %></div><% if (admin.nameplate) { %><span class="user-tag bg-<%= syzoj.utils.makeUserColor(admin.rating, admin.is_admin) %>"><%- admin.nameplate %></span><% } %></a>
+          </td>
+          <td>
+              <%= admin.ac_num %>
+          </td>
+          <td>
+              <%= admin.rating %>
+          </td>
+        </tr>
+          <% } %>
+        </tbody>
+        </table>
         </div>
       </div>
     </div>
+  <% } %>
   <% if (contest.information) { %>
     <div class="row">
       <div class="column">

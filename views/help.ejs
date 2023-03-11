@@ -15,19 +15,19 @@
         <p>请根据题目中的说明选择使用<strong>标准输入输出</strong>或<strong>文件输入输出</strong>。</p>
 
         <h2 class="ui header">个人资料<br></h2>
-        <p>本站不提供头像存储服务，而是使用 Gravatar 进行头像显示。请使用邮箱注册 <a href="https://zh-cn.wordpress.com/">WordPress.com</a>，登录 <a href="https://cn.gravatar.com/">Gravatar</a> 并上传头像。同样使用 Gravatar 的 OJ 有 Vijos、COGS、UOJ 等。</p>
-        <p>个性签名可以使用 Markdown 与 HTML，请不要在其中添加恶意代码。</p>
+        <p>本站不提供头像存储服务，而是使用 Gravatar 进行头像显示。请使用邮箱注册 <a href="https://zh-cn.wordpress.com/">Wordpress.com</a>，登录 <a href="https://cn.gravatar.com/">Gravatar</a> 并上传头像。</p>
+        <p>个性签名可以使用 Markdown 与 HTML，恶意代码将会被过滤。</p>
         <h2 class="ui header">添加题目</h2>
         <h3 class="ui header">题面</h3>
         <p>在<a href="/problem/0/edit">添加题目页面</a>填写题面，题目内容使用 Markdown 与 TeX 公式。</p>
         <h3 class="ui header">测试数据</h3>
-<p>旧版的 <code>data_rule.txt</code> 已经停止使用，新加入的题目请使用新的 <code>data.yml</code> 配置文件。关于 YAML，详见 <a href="https://zh.wikipedia.org/wiki/YAML">YAML 的 Wikipedia 词条</a>。</p>
+<p>请使用 <code>data.yml</code> 配置文件。</p>
 <p>对于传统和提交答案题目，<code>data.yml</code> 是可选的，系统会自动识别您的数据包，将每个 <code>.in</code> 文件对应到 <code>.out</code> 或 <code>.ans</code> 文件，并将 <code>spj_</code> 开头的文件作为 Special Judge（详见下文的「Special Judge」）。</p>
 <h4>传统</h4>
 <p>对于传统题目，<code>data.yml</code> 的格式如下：</p>
 <div class="ui existing segment"><pre style="margin-top: 0; margin-bottom: 0; "><code class="lang-yaml"><span class="pl-l-Scalar-Plain">subtasks</span><span class="pl-p-Indicator">:</span>
   <span class="pl-p-Indicator">-</span> <span class="pl-l-Scalar-Plain">score</span><span class="pl-p-Indicator">:</span> <span class="pl-l-Scalar-Plain">30</span>              <span class="pl-c1"># 这个子任务的分数（注意，所有子任务的总分必须为 100）</span>
-    <span class="pl-l-Scalar-Plain">type</span><span class="pl-p-Indicator">:</span> <span class="pl-l-Scalar-Plain">sum</span>              <span class="pl-c1"># 子任务类型，可选的值有 sum、min 和 mul.</span>
+    <span class="pl-l-Scalar-Plain">type</span><span class="pl-p-Indicator">:</span> <span class="pl-l-Scalar-Plain">min</span>              <span class="pl-c1"># 子任务类型，可选的值有 sum、min 和 mul</span>
     <span class="pl-l-Scalar-Plain">cases</span><span class="pl-p-Indicator">:</span> <span class="pl-p-Indicator">[</span><span class="pl-nv">1</span><span class="pl-p-Indicator">,</span> <span class="pl-nv">2</span><span class="pl-p-Indicator">,</span> <span class="pl-nv">3</span><span class="pl-p-Indicator">]</span>       <span class="pl-c1"># 测试点编号可为数字</span>
   <span class="pl-p-Indicator">-</span> <span class="pl-l-Scalar-Plain">score</span><span class="pl-p-Indicator">:</span> <span class="pl-l-Scalar-Plain">30</span>              <span class="pl-c1"># 另一个子任务</span>
     <span class="pl-l-Scalar-Plain">type</span><span class="pl-p-Indicator">:</span> <span class="pl-l-Scalar-Plain">mul</span>
@@ -35,7 +35,7 @@
 
 <span class="pl-l-Scalar-Plain">inputFile</span><span class="pl-p-Indicator">:</span> <span class="pl-s">'dat#.in'</span>   <span class="pl-c1"># 测试数据包中的输入文件</span>
 <span class="pl-l-Scalar-Plain">outputFile</span><span class="pl-p-Indicator">:</span> <span class="pl-s">'dat#.ans'</span> <span class="pl-c1"># 测试数据包中的输出文件</span>
-<span class="pl-c1"># 上述文件名中的 # 字符将被替换为测试点编号</span>
+<span class="pl-c1"># 上述文件名中的 # 字符将被系统自动替换为测试点编号</span>
 
 <span class="pl-c1"># 可选 - Special Judge</span>
 <span class="pl-l-Scalar-Plain">specialJudge</span><span class="pl-p-Indicator">:</span>
@@ -55,10 +55,12 @@
       <span class="pl-p-Indicator">-</span> <span class="pl-l-Scalar-Plain">name</span><span class="pl-p-Indicator">:</span> <span class="pl-l-Scalar-Plain">itlib_c.h</span>
         <span class="pl-l-Scalar-Plain">dest</span><span class="pl-p-Indicator">:</span> <span class="pl-l-Scalar-Plain">interaction.h</span>
 </code></pre></div>
+
 <h4>提交答案</h4>
 <p>对于提交答案题目，<code>inputFile</code> 和 <code>outputFile</code> 可以省略，用 <code>userOutput</code> 表示用户提交的答案文件名。</p>
 <div class="ui existing segment"><pre style="margin-top: 0; margin-bottom: 0; "><code class="lang-yaml"><span class="pl-l-Scalar-Plain">userOutput</span><span class="pl-p-Indicator">:</span> <span class="pl-s">'dat#.out'</span>
 </code></pre></div>
+
 <h4>交互</h4>
 <p>对于交互题目，需要加入以下内容：</p>
 <div class="ui existing segment"><pre style="margin-top: 0; margin-bottom: 0; "><code class="lang-yaml"><span class="pl-c1"># 交互器</span>
@@ -74,7 +76,7 @@
 <ul>
 <li><code>sum</code>：测试点分数按百分比相加；</li>
 <li><code>mul</code>：测试点分数按百分比相乘；</li>
-<li><code>min</code>：取各测试点最低分。</li>
+<li><code>min</code>：取各测试点最低分。捆绑测试中，请选择此选项。</li>
 </ul>
 <h4>Special Judge</h4>
 <p>Special Judge 用于<strong>传统</strong>或<strong>提交答案</strong>题目。</p>
