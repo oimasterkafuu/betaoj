@@ -132,9 +132,13 @@ app.get('/article/:id/edit', async (req, res) => {
       article = await Article.create();
       article.id = 0;
       article.allowedEdit = true;
+      article.allow_comment = true;
     } else {
       article.allowedEdit = await article.isAllowedEditBy(res.locals.user);
+      if (!article.allowedEdit) throw new ErrorMessage('您没有权限进行此操作。');
     }
+    
+    // throw new ErrorMessage(JSON.stringify(article));
 
     res.render('article_edit', {
       article: article
@@ -167,6 +171,8 @@ app.post('/article/:id/edit', async (req, res) => {
       } else {
         article.problem_id = null;
       }
+      
+      article.allow_comment = true;
     } else {
       if (!await article.isAllowedEditBy(res.locals.user)) throw new ErrorMessage('您没有权限进行此操作。');
     }
@@ -176,6 +182,23 @@ app.post('/article/:id/edit', async (req, res) => {
     article.content = req.body.content;
     article.update_time = time;
     article.is_notice = (res.locals.user && res.locals.user.is_admin ? req.body.is_notice === 'on' : article.is_notice);
+    article.allow_comment = !(res.locals.user && res.locals.user.is_admin ? req.body.allow_comment !== 'on' : !article.allow_comment);
+    
+    let isLuoguReg = /^https:\/\/www.luogu.com.cn\/paste\/[a-zA-Z0-9]{8}$/;
+    if(isLuoguReg.test(article.content.trim())){
+        let oriContent = await fetch(article.content.trim(), {
+          headers: [
+            ["x-luogu-type", "content-only"],
+          ],
+        });
+        
+        if(oriContent.status == 200){
+            let jsonData = await oriContent.json();
+            if(jsonData.code == 200){
+                article.content = jsonData.currentData.paste.data;
+            }
+        }
+    }
 
     await article.save();
 

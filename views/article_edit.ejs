@@ -29,6 +29,11 @@
           <label><strong>公告</strong></label>
           <p style="margin-top: 5px; ">选择后将显示在首页公告栏。</p>
         </div>
+        <div class="ui <% if (article.allow_comment) { %>checked <% } %>checkbox" style="margin-top: 15px; ">
+          <input <% if (article.allow_comment) { %>checked=""<% } %> name="allow_comment" type="checkbox">
+          <label><strong>允许评论</strong></label>
+          <p style="margin-top: 5px; ">选择后将允许评论。</p>
+        </div>
       <% } %>
     </div>
     <div class="ui bottom attached tab segment" data-tab="preview">
