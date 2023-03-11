@@ -1,0 +1,50 @@
+<% this.title = '学生认证' %>
+<% include header %>
+<div class="ui error message" id="error" hidden></div>
+<div class="ui middle aligned center aligned grid">
+  <div class="row">
+    <div class="column" style="max-width: 450px">
+      <h4 class="ui image header">
+        <div class="content" style="margin-bottom: 10px; ">
+          学生认证 - 教师端
+        </div>
+      </h4>
+        <table class="ui very basic center aligned table" style="table-layout: fixed; ">
+            <thead>
+            <tr>
+                <th style="width: 150px; ">用户名</th>
+                <th style="width: 150px; ">真实姓名</th>
+                <th style="width: 150px; ">用户编辑</th>
+            </tr>
+            </thead>
+        <script data-cfasync="false">
+        var lineHeight = 0;
+        (function () {
+            var div = document.createElement('div');
+            div.style.position = 'fixed';
+            div.style.left = -10000;
+            div.style.visibility = 'hidden';
+            div.innerText = '测试，Test.';
+            document.body.appendChild(div);
+            lineHeight = div.clientHeight;
+        })();
+        </script>
+            <tbody>
+            <%
+            for (let user of users) {
+            %>
+                <tr>
+                    <td><div class="user-<%= syzoj.utils.makeUserColor(user.rating, user.is_admin) %>"><%= user.username %><% if (user.nameplate) { %><span class="user-tag bg-<%= syzoj.utils.makeUserColor(user.rating, user.is_admin) %>"><%- user.nameplate %></span><% } %></div></td>
+                    <td><%= user.nickname %></td>
+                    <td><a href="<%= syzoj.utils.makeUrl(['user', user.id, 'edit#permission']) %>">这里</a></td>
+                </tr>
+            <% } %>
+            </tbody>
+        </table>
+    </div>
+  </div>
+</div>
+<script src="<%- lib('blueimp-md5/2.10.0/js/md5.min.js') %>"></script>
+<script type="text/javascript">
+</script>
+<% include footer %>

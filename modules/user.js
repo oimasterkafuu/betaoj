@@ -174,6 +174,11 @@ app.post('/user/:id/edit', async (req, res) => {
       if (!syzoj.utils.isValidUsername(req.body.username)) throw new ErrorMessage('无效的用户名。');
       user.username = req.body.username;
       user.email = req.body.email;
+      
+      if(req.body.permission != 'null')
+        user.permission = parseInt(req.body.permission);
+      else
+        user.permission = null;
     }
 
     if (res.locals.user && res.locals.user.is_admin) {

@@ -62,6 +62,9 @@ export default class User extends Model {
 
   @TypeORM.Column({ nullable: true, type: "integer" })
   register_time: number;
+ 
+  @TypeORM.Column({ nullable: true, type: "integer" })
+  permission: number;
 
   static async fromEmail(email): Promise<User> {
     return User.findOne({
@@ -81,7 +84,7 @@ export default class User extends Model {
 
   async isAllowedEditBy(user) {
     if (!user) return false;
-    if (await user.hasPrivilege('manage_user')) return true;
+    if (await user.hasPrivilege('manage_user') && this.is_admin == false) return true;
     return user && (user.is_admin || this.id === user.id);
   }
 

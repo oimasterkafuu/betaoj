@@ -91,6 +91,10 @@ export default class Problem extends Model {
   
   @TypeORM.Column({ nullable: true, type: "integer" })
   difficulty: number;
+  
+  @TypeORM.Column({ nullable: true, type: "integer" })
+  permission: number;
+
   @TypeORM.Index()
   @TypeORM.Column({ nullable: true, type: "boolean" })
   is_public: boolean;
@@ -132,8 +136,9 @@ export default class Problem extends Model {
   }
 
   async isAllowedUseBy(user) {
-    if (this.is_public) return true;
+    if (this.is_public && !this.permission) return true;
     if (!user) return false;
+    if (this.is_public && this.permission <= user.permission) return true;
     if (await user.hasPrivilege('manage_problem')) return true;
     return this.user_id === user.id;
   }

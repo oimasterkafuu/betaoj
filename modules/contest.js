@@ -503,7 +503,29 @@ app.get('/contest/:id/problem/:pid', async (req, res) => {
 
     let problem_id = problems_id[pid - 1];
     let problem = await Problem.findById(problem_id);
+    
+    if(problem.permission && (!res.locals.user || res.locals.user.permission < problem.permission))
+        throw new ErrorMessage('您没有权限执行此操作。');
+    
     await problem.loadRelationships();
+    
+    problem.example = JSON.parse(problem.example);
+    let ori = '';
+    for(let i = 0; i < problem.example.length; ++i){
+      
+        if(problem.example[i].input == '' && problem.example[i].output == '') continue;
+        
+        ori += '### 样例输入 ' + (i + 1) + '\n';
+        ori += '```cpp\n';
+        ori += problem.example[i].input.trim().replaceAll('`', '\\`');
+        ori += '\n```\n\n'
+        ori += '### 样例输出 ' + (i + 1) + '\n';
+        ori += '```cpp\n';
+        ori += problem.example[i].output.trim().replaceAll('`', '\\`');
+        ori += '\n```\n\n'
+      }
+     
+    problem.example = await syzoj.utils.markdown(ori);
 
     contest.ended = contest.isEnded();
     if (!await contest.isSupervisior(curUser) && !(contest.isRunning() || contest.isEnded())) {

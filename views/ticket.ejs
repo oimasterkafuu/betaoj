@@ -1,0 +1,90 @@
+<% this.title = '学生认证' %>
+<% include header %>
+<div class="ui error message" id="error" hidden></div>
+<div class="ui middle aligned center aligned grid">
+  <div class="row">
+    <div class="column" style="max-width: 450px">
+      <h4 class="ui image header">
+        <div class="content" style="margin-bottom: 10px; ">
+          学生认证
+        </div>
+      </h4>
+      <form class="ui large form">
+        <div class="ui existing segment">
+          <div class="field">
+            <div class="ui left icon input">
+              <i class="user icon"></i>
+              <input name="nickname" placeholder="真实姓名" type="text" id="nickname" onkeydown="key_login(event)">
+            </div>
+          </div>
+          <div class="ui fluid large submit button" id="submit">提交</div>
+        </div>
+
+        <div class="ui message"><p>准确填写。乱搞后果自负。</p><p>如果信息有误，您将无法访问完整题库。</p><p>小号可以使用相同姓名，但后期需要额外验证。</p><p><font color="red">提交后将不可修改。</font></p></div>
+
+      </form>
+    </div>
+  </div>
+</div>
+<script src="<%- lib('blueimp-md5/2.10.0/js/md5.min.js') %>"></script>
+<script type="text/javascript">
+function key_login(event) {
+    if (event.keyCode == 13) {
+        submit();
+    }
+}
+function show_error(error) {
+    $("#error").text(error);
+    $("#error").show();
+}
+function success() {
+  window.location.href = location.protocol + '//' + location.host + <%- serializejs(req.query.url || '/') %>;
+}
+function submit() {
+    $("#submit").addClass("loading");
+    $.ajax({
+        url: "/anickname",
+        type: 'POST',
+        data: {
+            "nickname": $("#nickname").val()
+        },
+        async: true,
+        success: function(data) {
+            //console.log(data);
+            data=JSON.parse(data);
+            error_code = data.error_code;
+            //console.log(error_code);
+	    switch (error_code) {
+                case 1002:
+                    show_error("没有登录");
+                    break;
+                case 1003:
+                    show_error("请勿重复认证");
+                    break;
+                case 1004:
+                    show_error("服务器内部错误");
+                    break;
+                case 1:
+                    success();
+                    return;
+                default:
+                    show_error("未知错误");
+                    break;
+            }
+            $("#submit").text("提交");
+            $("#submit").removeClass("loading");
+        },
+        error:  function(XMLHttpRequest, textStatus, errorThrown) {
+            alert(XMLHttpRequest.responseText);
+            show_error("未知错误");
+            $("#submit").text("提交");
+        }
+    });
+}
+$(document).ready(function() {
+    $("#submit").click(function() {
+        submit();
+    });
+});
+</script>
+<% include footer %>

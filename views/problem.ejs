@@ -36,14 +36,6 @@ if (contest) {
       <div class="row" style="margin-top: -15px">
           <span class="ui label">内存限制：<%= problem.memory_limit %> MiB</span>
           <span class="ui label">时间限制：<%= problem.time_limit %> ms</span>
-          <% if (problem.type === 'interaction') { %>
-            <span class="ui label">题目类型：交互</span>
-          <% } else if (problem.file_io) { %>
-            <span class="ui label">输入文件：<%= problem.file_io_input_name %></span>
-            <span class="ui label">输出文件：<%= problem.file_io_output_name %></span>
-          <% } else { %>
-            <span class="ui label">标准输入输出</span>
-          <% } %>
       </div>
     <% } %>
     <% if (!contest && problem.allowedManage) { %>
@@ -112,13 +104,6 @@ if (contest) {
           <% if (problem.allowedEdit) { %>
             <a class="small ui button" href="<%= syzoj.utils.makeUrl(['problem', problem.id, 'edit']) %>">编辑</a>
             <a class="small ui button" href="<%= syzoj.utils.makeUrl(['problem', problem.id, 'manage']) %>">管理</a>
-          <% } %>
-          <% if (problem.allowedManage) { %>
-            <% if (problem.is_public) {  %>
-              <a class="small ui button" id="dis_public" href-post="<%= syzoj.utils.makeUrl(['problem', problem.id, 'dis_public']) %>">取消公开</a>
-            <% } else { %>
-              <a class="small ui button" id="public" href-post="<%= syzoj.utils.makeUrl(['problem', problem.id, 'public']) %>">公开</a>
-            <% } %>
             <div class="ui basic modal" id="modal-delete">
               <div class="ui icon header">
                 <i class="trash icon"></i>

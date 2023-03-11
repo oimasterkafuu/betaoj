@@ -66,6 +66,7 @@ app.post('/api/forget', async (req, res) => {
 // Sign up
 app.post('/api/sign_up', async (req, res) => {
   try {
+    // throw new ErrorMessage('Beta 版不开放注册。');
     res.setHeader('Content-Type', 'application/json');
     let user = await User.fromName(req.body.username);
     if (user) throw 2008;
@@ -113,7 +114,8 @@ app.post('/api/sign_up', async (req, res) => {
         email: req.body.email,
         is_show: syzoj.config.default.user.show,
         rating: syzoj.config.default.user.rating,
-        register_time: parseInt((new Date()).getTime() / 1000)
+        register_time: parseInt((new Date()).getTime() / 1000),
+        permission: 0
       });
       await user.save();
 

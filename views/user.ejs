@@ -87,7 +87,7 @@
                 <div class="content">
                     <div class="header"><div class="user-<%= syzoj.utils.makeUserColor(show_user.rating, show_user.is_admin) %>"><%= show_user.username %></div><% if (show_user.nameplate) { %><span class="user-tag bg-<%= syzoj.utils.makeUserColor(show_user.rating, show_user.is_admin) %>"><%- show_user.nameplate %></span><% } %> <% if (show_user.sex == 1) { %><i class="man icon"></i><% } else if (show_user.sex == -1) { %><i class="woman icon"></i><% } %></div>
                     <div class="meta">
-                        <a class="group"><%= show_user.is_admin ? '管理员' : '普通用户' %></a>
+                        <a class="group"><%= show_user.is_admin ? '管理员' : (show_user.permission ? '已验证的学生' : '普通用户') %></a>
                     </div>
                 </div>
                 <div class="extra content">
@@ -104,12 +104,14 @@
                         <div class="ui grid">
                             <div class="eight wide column">
                                 <div class="ui grid">
+                                    <% if (user && user.is_admin && show_user.nickname) { %>
                                     <div class="row">
                                         <div class="column">
-                                           <h4 class="ui top attached block header">用户名</h4>
-                                           <div class="ui bottom attached segment"><%= show_user.username %><% if (show_user.nameplate) { %><%- show_user.nameplate %><% } %></div>
+                                           <h4 class="ui top attached block header">真实姓名</h4>
+                                           <div class="ui bottom attached segment"><%= show_user.nickname %></div>
                                         </div>
                                     </div>
+                                    <% } %>
                                     <% if (show_user.emailVisible) { %>
                                       <div class="row">
                                           <div class="column">

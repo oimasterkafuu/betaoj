@@ -61,6 +61,17 @@
             <% } %>
           </select>
           
+          <label style="margin-top: 15px; ">权限</label>
+          <select class="ui dropdown" name="permission">
+            <option value="0" <%= problem.permission === 0 ? 'selected': '' %>>外来学生可查看（及其不推荐）</option>
+            <option value="20" <%= problem.permission === 20 ? 'selected': '' %>>普及及以上</option>
+            <option value="30" <%= problem.permission === 30 ? 'selected': '' %>>提高- 及以上</option>
+            <option value="40" <%= problem.permission === 40 ? 'selected': '' %>>提高及以上</option>
+            <option value="50" <%= problem.permission === 50 ? 'selected': '' %>>省选- 及以上</option>
+            <option value="60" <%= problem.permission === 60 ? 'selected': '' %>>省选及以上</option>
+            <option value="100" <%= problem.permission === 100 ? 'selected': '' %>>神仙及以上</option>
+          </select>
+          
           <label style="margin-top: 15px; ">难度</label>
           <input class="font-content" readonly type="text" id="difficulty-show" value="*<%= problem.difficulty %>">
           <input style="width: 100%" type="range" id="difficulty" name="difficulty" value="<%= problem.difficulty %>" step="100" min="800" max="3200">

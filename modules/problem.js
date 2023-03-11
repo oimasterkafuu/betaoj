@@ -364,6 +364,7 @@ app.get('/problem/:id/edit', async (req, res) => {
       problem.new = true;
       problem.difficulty = 1600;
       problem.example = [];
+      problem.permission = 20;
     } else {
       if (!await problem.isAllowedUseBy(res.locals.user)) throw new ErrorMessage('您没有权限进行此操作。');
       problem.allowedEdit = await problem.isAllowedEditBy(res.locals.user);

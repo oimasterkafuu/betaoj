@@ -312,3 +312,119 @@ code {
   padding-left: 0.8rem !important;
   padding-right: 0 !important;
 }
+
+/* user rating colors */
+
+.user-legendary {
+  color: red!important;
+  font-weight: 700;
+  display: inline-block;
+}
+
+.user-legendary::first-letter {
+  color: #000!important;
+  font-weight: 700;
+}
+
+.user-red {
+  color: red!important;
+  font-weight: 700;
+  display: inline-block;
+}
+
+.user-violet {
+  color: #a0a!important;
+  font-weight: 700;
+  display: inline-block;
+}
+
+.user-orange {
+  color: #ff8c00!important;
+  font-weight: 700;
+  display: inline-block;
+}
+
+.user-blue {
+  color: blue!important;
+  font-weight: 700;
+  display: inline-block;
+}
+
+.user-cyan {
+  color: #03a89e!important;
+  font-weight: 700;
+  display: inline-block;
+}
+
+.user-green {
+  color: green!important;
+  font-weight: 700;
+  display: inline-block;
+}
+
+.user-gray {
+  color: gray!important;
+  font-weight: 700;
+  display: inline-block;
+}
+
+.user-admin {
+  color: #000!important;
+  font-weight: 700;
+  display: inline-block;
+}
+
+.user-tag {
+  border-radius: 3px;
+  display: inline-block;
+  padding: .3em .5em;
+  font-weight: 700;
+  color: #fff;
+  line-height: 1;
+  font-size: 11px;
+  margin: .2em;
+}
+
+.bg-legendary {
+  background-color: red!important;
+}
+
+.bg-red {
+  background-color: red!important;
+}
+
+.bg-fire {
+  background-color: red!important;
+}
+
+.bg-violet {
+  background-color: #a0a!important;
+}
+
+.bg-orange {
+  background-color: #ff8c00!important;
+}
+
+.bg-blue {
+  background-color: blue!important;
+}
+
+.bg-cyan {
+  background-color: #03a89e!important;
+}
+
+.bg-green {
+  background-color: green!important;
+}
+
+.bg-gray {
+  background-color: gray!important;
+}
+
+.bg-admin {
+  background-color: #000!important;
+}
+
+a.item {
+  color: #092350 !important;
+}

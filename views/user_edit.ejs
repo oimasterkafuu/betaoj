@@ -59,6 +59,27 @@
       <%
       let allowedManagePrivilege = user && user.is_admin;
       %>
+      <% if (allowedManagePrivilege) { %>
+	    <div class="field">
+	    	<label for="nameplate">Tag</label>
+	    	<input class="font-content" type="text" id="nameplate" name="nameplate" value="<%= edited_user.nameplate %>"<% if (!user.allowedManage) { %> readonly<% } %>>
+	    </div>
+      <div class="field">
+	    	<label for="permission">权限</label>
+        <a name="permission"></a>
+	    	<select class="ui dropdown" name="permission">
+          <option value="null" <%= edited_user.permission === null ? 'selected': '' %>>未设置</option>
+          <option value="0" <%= edited_user.permission === 0 ? 'selected': '' %>>外来学生</option>
+          <option value="20" <%= edited_user.permission === 20 ? 'selected': '' %>>普及</option>
+          <option value="30" <%= edited_user.permission === 30 ? 'selected': '' %>>提高-</option>
+          <option value="40" <%= edited_user.permission === 40 ? 'selected': '' %>>提高</option>
+          <option value="50" <%= edited_user.permission === 50 ? 'selected': '' %>>省选-</option>
+          <option value="60" <%= edited_user.permission === 60 ? 'selected': '' %>>省选</option>
+          <option value="100" <%= edited_user.permission === 100 ? 'selected': '' %>>神仙</option>
+          <option value="99999" <%= edited_user.permission === 99999 ? 'selected': '' %>>超级管理</option>
+        </select>
+	    </div>
+	   <% } %>
       <div class="inline field">
         <label class="ui header">权限</label>
         <div class="ui toggle disabled checkbox" style="margin-right: 20px; ">
