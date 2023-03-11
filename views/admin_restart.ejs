@@ -18,7 +18,7 @@ setInterval(function () {
     span.text((++time).toString());
 }, 1000);
 
-var checkInterval = 500,
+var checkInterval = 2000,
     delayBeforeRedirect = 1000,
     currentServiceID = <%- serializejs(syzoj.serviceID) %>;
 function checkServiceUp() {
