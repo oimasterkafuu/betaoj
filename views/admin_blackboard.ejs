@@ -1,0 +1,45 @@
+<% this.adminPage = 'blackboard'; %>
+<% include admin_header %>
+
+<div class="padding">
+  <form class="" method="post">
+    <div class="ui top attached tabular menu">
+      <a class="item active" data-tab="edit">编辑</a>
+      <a class="item" data-tab="preview" id="preview_tab">预览</a>
+    </div>
+    <div class="ui bottom attached tab segment active" data-tab="edit">
+      <div class="ui form">
+        <div class="field">
+          <textarea rows="15" id="content" name="data" class="markdown-edit"><%= data %></textarea>
+        </div>
+      </div>
+
+    </div>
+    <div class="ui bottom attached tab segment" data-tab="preview">
+      <div id="pv-content"></div>
+    </div>
+
+<div style="text-align: center; ">
+    <button id="submit_button" type="submit" class="ui labeled submit icon button">
+      <i class="icon edit"></i> 提交
+    </button>
+</div>
+</form>
+
+
+<script type="text/javascript">
+$(function () {
+    function render(output, input) {
+      $.post('/api/markdown', { s: input.val() }, function (s) {
+        output.html(s);
+      });
+    }
+    $("#preview_tab").click(function () {
+      $("#pv-content").text('Loading...');
+      render($("#pv-content"), $("#content"));
+    });
+    $('.tabular.menu .item').tab();
+})
+</script>
+
+<% include admin_footer %>

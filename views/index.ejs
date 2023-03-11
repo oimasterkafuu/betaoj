@@ -22,14 +22,16 @@
           </tbody>
         </table>
       </div>
-      <h4 class="ui top attached block header"><i class="ui signal icon"></i>排名</h4>
+      <h4 class="ui top attached block header"><i class="ui user icon"></i>排名</h4>
       <div class="ui bottom attached segment">
         <table class="ui very basic center aligned table" style="table-layout: fixed; ">
           <thead>
             <tr>
 	            <th style="width: 50px; ">#</th>
-	            <th style="width: 170px; ">用户名</th>
+	            <th style="width: 200px; ">用户名</th>
 	            <th>个性签名</th>
+	            <th style="width: 80px; ">通过数量</th>
+	            <th style="width: 50px; ">积分</th>
             </tr>
           </thead>
           <script data-cfasync="false">
@@ -52,7 +54,7 @@
             %>
                 <tr>
                     <td><b><%= i %></b></td>
-                    <td><a href="<%= syzoj.utils.makeUrl(['user', user.id]) %>"><%= user.username %></a><% if (user.nameplate) { %><%- user.nameplate %><% } %></td>
+                    <td><a href="<%= syzoj.utils.makeUrl(['user', user.id]) %>"><div class="user-<%= syzoj.utils.makeUserColor(user.rating, user.is_admin) %>"><%= user.username %></div></a><% if (user.nameplate) { %><span class="user-tag bg-<%= syzoj.utils.makeUserColor(user.rating, user.is_admin) %>"><%- user.nameplate %></span><% } %></td>
                     <td style="font-content">
                       <script id="user-infomation-script-<%= i %>" data-cfasync="false">
                       (function () {
@@ -68,6 +70,8 @@
                       })();
                       </script>
                     </td>
+                    <td><%= user.ac_num %></td>
+                    <td><%= user.rating %></td>
                 </tr>
              <%
             } %>
@@ -76,23 +80,37 @@
       </div>
     </div>
     <div class="right floated five wide column">
-        <h4 class="ui top attached block header"><i class="ui quote left icon"></i>一言（ヒトコト）</h4>
-        <div class="ui bottom attached center aligned segment">
-          <div class="ui active centered inline loader" id="hitokoto-loader"></div>
-          <script>
-          $.get('https://v1.hitokoto.cn/?c=a', function (data) {
-            if (typeof data === 'string') data = JSON.parse(data);
-            $('#hitokoto-loader').removeClass('active');
-            $('#hitokoto-content').css('display', '').text(data.hitokoto);
-            if (data.from) {
-              $('#hitokoto-from').css('display', '').text('——' + data.from);
-            }
-          });
-          </script>
-          <div style="font-size: 1em; line-height: 1.5em; display: none; " id="hitokoto-content"></div>
-          <div style="text-align: right; margin-top: 15px; font-size: 0.9em; color: #666; display: none; " id="hitokoto-from"></div>
-        </div>
-      <h4 class="ui top attached block header"><i class="ui rss icon"></i>最近更新</h4>
+        <% if (syzoj.config.hitokoto) { %>
+            <h4 class="ui top attached block header"><i class="ui quote left icon"></i>一言（ひとこと）</h4>
+            <div class="ui bottom attached center aligned segment">
+              <div class="ui active centered inline loader" id="hitokoto-loader"></div>
+              <script>
+              $.get('https://v1.hitokoto.cn/?c=a', function (data) {
+                if (typeof data === 'string') data = JSON.parse(data);
+                $('#hitokoto-loader').removeClass('active');
+                $('#hitokoto-content').css('display', '').text(data.hitokoto);
+                if (data.from) {
+                  $('#hitokoto-from').css('display', '').text('——' + data.from);
+                }
+              });
+              </script>
+              <div style="font-size: 1em; line-height: 1.5em; display: none; " id="hitokoto-content"></div>
+              <div style="text-align: right; margin-top: 15px; font-size: 0.9em; color: #666; display: none; " id="hitokoto-from"></div>
+            </div>
+        <% } %>
+        <% if (blackboard) { %>
+            <h4 class="ui top attached block header"><i class="ui bullhorn icon"></i>小黑板</h4>
+            <div class="ui bottom attached aligned segment">
+                <%- blackboard %>
+            </div>
+        <% } %>
+        <% if (user && user.permission == null) { %>
+            <h4 class="ui top attached block header"><i class="ui hand point right icon"></i>警告</h4>
+            <div class="ui bottom attached aligned segment">
+                您的账号还<font color="red">没有被审核</font>。请尽快联系管理员进行审核。
+            </div>
+        <% } %>
+      <h4 class="ui top attached block header"><i class="ui book icon"></i>最近更新</h4>
       <div class="ui bottom attached segment">
 	<table class="ui very basic center aligned table">
           <thead>

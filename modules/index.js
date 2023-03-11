@@ -40,6 +40,9 @@ app.get('/', async (req, res) => {
       title: problem.title,
       time: timeAgo.format(new Date(problem.publicize_time)),
     }));
+    
+    let blackboard = syzoj.config.blackboard;
+    blackboard = await syzoj.utils.markdown(blackboard);
 
     res.render('index', {
       ranklist: ranklist,
@@ -47,7 +50,8 @@ app.get('/', async (req, res) => {
       fortune: fortune,
       contests: contests,
       problems: problems,
-      links: syzoj.config.links
+      links: syzoj.config.links,
+      blackboard: blackboard
     });
   } catch (e) {
     syzoj.log(e);
