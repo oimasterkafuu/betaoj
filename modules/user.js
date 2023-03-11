@@ -182,6 +182,7 @@ app.post('/user/:id/edit', async (req, res) => {
     }
 
     if (res.locals.user && res.locals.user.is_admin) {
+      user.nameplate = req.body.nameplate;
       if (!req.body.privileges) {
         req.body.privileges = [];
       } else if (!Array.isArray(req.body.privileges)) {
