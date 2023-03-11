@@ -1,32 +1,63 @@
 <% this.title = '注册' %>
 <% include header %>
-<div class="padding">
-  <h1>注册</h1>
+<!--div class="padding"-->
   <div class="ui error message" id="error" data-am-alert hidden>
     <p id="error_info"></p>
   </div>
-          <form class="ui form">
+<div class="ui middle aligned center aligned grid">
+  <div class="row">
+    <div class="column" style="max-width: 450px">
+      <h2 class="ui image header">
+        <div class="content" style="margin-bottom: 10px; ">
+          注册
+        </div>
+      </h2>
+          <form class="ui large form">
+        <div class="ui existing segment">
                 <div class="field">
-                    <label for="username">用户名</label>
-                    <input type="text" placeholder="" id="username">
+                    <!--label for="username">用户名</label>
+                    <input type="text" placeholder="" id="username"-->
+                    <div class="ui left icon input">
+                      <i class="user icon"></i>
+                      <input placeholder="用户名" type="text" id="username">
+                    </div>
                 </div>
                 <div class="field">
-                    <label for="email">邮箱</label>
-                    <input type="email" placeholder="" id="email">
+                    <!--label for="email">邮箱</label>
+                    <input type="email" placeholder="" id="email"-->
+                    
+                    <div class="ui left icon input">
+                      <i class="mail icon"></i>
+                      <input placeholder="邮箱" type="email" id="email">
+                    </div>
                 </div>
                 <div class="two fields">
                     <div class="field">
-                    <label class="ui header">密码</label>
-                      <input type="password" placeholder="" id="password1">
+                    <!--label class="ui header">密码</label>
+                      <input type="password" placeholder="" id="password1"-->
+                      
+                    <div class="ui left icon input">
+                      <i class="lock icon"></i>
+                      <input placeholder="密码" type="password" id="password1">
+                    </div>
+                    
                     </div>
                     <div class="field">
-                      <label class="ui header">确认密码</label>
-                      <input type="password" placeholder="" id="password2">
+                      <!--label class="ui header">确认密码</label>
+                      <input type="password" placeholder="" id="password2"-->
+                    <div class="ui left icon input">
+                      <i class="lock icon"></i>
+                      <input placeholder="确认密码" type="password" id="password2">
+                    </div>
                     </div>
                 </div>
                 <a id="sign_up" class="ui button" href="javascript:submit();">注册</a>
+        </div>
             </form>
+    </div>
+  </div>
 </div>
+<!--/div-->
 <script src="<%- lib('blueimp-md5/2.10.0/js/md5.min.js') %>"></script>
 <script type="text/javascript">
 function show_error(error) {
@@ -40,7 +71,7 @@ function success() {
 }
 
 function mail_required() {
-    alert("注册确认邮件已经发送到您的邮箱的垃圾箱，点击邮件内的链接即可完成注册。");
+    alert("注册确认邮件已经发送到您的邮箱，点击邮件内的链接即可完成注册。");
     var s = $("#email").val();
     var mailWebsite = 'https://mail.' + s.substring(s.indexOf('@') + 1, s.length);
     if (mailWebsite === 'https://mail.gmail.com') mailWebsite = 'https://mail.google.com';
@@ -72,7 +103,7 @@ function submit() {
                     break;
                 case 2005:
                 case 2002:
-                    show_error("用户名需要大于 3 个字符小于 16 个字符，仅允许字母数字和下划线");
+                    show_error("用户名需要大于 3 个字符小于 16 个字符，仅允许字母数字、横杠和下划线");
                     break;
                 case 2007:
                 case 2003:
