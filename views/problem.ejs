@@ -140,10 +140,54 @@ if (contest) {
             </div>
             <div class="small ui red button" onclick="$('#modal-delete').modal('show')">删除</div>
           <% } %>
+          <% if (problem.allowedManage) { %>
+            <% if (problem.is_public) {  %>
+              <a class="small ui button" id="dis_public" href-post="<%= syzoj.utils.makeUrl(['problem', problem.id, 'dis_public']) %>">取消公开</a>
+            <% } else { %>
+              <a class="small ui button" id="public" href-post="<%= syzoj.utils.makeUrl(['problem', problem.id, 'public']) %>">公开</a>
+            <% } %>
+          <% } %>
         </div>
       <% } %>
     </div>
   </div>
+  <% if (problem.file_io || (testcases && !testcases.error && testcases.spj) || (!testcases || testcases.error) || (problem.type === 'interaction') || (problem.type == 'submit-answer') ) { %>
+  <div class="row">
+    <div class="column">
+      <h4 class="ui top attached block header">注意</h4>
+      <div class="ui bottom attached segment font-content">
+      <% if (problem.file_io) { %>
+          <p>本题采用文件输入输出。</p>
+          <p>
+            输入文件为 <span class="ui orange label"><i class="file icon"></i><%= problem.file_io_input_name %></span>，
+            输出文件为<span class="ui orange label"><i class="file icon"></i><%= problem.file_io_output_name %></span>。
+          </p>
+      <% } %>
+      <% if (testcases && !testcases.error && testcases.spj) { %>
+        <p>出题人配置了 Special Judge 程序。本题答案可能不唯一。</p>
+      <% } %>
+      <% if (!testcases || testcases.error) { %>
+        <% if(problem.allowedEdit) { %>
+            <p>您还没有上传本题数据，或者系统无法解析您的数据包。请您进入「测试数据」页面查看详情。</p>
+            <p>如果有疑问，可以联系 <a href="<%= syzoj.utils.makeUrl(['user', 1]) %>">oimaster</a>。</p>
+        <% } else { %>
+            <p>出题人可能还没有上传本题数据，或者系统无法解析数据包。</p>
+            <p>如果你想要做这道题，请联系本题出题者<% if(problem.is_anonymous == false) { %> <a href="<%= syzoj.utils.makeUrl(['user', problem.user_id]) %>"><div class="user-<%= syzoj.utils.makeUserColor(problem.user.rating, problem.user.is_admin) %>"><%= problem.user.username %></div></a><% } %>。</p>
+        <% } %>
+      <% } %>
+          <% if (problem.type === 'interaction') { %>
+            <p>
+            这是一道 <span class="ui orange label">交互</span> 题，你的程序需要和出题者所提供的程序进行交互。
+            </p>
+          <% } else if(problem.type == 'submit-answer') { %>
+            <p>
+            这是一道 <span class="ui orange label">提交答案</span> 题。请在下方的文本编辑处提交你的答案，或者上传 ZIP。
+            </p>
+          <% } %>
+      </div>
+    </div>
+  </div>
+  <% } %>
   <% if (problem.description) { %>
   <div class="row">
     <div class="column">

@@ -35,7 +35,22 @@
           <label style="margin-top: 15px; " for="output_format">输出格式</label>
           <textarea class="markdown-edit" rows="10" id="output" name="output_format"><%= problem.output_format %></textarea>
           <label style="margin-top: 15px; ">样例</label>
-          <textarea class="markdown-edit" rows="15" id="example" name="example"><%= problem.example %></textarea>
+          <input type="hidden" name="example" id="example" value="<%= JSON.stringify(problem.example) %>">
+          <div id="samples">
+              
+              <% for (let i = 0; i < problem.example.length; ++i) { %>
+                  <div class="two fields">
+                    <div class="field">
+                      <textarea class="markdown-edit sample_input" rows="5" sample_id=<%= i %> placeholder="样例输入"><%= problem.example[i].input %></textarea>
+                    </div>
+                    <div class="field">
+                      <textarea class="markdown-edit sample_output" rows="5" sample_id=<%= i %> placeholder="样例输出"><%= problem.example[i].output %></textarea>
+                    </div>
+                  </div>
+              <% } %>
+              
+          </div>
+          <!--textarea class="markdown-edit" rows="15" id="example" name="example"><%= problem.example %></textarea-->
           <label style="margin-top: 15px; ">数据范围与提示</label>
           <textarea class="markdown-edit" rows="10" id="hint" name="limit_and_hint"><%= problem.limit_and_hint %></textarea>
 
@@ -87,7 +102,7 @@ $(function () {
       render($("#pv-description"), $("#description"));
       render($("#pv-input"), $("#input"));
       render($("#pv-output"), $("#output"));
-      render($("#pv-example"), $("#example"));
+      renderExample($("#pv-example"), $("#example"));
       render($("#pv-hint"), $("#hint"));
     });
     $('.tabular.menu .item').tab();
@@ -113,4 +128,81 @@ $(function () {
     });
 });
 </script>
+
+<script>
+
+let content = <%- JSON.stringify(problem.example) %>;
+
+<% if(problem.example.length) { %>
+  $('.sample_input')
+    .change((event) => {
+      let now = event.currentTarget;
+      let id = $(now).attr('sample_id');
+      content[id].input = $(now).val();
+      $('#example').val(JSON.stringify(content));
+      addNew();
+    });
+  $('.sample_output')
+    .change((event) => {
+      let now = event.currentTarget;
+      let id = $(now).attr('sample_id');
+      content[id].output = $(now).val();
+      $('#example').val(JSON.stringify(content));
+      addNew();
+    });
+
+<% } %>
+    
+function addNew(){
+    let isnull = false;
+    
+    for(let i of content)
+        if(i.input == '' && i.output == '')
+            isnull = true;
+    
+    if(isnull == true)
+        return;
+    
+    content.push({input: '', output: ''});
+    
+    
+    let newElement = `
+
+              <div class="two fields">
+                <div class="field">
+                  <textarea class="markdown-edit sample_input" rows="5" placeholder="样例输入 8db3f1" sample_id="oimasterakioi"></textarea>
+                </div>
+                <div class="field">
+                  <textarea class="markdown-edit sample_output" rows="5" placeholder="样例输出 8db3f1" sample_id="oimasterakioi"></textarea>
+                </div>
+              </div>
+`;
+
+    $('#samples').append(newElement.replaceAll('oimasterakioi', content.length - 1).replaceAll('8db3f1', content.length));
+    
+    
+  $('[sample_id=' + (content.length - 1) + '].sample_input')
+    .change((event) => {
+      let now = event.currentTarget;
+      let id = $(now).attr('sample_id');
+      content[id].input = $(now).val();
+      $('#example').val(JSON.stringify(content));
+      addNew();
+    });
+  $('[sample_id=' + (content.length - 1) + '].sample_output')
+    .change((event) => {
+      let now = event.currentTarget;
+      let id = $(now).attr('sample_id');
+      content[id].output = $(now).val();
+      $('#example').val(JSON.stringify(content));
+      addNew();
+    });
+    
+}
+
+addNew();
+
+    
+</script>
+
 <% include footer %>
