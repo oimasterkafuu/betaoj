@@ -432,6 +432,39 @@ app.post('/admin/links', async (req, res) => {
   }
 });
 
+app.get('/admin/blackboard', async (req, res) => {
+  try {
+    if (!res.locals.user || !res.locals.user.is_admin) throw new ErrorMessage('您没有权限进行此操作。');
+
+    res.render('admin_blackboard', {
+      data: syzoj.config.blackboard || ""
+    });
+  } catch (e) {
+    syzoj.log(e);
+    res.render('error', {
+      err: e
+    })
+  }
+});
+app.post('/admin/blackboard', async (req, res) => {
+  try {
+    if (!res.locals.user || !res.locals.user.is_admin) throw new ErrorMessage('您没有权限进行此操作。');
+
+    if (JSON.stringify(syzoj.config.blackboard) !== req.body.data) {
+      syzoj.configInFile.blackboard = req.body.data;
+      syzoj.reloadConfig();
+      await syzoj.utils.saveConfig();
+    }
+
+    res.redirect(syzoj.utils.makeUrl(['admin', 'blackboard']));
+  } catch (e) {
+    syzoj.log(e);
+    res.render('error', {
+      err: e
+    })
+  }
+});
+
 app.get('/admin/raw', async (req, res) => {
   try {
     if (!res.locals.user || !res.locals.user.is_admin) throw new ErrorMessage('您没有权限进行此操作。');
