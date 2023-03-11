@@ -85,7 +85,7 @@
                     <img style="margin-top: -100%; " src="<%= syzoj.utils.gravatar(show_user.email, 1000) %>">
                 </div>
                 <div class="content">
-                    <div class="header"><%= show_user.username %><% if (show_user.nameplate) { %><%- show_user.nameplate %><% } %> <% if (show_user.sex == 1) { %><i class="man icon"></i><% } else if (show_user.sex == -1) { %><i class="woman icon"></i><% } %></div>
+                    <div class="header"><div class="user-<%= syzoj.utils.makeUserColor(show_user.rating, show_user.is_admin) %>"><%= show_user.username %></div><% if (show_user.nameplate) { %><span class="user-tag bg-<%= syzoj.utils.makeUserColor(show_user.rating, show_user.is_admin) %>"><%- show_user.nameplate %></span><% } %> <% if (show_user.sex == 1) { %><i class="man icon"></i><% } else if (show_user.sex == -1) { %><i class="woman icon"></i><% } %></div>
                     <div class="meta">
                         <a class="group"><%= show_user.is_admin ? '管理员' : '普通用户' %></a>
                     </div>
@@ -205,7 +205,7 @@
                                     <tr>
                                         <td><%= history.contestName %></td>
                                         <td><%= history.rank != null ? history.rank + " / " + history.participants : '' %></td>
-                                        <td><%= history.value %> 
+                                        <td><div class="user-<%= syzoj.utils.makeUserColor(history.value, false) %>"><%= history.value %></div> 
                                             <% if(history.delta != null) { %> 
                                                 <span class="<%= history.delta >= 0 ? 'rating_up' : 'rating_down' %>">
                                                 (<%= (history.delta < 0 ? '' : '+') + history.delta %>)

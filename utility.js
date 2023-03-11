@@ -323,5 +323,16 @@ module.exports = {
           host = currentProto + '://' + req.get('host');
     if (hostOnly) return host;
     else return host + req.originalUrl;
+  },
+  makeUserColor(rating, is_admin) {
+    if (is_admin) return 'admin';
+    if (rating < 1200) return 'gray';
+    else if (rating < 1400) return 'green';
+    else if (rating < 1600) return 'cyan';
+    else if (rating < 1900) return 'blue';
+    else if (rating < 2200) return 'violet';
+    else if (rating < 2400) return 'orange';
+    else if (rating < 2900) return 'red';
+    else return 'legendary'; // who will reach this first?
   }
 };

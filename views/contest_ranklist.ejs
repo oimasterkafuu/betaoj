@@ -81,7 +81,7 @@
                   <%= rank %>
                   </div>
                 </td>
-                <td><a href="<%= syzoj.utils.makeUrl(['user', item.user.id]) %>"><%= item.user.username %></a><% if (item.user.nameplate) { %><%- item.user.nameplate %><% } %></td>
+                <td><a href="<%= syzoj.utils.makeUrl(['user', item.user.id]) %>"><div class="user-<%= syzoj.utils.makeUserColor(item.user.rating, item.user.is_admin) %>"><%= item.user.username %></div></a><% if (item.user.nameplate) { %><span class="user-tag bg-<%= syzoj.utils.makeUserColor(item.user.rating, item.user.is_admin) %>"><%- item.user.nameplate %></span><% } %></td>
                 <% if (contest.type === 'acm') { %>
                   <td>
                     <span class="score score_<%= parseInt((item.player.score / ranklist[0].player.score * 10) || 0) %>">

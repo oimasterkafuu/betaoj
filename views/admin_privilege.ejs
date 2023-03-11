@@ -22,7 +22,7 @@ let privileges = {
   <% for (let user of users) { %>
     <tr>
       <td><%= user.user.id %></td>
-      <td><%= user.user.username %></td>
+      <td><div class="user-<%= syzoj.utils.makeUserColor(user.user.rating, user.user.is_admin) %>"><%= user.user.username %></div></td>
       <% for (let privilege in privileges) { %>
         <td>
           <div class="ui fitted toggle checkbox checkbox_privilege" data-user="<%= user.user.id %>" data-name="<%= privilege %>">
