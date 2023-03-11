@@ -432,7 +432,6 @@ app.post('/problem/:id/edit', async (req, res) => {
       }
     }
 
-    if (!req.body.title.trim()) throw new ErrorMessage('题目名不能为空。');
     problem.title = req.body.title;
     problem.description = req.body.description;
     problem.input_format = req.body.input_format;
@@ -451,6 +450,52 @@ app.post('/problem/:id/edit', async (req, res) => {
     problem.limit_and_hint = req.body.limit_and_hint;
     problem.is_anonymous = (req.body.is_anonymous === 'on');
     problem.difficulty = parseInt(req.body.difficulty);
+    
+    
+    let isLuoguReg = /^https:\/\/www.luogu.com.cn\/problem\/[A-Z][0-9]{1,6}$/;
+    if(isLuoguReg.test(problem.description.trim())){
+        let oriContent = await fetch(problem.description.trim(), {
+          headers: [
+            ["x-luogu-type", "content-only"],
+          ],
+        });
+        
+        if(oriContent.status == 200){
+            let jsonData = await oriContent.json();
+            if(jsonData.code == 200){
+                // article.content = jsonData.currentData.paste.data;
+                // throw new ErrorMessage(JSON.stringify(jsonData));
+                
+                problem.title = '「洛谷 ' + jsonData.currentData.problem.pid + '」' + jsonData.currentData.problem.title;
+                problem.description = '';
+                if(jsonData.currentData.problem.background){
+                    problem.description = '## 题目背景 \n\n' + jsonData.currentData.problem.background + '\n ## 题目描述 \n\n';
+                }
+                
+                problem.description += jsonData.currentData.problem.description;
+                problem.input_format = jsonData.currentData.problem.inputFormat;
+                problem.output_format = jsonData.currentData.problem.outputFormat;
+                problem.limit_and_hint = jsonData.currentData.problem.hint;
+                
+                problem.description = problem.description.replaceAll('](/', '](https://www.luogu.com.cn/');
+                problem.input_format = problem.input_format.replaceAll('](/', '](https://www.luogu.com.cn/');
+                problem.output_format = problem.output_format.replaceAll('](/', '](https://www.luogu.com.cn/');
+                problem.limit_and_hint = problem.limit_and_hint.replaceAll('](/', '](https://www.luogu.com.cn/');
+                
+                problem.example = [];
+                for(let i of jsonData.currentData.problem.samples){
+                    problem.example.push({
+                        input: i[0],
+                        output: i[1]
+                    });
+                }
+                
+                problem.example = JSON.stringify(problem.example);
+            }
+        }
+    }
+    
+    if (!problem.title.trim()) throw new ErrorMessage('题目名不能为空。');
 
     // Save the problem first, to have the `id` allocated
     await problem.save();
