@@ -405,7 +405,18 @@ app.post('/problem/:id/edit', async (req, res) => {
           problem.id = customID;
         } else if (id) problem.id = id;
       }
-
+      
+      if(!problem.id){
+        let tmpid = res.locals.user.id * 1000;
+        while(tmpid < (res.locals.user.id + 1) * 1000 && await Problem.findById(tmpid))
+            ++tmpid;
+        
+        if(tmpid == (res.locals.user.id + 1) * 1000)
+            throw new ErrorMessage('题目创建过多。');
+        
+        problem.id = tmpid;
+      }
+      
       problem.user_id = res.locals.user.id;
       problem.publicizer_id = res.locals.user.id;
     } else {
@@ -672,6 +683,35 @@ async function setPublic(req, res, is_public) {
     await problem.save();
 
     JudgeState.query('UPDATE `judge_state` SET `is_public` = ' + is_public + ' WHERE `problem_id` = ' + id);
+    
+    
+    if(is_public == true && problem.id >= 1000){
+        // need a smaller public id
+        let new_id = 1;
+        while(new_id < 1000 && await Problem.findById(new_id)){
+            ++new_id;
+        }
+        
+        if(new_id == 1000)
+            throw new ErrorMessage('空余 ID 不足。');
+        
+        await problem.changeID(new_id);
+        
+        id = new_id;
+    } else if(is_public == false && problem.id < 1000){
+        // need a smaller public id
+        let new_id = problem.user_id * 1000;
+        while(new_id < (problem.user_id + 1) * 1000 && await Problem.findById(new_id)){
+            ++new_id;
+        }
+        
+        if(new_id == (problem.user_id + 1) * 1000)
+            throw new ErrorMessage('空余 ID 不足。');
+        
+        await problem.changeID(new_id);
+        
+        id = new_id;
+    }
 
     res.redirect(syzoj.utils.makeUrl(['problem', id]));
   } catch (e) {
@@ -826,7 +866,7 @@ app.post('/problem/:id/delete', async (req, res) => {
     let problem = await Problem.findById(id);
     if (!problem) throw new ErrorMessage('无此题目。');
 
-    if (!await problem.isAllowedManageBy(res.locals.user)) throw new ErrorMessage('您没有权限进行此操作。');
+    if (!await problem.isAllowedEditBy(res.locals.user)) throw new ErrorMessage('您没有权限进行此操作。');
 
     await problem.delete();
 
