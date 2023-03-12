@@ -20,7 +20,7 @@
             <div class="section"><%= article.title %></div>
   </div>
   <h1><%= article.title %></h1>
- 	<p style="margin-bottom: -5px; ">
+ 	<div style="margin-bottom: -5px; ">
 	<img style="vertical-align: middle; margin-bottom: 2px; margin-right: 2px; " src="<%= syzoj.utils.gravatar(article.user.email, 34) %>" width="17" height="17">
 	<b style="margin-right: 30px; "><a class="black-link" href="<%= syzoj.utils.makeUrl(['user', article.user_id]) %>"><div class="user-<%= syzoj.utils.makeUserColor(article.user.rating, article.user.is_admin) %>"><%= article.user.username %></div></a><% if (article.user.nameplate) { %><span class="user-tag bg-<%= syzoj.utils.makeUserColor(article.user.rating, article.user.is_admin) %>"><%- article.user.nameplate %></span><% } %></b>
 	<b style="margin-right: 30px; "><i class="calendar icon"></i> <%= syzoj.utils.formatDate(article.public_time) %></b>
@@ -48,7 +48,7 @@
           </div>
         </div>
         <% } %>
- 	</p>
+      </div>
   <div class="ui existing segment">
 	  <div id="content" class="font-content"><%- article.content %></div>
   </div>
