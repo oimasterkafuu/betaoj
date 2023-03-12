@@ -39,8 +39,8 @@ app.get('/contest/:id/edit', async (req, res) => {
     let contest_id = parseInt(req.params.id);
     let contest = await Contest.findById(contest_id);
     if (!contest) {
-        // if contest does not exist, only system administrators can create one
-      if (!res.locals.user || (false && !res.locals.user.is_admin)) throw new ErrorMessage('您没有权限进行此操作。');
+        // if contest does not exist, only users who have permission can create one
+      if (!res.locals.user || !res.locals.user.permission) throw new ErrorMessage('您没有权限进行此操作。');
 
       contest = await Contest.create();
       contest.id = 0;
@@ -75,8 +75,8 @@ app.post('/contest/:id/edit', async (req, res) => {
     let contest = await Contest.findById(contest_id);
     let ranklist = null;
     if (!contest) {
-      // if contest does not exist, only system administrators can create one
-      if (!res.locals.user || (false && !res.locals.user.is_admin)) throw new ErrorMessage('您没有权限进行此操作。');
+      // if contest does not exist, only users who have permission can create one
+      if (!res.locals.user || !res.locals.user.permission) throw new ErrorMessage('您没有权限进行此操作。');
 
       contest = await Contest.create();
 
