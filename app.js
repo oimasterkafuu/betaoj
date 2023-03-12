@@ -241,10 +241,10 @@ global.syzoj = {
     let FileStore = require('session-file-store')(Session);
     let sessionConfig = {
       secret: this.config.session_secret,
-      cookie: { httpOnly: false },
+      cookie: { httpOnly: true },
       rolling: true,
-      saveUninitialized: true,
-      resave: true,
+      saveUninitialized: false,
+      resave: false,
       store: new FileStore({ retries: 0 }),
     };
     if (syzoj.production) {
