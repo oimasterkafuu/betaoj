@@ -12,7 +12,7 @@ app.get('/api/v2/search/users/:keyword*?', async (req, res) => {
     if (uid != null && !isNaN(uid)) {
       conditions.push({ id: uid });
     }
-    if (keyword != null && String(keyword).length >= 2) {
+    if (keyword != null && String(keyword).length >= 1) {
       conditions.push({ username: TypeORM.Like(`%${req.params.keyword}%`) });
     }
     if (conditions.length === 0) {
@@ -23,7 +23,7 @@ app.get('/api/v2/search/users/:keyword*?', async (req, res) => {
         order: {
           username: 'ASC'
         }
-      });
+      }).filter(user => user.nickname && !user.username.startsWith('bannedUser'));;
 
       let result = [];
 
