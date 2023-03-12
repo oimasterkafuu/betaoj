@@ -1,10 +1,5 @@
 let User = syzoj.model('user');
 
-app.get('*', async(req, res, next) => {
-    res.locals.navMsg = [];
-    next();
-})
-
 app.get('*', async (req, res, next) => {
     try {
         if (res.locals.user && !res.locals.user.nickname)
@@ -18,6 +13,26 @@ app.get('*', async (req, res, next) => {
         })
     }
 });
+app.get('*', async (req, res, next) => {
+    try {
+        if (!res.locals.user || !res.locals.user.is_admin){
+            next();
+            return;
+        }
+        let users = (await User.find({
+            where: [
+                { permission: null }
+            ]
+        })).filter(user => user.nickname && !user.username.startsWith('bannedUser'));
+        
+        res.locals.needPass = users.length;
+        next();
+    } catch (e) {
+        syzoj.log(e);
+        next();
+    }
+});
+
 app.post('/anickname', async (req, res) => {
     try {
         if (!res.locals.user)
@@ -54,30 +69,4 @@ app.get('/teach', async (req, res) => {
             err: e
         })
     }
-});
-app.get('*', async (req, res, next) => {
-    try {
-        if (!res.locals.user || !res.locals.user.is_admin){
-            next();
-            return;
-        }
-        let users = (await User.find({
-            where: [
-                { permission: null }
-            ]
-        })).filter(user => user.nickname && !user.username.startsWith('bannedUser'));
-        
-        if(users.length)
-            res.locals.navMsg.push([`审核 ${users.length} 位学生`, 'teach']);
-        next();
-    } catch (e) {
-        syzoj.log(e);
-        next();
-    }
-});
-
-app.get('/fixer', (req, res) => {
-    fetch(`https://oj.oimaster.cf/api/v2/search/problems/${req.query.data}`)
-    .then(response => response.json())
-    .then(data => res.send(data));
 });
