@@ -452,7 +452,7 @@ app.post('/problem/:id/edit', async (req, res) => {
     problem.difficulty = parseInt(req.body.difficulty);
     
     
-    let isLuoguReg = /^https:\/\/www.luogu.com.cn\/problem\/[A-Z][0-9]{1,6}$/;
+    let isLuoguReg = /^https:\/\/www\.luogu\.com\.cn\/problem\/[A-Z][0-9]{1,6}$/;
     if(isLuoguReg.test(problem.description.trim())){
         let oriContent = await fetch(problem.description.trim(), {
           headers: [

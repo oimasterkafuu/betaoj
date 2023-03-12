@@ -184,7 +184,7 @@ app.post('/article/:id/edit', async (req, res) => {
     article.is_notice = (res.locals.user && res.locals.user.is_admin ? req.body.is_notice === 'on' : article.is_notice);
     article.allow_comment = !(res.locals.user && res.locals.user.is_admin ? req.body.allow_comment !== 'on' : !article.allow_comment);
     
-    let isLuoguReg = /^https:\/\/www.luogu.com.cn\/paste\/[a-zA-Z0-9]{8}$/;
+    let isLuoguReg = /^https:\/\/www\.luogu\.com\.cn\/paste\/[a-zA-Z0-9]{8}$/;
     if(isLuoguReg.test(article.content.trim())){
         let oriContent = await fetch(article.content.trim(), {
           headers: [
