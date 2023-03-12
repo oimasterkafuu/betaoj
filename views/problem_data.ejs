@@ -148,7 +148,7 @@ function getIcon(filename) {
           var old_files = <%- serializejs((testdata && testdata.files ? testdata.files : []).map(function(x) { return x.filename; })) %>;
           var replaced_files = Array.prototype.slice.call($('#upload_file')[0].files).map(function (x) { return x.name; }).filter(function (x) { return old_files.includes(x); });
           var s = '';
-          for (let file of replaced_files) s += '<samp>' + file + '</samp><br>';
+          for (let file of replaced_files) s += $('<samp></samp>').text(file)[0].outerHTML + '<br>';
           if (s) {
             $('#replaced_files').html(s);
             $('#modal-replace').modal('show');
