@@ -46,6 +46,15 @@
       </div>
     </div>
   </div>
+  <div style="margin-bottom: 25px;">
+    <div class="ui search" style="width: 280px; height: 28px; margin-top: -5.3px; ">
+      <div class="ui left icon input" style="width: 100%; ">
+        <input class="prompt" style="width: 100%; " type="text" value="<%= req.query.keyword %>" placeholder="搜索讨论" name="nickname">
+        <i class="search icon"></i>
+      </div>
+      <div class="results" style="width: 100%; "></div>
+    </div>
+  </div>
   <% if (articles.length) { %>
   <table class="ui very basic center aligned table">
     <thead>
@@ -90,4 +99,20 @@
   </div>
   <% } %>
 </div>
+
+<script>
+  $(function () {
+    $('.ui.search').search({
+      debug: true,
+      saveRemoteData: false,
+      apiSettings: {
+        url: '/api/v2/search/discussion/{query}',
+        cache: false
+      },
+      fields: {
+        title: 'name'
+      }
+    });
+  });
+  </script>
 <% include footer %>

@@ -23,7 +23,7 @@ app.get('/api/v2/search/users/:keyword*?', async (req, res) => {
         order: {
           username: 'ASC'
         }
-      }).filter(user => user.nickname && !user.username.startsWith('bannedUser'));;
+      }).filter(user => user.nickname && !user.username.startsWith('bannedUser'));
 
       let result = [];
 
@@ -92,6 +92,37 @@ app.get('/api/v2/search/tags/:keyword*?', async (req, res) => {
 
     result = result.map(x => ({ name: x.name, value: x.id }));
     res.send({ success: true, results: result });
+  } catch (e) {
+    syzoj.log(e);
+    res.send({ success: false });
+  }
+});
+
+app.get('/api/v2/search/discussion/:keyword*?', async (req, res) => {
+  try {
+    let Article = syzoj.model('article');
+
+    let keyword = req.params.keyword || '';
+    let conditions = [];
+
+    if (keyword != null && String(keyword).length >= 1) {
+      conditions.push({ title: TypeORM.Like(`%${req.params.keyword}%`) });
+    }
+    if (conditions.length === 0) {
+      res.send({ success: true, results: [] });
+    } else {
+      let articles = await Article.find({
+        where: conditions,
+        order: {
+          id: 'ASC'
+        }
+      });
+
+      let result = [];
+
+      result = articles.map(x => ({ name: `${x.title}`, value: x.id, url: syzoj.utils.makeUrl(['article', x.id]) }));
+      res.send({ success: true, results: result });
+    }
   } catch (e) {
     syzoj.log(e);
     res.send({ success: false });
