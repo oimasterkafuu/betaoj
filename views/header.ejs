@@ -34,27 +34,27 @@
       <link href="<%- this.builtInCdnUrl %>/google-fonts/exo-2.css" rel="stylesheet">
     <% } %>
     <script data-cfasync="false" src="<%- lib('jquery/3.3.1/jquery.min.js') %>"></script>
-    <% if (syzoj.config.google_analytics && syzoj.config.google_analytics !== 'UA-XXXXXXXX-X') { %>
-    <!--<script>
-      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-      })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
-
-      ga('create', '<%= syzoj.config.google_analytics %>', 'auto');
-      ga('send', 'pageview');
-
-    </script>-->
-    <!-- Global site tag (gtag.js) - Google Analytics -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=<%= syzoj.config.google_analytics %>"></script>
-    <script>
-        window.dataLayer = window.dataLayer || [];
-        function gtag(){dataLayer.push(arguments);}
-        gtag('js', new Date());
-        gtag('config', '<%= syzoj.config.google_analytics %>');
-    </script>
-    <% } %>
 </head>
+<% if (syzoj.config.google_analytics && syzoj.config.google_analytics !== 'UA-XXXXXXXX-X') { %>
+  <!--<script>
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+    ga('create', '<%= syzoj.config.google_analytics %>', 'auto');
+    ga('send', 'pageview');
+
+  </script>-->
+  <!-- Global site tag (gtag.js) - Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=<%= syzoj.config.google_analytics %>"></script>
+  <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', '<%= syzoj.config.google_analytics %>');
+  </script>
+<% } %>
 <body style="position: relative; margin-top: 49px; height: calc(100% - 49px); overflow-y: overlay; ">
     <div class="ui fixed borderless menu" style="position: fixed; height: 49px; ">
         <div class="ui container">
