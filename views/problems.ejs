@@ -123,7 +123,7 @@ if (typeof tags !== 'undefined') tagIDs = tags.map(x => x.id);
             <% if ( problem.permission && (!user || problem.permission > user.permission) ) { %>
               <i class="icon lock orange"></i>
             <% } else if(problem.permission) { %>
-              <i class="icon unlock orange"></i>
+              <!-- <i class="icon unlock orange"></i> -->
             <% } %>
                 <% if (!problem.is_public) { %><span class="ui header"><span class="ui tiny red label">未公开</span></span><% } %>
           <% if (problem.type === 'interaction') { %>
