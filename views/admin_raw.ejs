@@ -1,8 +1,8 @@
 <% this.adminPage = 'raw'; %>
-<% include admin_header %>
+<%- include('admin_header'); %>
 <form method="post">
 
-<% include monaco-editor %>
+<%- include('monaco-editor'); %>
 <div id="editor" class="editor" style="border: 1px solid #D4D4D5; height: 500px; margin-bottom: 20px; " contenteditable>
   <%- this.showLoadingEditor(); %>
 </div>
@@ -28,4 +28,4 @@ window.onEditorLoaded(function () {
   <button id="submit_button" class="ui disabled blue labeled icon button"><i class="ui edit icon"></i>提交</button>
 </div>
 </form>
-<% include admin_footer %>
+<%- include('admin_footer'); %>

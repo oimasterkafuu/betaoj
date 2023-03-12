@@ -1,4 +1,4 @@
-<% include util %>
+<%- include('util'); %>
 <%
   this.title = '题目打印 - ' + contest.title + ' - 比赛';
 %>
@@ -149,4 +149,4 @@ $(() => {
     window.print();
 });
 </script>
-<% include footer %>
+<%- include('footer'); %>

@@ -1,5 +1,5 @@
 <% this.title = '重启服务' %>
-<% include header %>
+<%- include('header'); %>
 
 <div class="ui success icon message">
   <i class="redo icon"></i>
@@ -43,4 +43,4 @@ function checkServiceUp() {
 checkServiceUp();
 </script>
 
-<% include footer %>
+<%- include('footer'); %>

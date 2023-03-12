@@ -1,5 +1,5 @@
 <% this.title = '注册' %>
-<% include header %>
+<%- include('header'); %>
 <!--div class="padding"-->
   <div class="ui error message" id="error" data-am-alert hidden>
     <p id="error_info"></p>
@@ -142,4 +142,4 @@ function submit() {
     });
 }
 </script>
-<% include footer %>
+<%- include('footer'); %>

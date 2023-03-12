@@ -34,12 +34,12 @@ function getIcon(filename) {
   return 'file outline';
 }
 %>
-<% include header %>
+<%- include('header'); %>
 <div class="padding">
   <div class="ui grid">
     <div class="seven wide column">
       <h3 style="text-align: center; ">测试点信息</h3>
-      <% include problem_testcases %>
+      <%- include('problem_testcases'); %>
     </div>
     <div class="nine wide column">
       <h3 style="text-align: center; ">文件列表</h3>
@@ -161,4 +161,4 @@ function getIcon(filename) {
     </div>
   </div>
 </div>
-<% include footer %>
+<%- include('footer'); %>

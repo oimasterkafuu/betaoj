@@ -1,5 +1,5 @@
 <% this.title = '学生认证' %>
-<% include header %>
+<%- include('header'); %>
 <div class="ui error message" id="error" hidden></div>
 <div class="ui middle aligned center aligned grid">
   <div class="row">
@@ -47,4 +47,4 @@
 <script src="<%- lib('blueimp-md5/2.10.0/js/md5.min.js') %>"></script>
 <script type="text/javascript">
 </script>
-<% include footer %>
+<%- include('footer'); %>

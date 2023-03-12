@@ -6,7 +6,7 @@ let privileges = {
   manage_user: '管理用户',
 };
 %>
-<% include admin_header %>
+<%- include('admin_header'); %>
 <table class="ui center aligned celled table">
 <thead>
   <tr>
@@ -60,4 +60,4 @@ function submit() {
   $('#submit_form').submit();
 }
 </script>
-<% include admin_footer %>
+<%- include('admin_footer'); %>

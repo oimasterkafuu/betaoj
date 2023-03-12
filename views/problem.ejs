@@ -1,4 +1,4 @@
-<% include util %>
+<%- include('util'); %>
 <%
 if (typeof contest === 'undefined') contest = null;
 if (contest) {
@@ -7,7 +7,7 @@ if (contest) {
   this.title = problem.title + ' - 题目';
 }
 %>
-<% include header %>
+<%- include('header'); %>
 <style>
 #languages-menu::-webkit-scrollbar, #testcase-menu::-webkit-scrollbar {
     width: 0px;
@@ -19,7 +19,7 @@ if (contest) {
 }
 </style>
 
-<% include monaco-editor %>
+<%- include('monaco-editor'); %>
 
 <div class="ui center aligned grid">
     <div class="row">
@@ -421,4 +421,4 @@ if (contest) {
   }
   </script>
 <% } %>
-<% include footer %>
+<%- include('footer'); %>

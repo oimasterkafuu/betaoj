@@ -1,5 +1,5 @@
 <% this.title = article.id ? '编辑帖子' : '发表帖子'; %>
-<% include header %>
+<%- include('header'); %>
 <style type="text/css">
     .am-panel-title{
     font-size: 1.6em;
@@ -63,4 +63,4 @@ $(function () {
     $('.tabular.menu .item').tab();
 })
 </script>
-<% include footer %>
+<%- include('footer'); %>

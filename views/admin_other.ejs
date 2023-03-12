@@ -1,5 +1,5 @@
 <% this.adminPage = 'other'; %>
-<% include admin_header %>
+<%- include('admin_header'); %>
 <div class="ui form">
   <h4 class="ui top attached block header"><i class="ui wrench icon"></i>重新计算数据</h4>
   <div class="ui bottom attached segment">
@@ -16,4 +16,4 @@
     <p><a href-post="/admin/fixtags" class="ui blue labeled icon button"><i class="ui lightbulb icon"></i>重新计算标签</a></p>
   </div>
 </div>
-<% include admin_footer %>
+<%- include('admin_footer'); %>

@@ -10,7 +10,7 @@ let types = {
   max: problem.type === 'submit-answer' ? null : '最大内存'
 };
 %>
-<% include header %>
+<%- include('header'); %>
 <script src="<%- lib('raphael/2.2.7/raphael.min.js') %>"></script>
 <script src="<%- lib('morris.js/0.5.1/morris.min.js') %>"></script>
 <script>
@@ -69,7 +69,7 @@ function getColorOfScore(score) {
     </thead>
     <tbody>
       <% for (let judge of statistics.judge_state) { %>
-          <% include util %>
+          <%- include('util'); %>
           <tr>
               <td><a href="<%= syzoj.utils.makeUrl(['submission', judge.id]) %>"><b>#<%= judge.id %></b></a></td>
               <td><a href="<%= syzoj.utils.makeUrl(['problem', judge.problem_id]) %>"><b>#<%= judge.problem_id %>.</b> <%= judge.problem.title %></a></td>
@@ -96,7 +96,7 @@ function getColorOfScore(score) {
     </tbody>
   </table>
   <br>
-  <% include page %>
+  <%- include('page'); %>
   <br>
   <h1 style="text-align: center; ">
     得分分布
@@ -184,4 +184,4 @@ function getColorOfScore(score) {
   });
   </script>
 </div>
-<% include footer %>
+<%- include('footer'); %>

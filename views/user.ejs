@@ -1,5 +1,5 @@
 <% this.title = show_user.username + ' - 用户'; %>
-<% include header %>
+<%- include('header') %>
 <style>
 #avatar_container:before {
     content: "";
@@ -298,4 +298,4 @@ $(function () {
   document.getElementById('pie_chart_legend').innerHTML = pie.generateLegend();
 });
 </script>
-<% include footer %>
+<%- include('footer'); %>

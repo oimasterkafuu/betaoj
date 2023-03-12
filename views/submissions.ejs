@@ -1,6 +1,6 @@
 <% this.title = '提交记录' %>
-<% include header %>
-<% include util %>
+<%- include('header'); %>
+<%- include('util'); %>
 <script src="<%- lib('textfit/2.3.1/textFit.min.js') %>"></script>
 <div class="padding">
   <% if (displayConfig.inContest) { %>
@@ -117,9 +117,9 @@
   <% } else { %>
   <br>
   <% if (fast_pagination) { %>
-    <% include page_fast %>
+    <%- include('page_fast'); %>
   <% } else { %>
-    <% include page %>
+    <%- include('page'); %>
   <% } %>
   <% } %>
 </div>
@@ -127,7 +127,7 @@
 <script src="<%- lib('vue/2.5.21/vue.min.js') %>"></script>
 <script src="<%- lib('socket.io/2.2.0/socket.io.js') %>"></script>
 
-<% include submissions_item %>
+<%- include('submissions_item'); %>
 <script>
 $(function () {
   $('#select_language').dropdown();
@@ -178,4 +178,4 @@ if (itemList.some(function(t) {return t.token != null;})) {
   })
 }
 </script>
-<% include footer %>
+<%- include('footer'); %>

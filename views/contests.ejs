@@ -1,5 +1,5 @@
 <% this.title = '比赛' %>
-<% include header %>
+<%- include('header'); %>
 <div class="padding">
     <% if (contests.length) { %>
     <% if (user && (true || user.is_admin)) { %>
@@ -59,6 +59,6 @@
     </div>
     <% } %>
   <br>
-  <% include page %>
+  <%- include('page'); %>
 </div>
-<% include footer %>
+<%- include('footer'); %>

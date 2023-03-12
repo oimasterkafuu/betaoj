@@ -1,5 +1,5 @@
 <% this.title = article.title + ' - 帖子'; %>
-<% include header %>
+<%- include('header'); %>
 <style type="text/css" xmlns:style="http://www.w3.org/1999/xhtml">
 .small{
   font-size: 0.7em;
@@ -93,7 +93,7 @@
     <% } %>
   </div>
   <div style="margin-bottom: 50px; ">
-    <% include page %>
+    <%- include('page'); %>
   </div>
   <% } %>
     <% if (article.allowedComment) { %>
@@ -109,4 +109,4 @@
     </form>
   <% } %>
 </div>
-<% include footer %>
+<%- include('footer'); %>

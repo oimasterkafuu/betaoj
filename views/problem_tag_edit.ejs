@@ -1,5 +1,5 @@
 <% this.title = '编辑标签' %>
-<% include header %>
+<%- include('header'); %>
 <div class="padding">
   <form class="ui form" action="<%= syzoj.utils.makeUrl(['problems', 'tag', tag.id, 'edit']) %>" method="post">
       <div class="field">
@@ -71,4 +71,4 @@ $(function () {
   $('#tag_color').dropdown();
 });
 </script>
-<% include footer %>
+<%- include('footer'); %>

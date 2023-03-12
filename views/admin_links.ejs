@@ -1,7 +1,7 @@
 <%
 this.adminPage = 'links';
 %>
-<% include admin_header %>
+<%- include('admin_header'); %>
 <table class="ui center aligned celled table">
 <thead>
   <tr>
@@ -75,4 +75,4 @@ $('#add_button').click(function () {
   $('#submit_form').submit();
 });
 </script>
-<% include admin_footer %>
+<%- include('admin_footer'); %>

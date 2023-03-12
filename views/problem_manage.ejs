@@ -1,11 +1,11 @@
 <% this.title = '管理题目'; %>
-<% include header %>
+<%- include('header'); %>
 <div class="padding">
     <div class="ui grid">
     <div class="row">
       <div class="seven wide column">
         <form class="ui form" method="post" action=""></form>
-        <% include problem_testcases %>
+        <%- include('problem_testcases'); %>
       </div>
       <div class="nine wide column">
         <form class="ui form" method="post" enctype="multipart/form-data" onsubmit="return checkSubmit()">
@@ -150,4 +150,4 @@ function checkSubmit() {
   }
 }
 </script>
-<% include footer %>
+<%- include('footer'); %>

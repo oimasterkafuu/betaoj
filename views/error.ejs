@@ -1,5 +1,5 @@
 <% this.title = '错误' %>
-<% include header %>
+<%- include('header'); %>
 
 <%
 if (!(err instanceof ErrorMessage)) {
@@ -24,4 +24,4 @@ if (!(err instanceof ErrorMessage)) {
   </div>
 </div>
 
-<% include footer %>
+<%- include('footer'); %>

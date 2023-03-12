@@ -1,5 +1,5 @@
 <% this.adminPage = 'rating'; %>
-<% include admin_header %>
+<%- include('admin_header'); %>
 <form action="<%= syzoj.utils.makeUrl(['admin', 'rating', 'add']) %>" method="post" class="ui form">
   <div class="field">
     <label>比赛</label>
@@ -29,5 +29,5 @@
   </div>
 </div>
 </form>
-<% include admin_footer %>
+<%- include('admin_footer'); %>
 <script>$('.selection.dropdown').dropdown();</script>

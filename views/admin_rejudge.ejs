@@ -1,5 +1,5 @@
 <% this.adminPage = 'rejudge'; %>
-<% include admin_header %>
+<%- include('admin_header'); %>
 <form method="post" class="ui form">
   <div class="four fields">
     <div class="field">
@@ -105,4 +105,4 @@ $(function () {
   $('.ui.dropdown').dropdown();
 });
 </script>
-<% include admin_footer %>
+<%- include('admin_footer'); %>

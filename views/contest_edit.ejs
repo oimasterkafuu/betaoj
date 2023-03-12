@@ -1,5 +1,5 @@
 <% this.title = contest.id ? '编辑比赛' : '新建比赛' %>
-<% include header %>
+<%- include('header'); %>
 <div class="padding">
         <form action="<%= syzoj.utils.makeUrl(['contest', contest.id, 'edit']) %>" method="post">
           <div class="ui form">
@@ -122,4 +122,4 @@ $(function () {
     });
 });
 </script>
-<% include footer %>
+<%- include('footer'); %>

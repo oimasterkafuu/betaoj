@@ -1,5 +1,5 @@
 <% this.adminPage = 'config'; %>
-<% include admin_header %>
+<%- include('admin_header'); %>
 <form method="post" class="ui form">
 <%
 function showTitle(title) {
@@ -51,4 +51,4 @@ for (let item in items) {
   <button class="ui blue labeled icon button"><i class="ui edit icon"></i>提交</button>
 </div>
 </form>
-<% include admin_footer %>
+<%- include('admin_footer'); %>

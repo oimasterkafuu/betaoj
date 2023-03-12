@@ -6,7 +6,7 @@
 .ui.label.pointing.below.right { margin-bottom: 0; float: right; }
 #back_to_contest { display: none;  }
 </style>
-<% include header %>
+<%- include('header'); %>
 <div class="padding">
   <h1><%= contest.title %></h1>
   <div style="margin-bottom: 30px;"><%- contest.subtitle %></div>
@@ -167,4 +167,4 @@ $(function () {
   }, 5000);
 });
 </script>
-<% include footer %>
+<%- include('footer'); %>

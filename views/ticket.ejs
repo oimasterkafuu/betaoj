@@ -1,5 +1,5 @@
 <% this.title = '学生认证' %>
-<% include header %>
+<%- include('header'); %>
 <div class="ui error message" id="error" hidden></div>
 <div class="ui middle aligned center aligned grid">
   <div class="row">
@@ -87,4 +87,4 @@ $(document).ready(function() {
     });
 });
 </script>
-<% include footer %>
+<%- include('footer'); %>

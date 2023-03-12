@@ -1,5 +1,5 @@
 <% this.title = '修改资料'; %>
-<% include header %>
+<%- include('header'); %>
 <div class="padding">
     <div class="ui <% if (error_info === '') { %>success<% } else { %>error<% } %> message" id="error" <% if (error_info === null) { %>hidden<% } %>>
       <% if (error_info !== null) {
@@ -214,4 +214,4 @@ $(function () {
 	$('.ui.dropdown:not(.simple)').dropdown();
 });
 </script>
-<% include footer %>
+<%- include('footer'); %>
