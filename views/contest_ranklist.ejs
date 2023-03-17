@@ -14,6 +14,9 @@
             <tr>
                 <th>#</th>
                 <th>用户名</th>
+                <% if (user && user.is_admin) { %>
+                  <th>真实姓名</th>
+                <% } %>
                 <% if (contest.type === 'acm') { %>
                   <th>通过数量</th>
                   <th>罚时</th>
@@ -82,6 +85,9 @@
                   </div>
                 </td>
                 <td><a href="<%= syzoj.utils.makeUrl(['user', item.user.id]) %>"><div class="user-<%= syzoj.utils.makeUserColor(item.user.rating, item.user.is_admin) %>"><%= item.user.username %></div></a><% if (item.user.nameplate) { %><span class="user-tag bg-<%= syzoj.utils.makeUserColor(item.user.rating, item.user.is_admin) %>"><%- item.user.nameplate %></span><% } %></td>
+                <% if (user && user.is_admin) { %>
+                  <td><%= item.user.nickname%></td>
+                <% } %>
                 <% if (contest.type === 'acm') { %>
                   <td>
                     <span class="score score_<%= parseInt((item.player.score / ranklist[0].player.score * 10) || 0) %>">
