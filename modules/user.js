@@ -174,11 +174,6 @@ app.post('/user/:id/edit', async (req, res) => {
       if (!syzoj.utils.isValidUsername(req.body.username)) throw new ErrorMessage('无效的用户名。');
       user.username = req.body.username;
       user.email = req.body.email;
-      
-      if(req.body.permission != 'null')
-        user.permission = parseInt(req.body.permission);
-      else
-        user.permission = null;
     }
 
     if (res.locals.user && res.locals.user.is_admin) {
@@ -191,6 +186,11 @@ app.post('/user/:id/edit', async (req, res) => {
 
       let privileges = req.body.privileges;
       await user.setPrivileges(privileges);
+
+      if(req.body.permission != 'null')
+        user.permission = parseInt(req.body.permission);
+      else
+        user.permission = null;
     }
 
     user.information = req.body.information;
@@ -221,6 +221,36 @@ app.post('/user/:id/edit', async (req, res) => {
     res.render('user_edit', {
       edited_user: user,
       error_info: e.message
+    });
+  }
+});
+
+app.post('/user/:id/set_permission', async (req, res) => {
+  try {
+    let id = parseInt(req.params.id);
+    let user = await User.findById(id);
+    // if (!user) throw new ErrorMessage('无此用户。');
+    if(!user) return res.send({ success: false });
+    
+    // same as user_edit, but only need permission
+    if (res.locals.user && res.locals.user.is_admin) {
+      if(req.body.permission != 'null')
+        user.permission = parseInt(req.body.permission);
+      else
+        user.permission = null;
+    }
+  
+    await user.save();
+    res.send({
+      success: true
+    });
+  } catch (e) {
+    syzoj.log(e);
+    // res.render('error', {
+    //   err: e
+    // });
+    res.send({
+      success: false
     });
   }
 });

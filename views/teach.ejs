@@ -14,7 +14,7 @@
             <tr>
                 <th style="width: 150px; ">用户名</th>
                 <th style="width: 150px; ">真实姓名</th>
-                <th style="width: 150px; ">用户编辑</th>
+                <th style="width: 250px; ">权限</th>
             </tr>
             </thead>
         <script data-cfasync="false">
@@ -34,9 +34,37 @@
             for (let user of users) {
             %>
                 <tr>
-                    <td><div class="user-<%= syzoj.utils.makeUserColor(user.rating, user.is_admin) %>"><%= user.username %><% if (user.nameplate) { %><span class="user-tag bg-<%= syzoj.utils.makeUserColor(user.rating, user.is_admin) %>"><%- user.nameplate %></span><% } %></div></td>
+                    <td><a href="<%= syzoj.utils.makeUrl(['user', user.id]) %>"><div class="user-<%= syzoj.utils.makeUserColor(user.rating, user.is_admin) %>"><%= user.username %><% if (user.nameplate) { %><span class="user-tag bg-<%= syzoj.utils.makeUserColor(user.rating, user.is_admin) %>"><%- user.nameplate %></span><% } %></div></a></td>
                     <td><%= user.nickname %></td>
-                    <td><a href="<%= syzoj.utils.makeUrl(['user', user.id, 'edit#permission']) %>">这里</a></td>
+                    <!-- <td><a href="<%= syzoj.utils.makeUrl(['user', user.id, 'edit#permission']) %>">这里</a></td> -->
+                    <td>
+                      <select class="ui dropdown" name="permission<%= user.id %>" id="permission<%= user.id %>">
+                        <option value="null" <%= user.permission === null ? 'selected': '' %>>未设置</option>
+                        <option value="0" <%= user.permission === 0 ? 'selected': '' %>>外来学生</option>
+                        <option value="20" <%= user.permission === 20 ? 'selected': '' %>>普及</option>
+                        <option value="30" <%= user.permission === 30 ? 'selected': '' %>>提高-</option>
+                        <option value="40" <%= user.permission === 40 ? 'selected': '' %>>提高</option>
+                        <option value="50" <%= user.permission === 50 ? 'selected': '' %>>省选-</option>
+                        <option value="60" <%= user.permission === 60 ? 'selected': '' %>>省选</option>
+                        <option value="100" <%= user.permission === 100 ? 'selected': '' %>>神仙</option>
+                        <option value="99999" <%= user.permission === 99999 ? 'selected': '' %>>超级管理</option>
+                      </select>
+                      <script>
+                        $('#permission<%= user.id %>').change(function() {
+                          var permission = $(this).val();
+                          $.post('<%= syzoj.utils.makeUrl(['user', user.id, 'set_permission']) %>', {
+                            permission: permission
+                          }, function(data) {
+                            // console.log(data);
+                            if (!data.success) {
+                              $('#error').html('发生错误。').show();
+                            } else {
+                              $('#error').hide();
+                            }
+                          });
+                        });
+                      </script>
+                    </td>
                 </tr>
             <% } %>
             </tbody>
@@ -45,6 +73,9 @@
   </div>
 </div>
 <script src="<%- lib('blueimp-md5/2.10.0/js/md5.min.js') %>"></script>
-<script type="text/javascript">
+<script>
+  $(function () {
+    $('.ui.dropdown:not(.simple)').dropdown();
+  });
 </script>
 <%- include('footer'); %>
