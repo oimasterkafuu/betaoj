@@ -92,7 +92,7 @@
                 </div>
                 <div class="extra content">
                     <a><i class="check icon"></i>通过 <%= show_user.ac_problems.length %> 题</a>
-                    <a style="float: right; "><i class="star icon"></i>积分 <%= show_user.rating %></a>
+                    <a style="float: right; "><i class="star icon"></i>积分 <%= Math.round(show_user.rating) %></a>
                 </div>
             </div>
 
