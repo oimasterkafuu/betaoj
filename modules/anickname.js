@@ -13,7 +13,39 @@ app.get('*', async (req, res, next) => {
         })
     }
 });
+app.post('*', async (req, res, next) => {
+    try {
+        if (res.locals.user && !res.locals.user.nickname)
+            res.render('ticket');
+        else
+            next();
+    } catch (e) {
+        syzoj.log(e);
+        res.render('error', {
+            err: e
+        })
+    }
+});
 app.get('*', async (req, res, next) => {
+    try {
+        if (!res.locals.user || !res.locals.user.is_admin){
+            next();
+            return;
+        }
+        let users = (await User.find({
+            where: [
+                { permission: null }
+            ]
+        })).filter(user => user.nickname && !user.username.startsWith('bannedUser'));
+        
+        res.locals.needPass = users.length;
+        next();
+    } catch (e) {
+        syzoj.log(e);
+        next();
+    }
+});
+app.post('*', async (req, res, next) => {
     try {
         if (!res.locals.user || !res.locals.user.is_admin){
             next();
