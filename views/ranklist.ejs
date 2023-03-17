@@ -22,6 +22,9 @@
 	        <tr>
 	            <th style="width: 60px; ">#</th>
 	            <th style="width: 200px; "><%- createSortableTitle('username', '用户名', true) %></th>
+              <% if(user && user.is_admin) { %>
+                <th style="width: 100px; ">真实姓名</th>
+              <% } %>
 	            <th>个性签名</th>
 	            <th style="width: 100px; "><%- createSortableTitle('ac_num', '通过数量', false) %></th>
 	            <th style="width: 100px; "><%- createSortableTitle('rating', '积分', false) %></th>
@@ -48,6 +51,9 @@
             <tr>
 		        	<td><b><%= i %></b></td>
 		        	<td><a href="<%= syzoj.utils.makeUrl(['user', user.id]) %>"><div class="user-<%= syzoj.utils.makeUserColor(user.rating, user.is_admin) %>"><%= user.username %></div></a><% if (user.nameplate) { %><span class="user-tag bg-<%= syzoj.utils.makeUserColor(user.rating, user.is_admin) %>"><%- user.nameplate %></span><% } %></td>
+              <% if(locals.user && locals.user.is_admin) { %>
+                <td><%= user.nickname%></td>
+              <% } %>
 		        	<td class="font-content">
               <script id="user-infomation-script-<%= i %>" data-cfasync="false">
               (function () {
