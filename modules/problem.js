@@ -78,17 +78,20 @@ app.get('/problems/search', async (req, res) => {
              }))
              .andWhere(new TypeORM.Brackets(qb => {
                qb.where('title LIKE :title', { title: `%${req.query.keyword}%` })
+                 .orWhere('description LIKE :description', { description: `%${req.query.keyword}%` })
                  .orWhere('id = :id', { id: id })
              }));
       } else {
         query.where('is_public = 1')
              .andWhere(new TypeORM.Brackets(qb => {
                qb.where('title LIKE :title', { title: `%${req.query.keyword}%` })
+                 .orWhere('description LIKE :description', { description: `%${req.query.keyword}%` })
                  .orWhere('id = :id', { id: id })
              }));
       }
     } else {
       query.where('title LIKE :title', { title: `%${req.query.keyword}%` })
+           .orWhere('description LIKE :description', { description: `%${req.query.keyword}%` })
            .orWhere('id = :id', { id: id })
     }
 
