@@ -80,6 +80,12 @@
       </div>
     </div>
     <div class="right floated five wide column">
+        <% if (blackboard) { %>
+            <h4 class="ui top attached block header"><i class="ui bullhorn icon"></i>小黑板</h4>
+            <div class="ui bottom attached aligned segment">
+                <%- blackboard %>
+            </div>
+        <% } %>
         <% if (syzoj.config.hitokoto) { %>
             <h4 class="ui top attached block header"><i class="ui quote left icon"></i>一言（ひとこと）</h4>
             <div class="ui bottom attached center aligned segment">
@@ -98,18 +104,24 @@
               <div style="text-align: right; margin-top: 15px; font-size: 0.9em; color: #666; display: none; " id="hitokoto-from"></div>
             </div>
         <% } %>
-        <% if (blackboard) { %>
-            <h4 class="ui top attached block header"><i class="ui bullhorn icon"></i>小黑板</h4>
-            <div class="ui bottom attached aligned segment">
-                <%- blackboard %>
-            </div>
-        <% } %>
         <% if (user && user.permission == null) { %>
             <h4 class="ui top attached block header"><i class="ui hand point right icon"></i>警告</h4>
             <div class="ui bottom attached aligned segment">
                 您的账号还<font color="red">没有被审核</font>。请尽快联系管理员进行审核。
             </div>
         <% } %>
+      <h4 class="ui top attached block header"><i class="ui search icon"></i>搜索用户</h4>
+      <div class="ui bottom attached segment">
+        <form action="<%= syzoj.utils.makeUrl(['users', 'search']) %>" method="get">
+          <div class="ui search" style="width: 100%; " id="searchUser">
+            <div class="ui left icon input" style="width: 100%; ">
+              <input class="prompt" style="width: 100%; " type="text" placeholder="ID / 用户名<%= (user && user.is_admin) ? ' / 真实姓名' : '' %> …" name="keyword">
+              <i class="search icon"></i>
+            </div>
+            <div class="results" style="width: 100%; "></div>
+          </div>
+        </form>
+      </div>
       <h4 class="ui top attached block header"><i class="ui book icon"></i>最近更新</h4>
       <div class="ui bottom attached segment">
 	<table class="ui very basic center aligned table">
@@ -125,7 +137,7 @@
 	    %>
 	    <tr>
 	      <td><a href="<%= syzoj.utils.makeUrl(['problem', problem.id]) %>"><%= problem.title %></a></td>
-	      <td><%= problem.time %></td>
+	      <td title="<%= problem.time[1] %>"><%= problem.time[0] %></td>
 	    </tr>
 	    <% } %>
 	  </tbody>
@@ -187,7 +199,7 @@
       <h4 class="ui top attached block header"><i class="ui search icon"></i>搜索题目</h4>
       <div class="ui bottom attached segment">
         <form action="<%= syzoj.utils.makeUrl(['problems', 'search']) %>" method="get">
-          <div class="ui search" style="width: 100%; ">
+          <div class="ui search" style="width: 100%; " id="searchProblem">
             <div class="ui left icon input" style="width: 100%; ">
               <input class="prompt" style="width: 100%; " type="text" placeholder="ID / 题目名 …" name="keyword">
               <i class="search icon"></i>
@@ -245,11 +257,22 @@
 </div>
 <script>
 $(function () {
-  $('.ui.search').search({
+  $('#searchProblem').search({
     debug: true,
     saveRemoteData: false,
     apiSettings: {
       url: '/api/v2/search/problems/{query}',
+      cache: false
+    },
+    fields: {
+      title: 'name'
+    }
+  });
+  $('#searchUser').search({
+    debug: true,
+    saveRemoteData: false,
+    apiSettings: {
+      url: '/api/v2/search/users/{query}',
       cache: false
     },
     fields: {

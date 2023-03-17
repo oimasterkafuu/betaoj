@@ -38,7 +38,7 @@ app.get('/', async (req, res) => {
     })).map(problem => ({
       id: problem.id,
       title: problem.title,
-      time: timeAgo.format(new Date(problem.publicize_time)),
+      time: [timeAgo.format(new Date(problem.publicize_time)), syzoj.utils.formatDate(Math.round(new Date(problem.publicize_time).getTime() / 1000))],
     }));
     
     let blackboard = syzoj.config.blackboard;
