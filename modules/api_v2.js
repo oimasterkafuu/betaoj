@@ -14,6 +14,9 @@ app.get('/api/v2/search/users/:keyword*?', async (req, res) => {
     }
     if (keyword != null && String(keyword).length >= 1) {
       conditions.push({ username: TypeORM.Like(`%${req.params.keyword}%`) });
+      // only admin can search for nickname
+      if (res.locals.user && res.locals.user.is_admin)
+        conditions.push({ nickname: TypeORM.Like(`%${req.params.keyword}%`) });
     }
     if (conditions.length === 0) {
       res.send({ success: true, results: [] });
@@ -21,7 +24,7 @@ app.get('/api/v2/search/users/:keyword*?', async (req, res) => {
       let users = await User.find({
         where: conditions,
         order: {
-          username: 'ASC'
+          id: 'ASC'
         }
       }).filter(user => user.nickname && !user.username.startsWith('bannedUser'));
 
