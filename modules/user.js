@@ -6,294 +6,334 @@ const ContestPlayer = syzoj.model('contest_player');
 
 // Ranklist
 app.get('/ranklist', async (req, res) => {
-  try {
-    const sort = req.query.sort || syzoj.config.sorting.ranklist.field;
-    const order = req.query.order || syzoj.config.sorting.ranklist.order;
-    if (!['ac_num', 'rating', 'id', 'username'].includes(sort) || !['asc', 'desc'].includes(order)) {
-      throw new ErrorMessage('错误的排序参数。');
-    }
-    let paginate = syzoj.utils.paginate(await User.countForPagination({ is_show: true }), req.query.page, syzoj.config.page.ranklist);
-    let ranklist = await User.queryPage(paginate, { is_show: true }, { [sort]: order.toUpperCase() });
-    await ranklist.forEachAsync(async x => x.renderInformation());
+    try {
+        const sort = req.query.sort || syzoj.config.sorting.ranklist.field;
+        const order = req.query.order || syzoj.config.sorting.ranklist.order;
+        if (
+            !['ac_num', 'rating', 'id', 'username'].includes(sort) ||
+            !['asc', 'desc'].includes(order)
+        ) {
+            throw new ErrorMessage('错误的排序参数。');
+        }
+        let paginate = syzoj.utils.paginate(
+            await User.countForPagination({ is_show: true }),
+            req.query.page,
+            syzoj.config.page.ranklist,
+        );
+        let ranklist = await User.queryPage(
+            paginate,
+            { is_show: true },
+            { [sort]: order.toUpperCase() },
+        );
+        await ranklist.forEachAsync(async (x) => x.renderInformation());
 
-    res.render('ranklist', {
-      ranklist: ranklist,
-      paginate: paginate,
-      curSort: sort,
-      curOrder: order === 'asc'
-    });
-  } catch (e) {
-    syzoj.log(e);
-    res.render('error', {
-      err: e
-    });
-  }
+        res.render('ranklist', {
+            ranklist: ranklist,
+            paginate: paginate,
+            curSort: sort,
+            curOrder: order === 'asc',
+        });
+    } catch (e) {
+        syzoj.log(e);
+        res.render('error', {
+            err: e,
+        });
+    }
 });
 
 app.get('/find_user', async (req, res) => {
-  try {
-    let user = await User.fromName(req.query.nickname);
-    if (!user) throw new ErrorMessage('无此用户。');
-    res.redirect(syzoj.utils.makeUrl(['user', user.id]));
-  } catch (e) {
-    syzoj.log(e);
-    res.render('error', {
-      err: e
-    });
-  }
+    try {
+        let user = await User.fromName(req.query.nickname);
+        if (!user) throw new ErrorMessage('无此用户。');
+        res.redirect(syzoj.utils.makeUrl(['user', user.id]));
+    } catch (e) {
+        syzoj.log(e);
+        res.render('error', {
+            err: e,
+        });
+    }
 });
 
 // Login
 app.get('/login', async (req, res) => {
-  if (res.locals.user) {
-    res.render('error', {
-      err: new ErrorMessage('您已经登录了，请先注销。', { '注销': syzoj.utils.makeUrl(['logout'], { 'url': req.originalUrl }) })
-    });
-  } else {
-    res.render('login');
-  }
+    if (res.locals.user) {
+        res.render('error', {
+            err: new ErrorMessage('您已经登录了，请先注销。', {
+                注销: syzoj.utils.makeUrl(['logout'], { url: req.originalUrl }),
+            }),
+        });
+    } else {
+        res.render('login');
+    }
 });
 
 // Sign up
 app.get('/sign_up', async (req, res) => {
-  if (res.locals.user) {
-    res.render('error', {
-      err: new ErrorMessage('您已经登录了，请先注销。', { '注销': syzoj.utils.makeUrl(['logout'], { 'url': req.originalUrl }) })
-    });
-  } else {
-    res.render('sign_up');
-  }
+    if (res.locals.user) {
+        res.render('error', {
+            err: new ErrorMessage('您已经登录了，请先注销。', {
+                注销: syzoj.utils.makeUrl(['logout'], { url: req.originalUrl }),
+            }),
+        });
+    } else {
+        res.render('sign_up');
+    }
 });
 
 // Logout
 app.post('/logout', async (req, res) => {
-  req.session.user_id = null;
-  res.clearCookie('login');
-  res.redirect(req.query.url || '/');
+    req.session.user_id = null;
+    res.clearCookie('login');
+    res.redirect(req.query.url || '/');
 });
 
 // User page
 app.get('/user/:id', async (req, res) => {
-  try {
-    let id = parseInt(req.params.id);
-    let user = await User.findById(id);
-    if (!user) throw new ErrorMessage('无此用户。');
-    user.ac_problems = await user.getACProblems();
-    user.articles = await user.getArticles();
-    user.allowedEdit = await user.isAllowedEditBy(res.locals.user);
+    try {
+        let id = parseInt(req.params.id);
+        let user = await User.findById(id);
+        if (!user) throw new ErrorMessage('无此用户。');
+        user.ac_problems = await user.getACProblems();
+        user.articles = await user.getArticles();
+        user.allowedEdit = await user.isAllowedEditBy(res.locals.user);
 
-    let statistics = await user.getStatistics();
-    await user.renderInformation();
-    user.emailVisible = user.public_email || user.allowedEdit;
+        let statistics = await user.getStatistics();
+        await user.renderInformation();
+        user.emailVisible = user.public_email || user.allowedEdit;
 
-    const ratingHistoryValues = await RatingHistory.find({
-      where: { user_id: user.id },
-      order: { rating_calculation_id: 'ASC' }
-    });
-    const ratingHistories = [{
-      contestName: "初始积分",
-      value: syzoj.config.default.user.rating,
-      delta: null,
-      rank: null
-    }];
+        const ratingHistoryValues = await RatingHistory.find({
+            where: { user_id: user.id },
+            order: { rating_calculation_id: 'ASC' },
+        });
+        const ratingHistories = [
+            {
+                contestName: '初始积分',
+                value: syzoj.config.default.user.rating,
+                delta: null,
+                rank: null,
+            },
+        ];
 
-    for (const history of ratingHistoryValues) {
-      const contest = await Contest.findById((await RatingCalculation.findById(history.rating_calculation_id)).contest_id);
-      ratingHistories.push({
-        contestName: contest.title,
-        value: history.rating_after,
-        delta: history.rating_after - ratingHistories[ratingHistories.length - 1].value,
-        rank: history.rank,
-        participants: await ContestPlayer.count({ contest_id: contest.id })
-      });
+        for (const history of ratingHistoryValues) {
+            const contest = await Contest.findById(
+                (
+                    await RatingCalculation.findById(
+                        history.rating_calculation_id,
+                    )
+                ).contest_id,
+            );
+            ratingHistories.push({
+                contestName: contest.title,
+                value: history.rating_after,
+                delta:
+                    history.rating_after -
+                    ratingHistories[ratingHistories.length - 1].value,
+                rank: history.rank,
+                participants: await ContestPlayer.count({
+                    contest_id: contest.id,
+                }),
+            });
+        }
+        ratingHistories.reverse();
+
+        res.render('user', {
+            show_user: user,
+            statistics: statistics,
+            ratingHistories: ratingHistories,
+        });
+    } catch (e) {
+        syzoj.log(e);
+        res.render('error', {
+            err: e,
+        });
     }
-    ratingHistories.reverse();
-
-    res.render('user', {
-      show_user: user,
-      statistics: statistics,
-      ratingHistories: ratingHistories
-    });
-  } catch (e) {
-    syzoj.log(e);
-    res.render('error', {
-      err: e
-    });
-  }
 });
 
 app.get('/user/:id/edit', async (req, res) => {
-  try {
-    let id = parseInt(req.params.id);
-    let user = await User.findById(id);
-    if (!user) throw new ErrorMessage('无此用户。');
+    try {
+        let id = parseInt(req.params.id);
+        let user = await User.findById(id);
+        if (!user) throw new ErrorMessage('无此用户。');
 
-    let allowedEdit = await user.isAllowedEditBy(res.locals.user);
-    if (!allowedEdit) {
-      throw new ErrorMessage('您没有权限进行此操作。');
+        let allowedEdit = await user.isAllowedEditBy(res.locals.user);
+        if (!allowedEdit) {
+            throw new ErrorMessage('您没有权限进行此操作。');
+        }
+
+        user.privileges = await user.getPrivileges();
+
+        res.locals.user.allowedManage = await res.locals.user.hasPrivilege(
+            'manage_user',
+        );
+
+        res.render('user_edit', {
+            edited_user: user,
+            error_info: null,
+        });
+    } catch (e) {
+        syzoj.log(e);
+        res.render('error', {
+            err: e,
+        });
     }
-
-    user.privileges = await user.getPrivileges();
-
-    res.locals.user.allowedManage = await res.locals.user.hasPrivilege('manage_user');
-
-    res.render('user_edit', {
-      edited_user: user,
-      error_info: null
-    });
-  } catch (e) {
-    syzoj.log(e);
-    res.render('error', {
-      err: e
-    });
-  }
 });
 
 app.get('/forget', async (req, res) => {
-  res.render('forget');
+    res.render('forget');
 });
 
-
-
 app.post('/user/:id/edit', async (req, res) => {
-  let user;
-  try {
-    let id = parseInt(req.params.id);
-    user = await User.findById(id);
-    if (!user) throw new ErrorMessage('无此用户。');
-
-    let allowedEdit = await user.isAllowedEditBy(res.locals.user);
-    if (!allowedEdit) throw new ErrorMessage('您没有权限进行此操作。');
-
-    if (req.body.old_password && req.body.new_password) {
-      if (user.password !== req.body.old_password && !await res.locals.user.hasPrivilege('manage_user')) throw new ErrorMessage('旧密码错误。');
-      user.password = req.body.new_password;
-    }
-
-    if (res.locals.user && await res.locals.user.hasPrivilege('manage_user')) {
-      if (!syzoj.utils.isValidUsername(req.body.username)) throw new ErrorMessage('无效的用户名。');
-      user.username = req.body.username;
-      user.email = req.body.email;
-    }
-
-    if (res.locals.user && res.locals.user.is_admin) {
-      user.nameplate = req.body.nameplate;
-      if (!req.body.privileges) {
-        req.body.privileges = [];
-      } else if (!Array.isArray(req.body.privileges)) {
-        req.body.privileges = [req.body.privileges];
-      }
-
-      let privileges = req.body.privileges;
-      await user.setPrivileges(privileges);
-
-      if(req.body.permission != 'null')
-        user.permission = parseInt(req.body.permission);
-      else
-        user.permission = null;
-    }
-
-    user.information = req.body.information;
-    user.sex = req.body.sex;
-    user.public_email = (req.body.public_email === 'on');
-    user.prefer_formatted_code = (req.body.prefer_formatted_code === 'on');
-
-    await user.save();
-
-    if (user.id === res.locals.user.id) res.locals.user = user;
-
-    user.privileges = await user.getPrivileges();
-    res.locals.user.allowedManage = await res.locals.user.hasPrivilege('manage_user');
-
-    res.render('user_edit', {
-      edited_user: user,
-      error_info: ''
-    });
-  } catch (e) {
+    let user;
     try {
-      user.privileges = await user.getPrivileges();
-      if (res.locals.user)
-        res.locals.user.allowedManage = await res.locals.user.hasPrivilege('manage_user');
-    } catch (e) {
-      console.error(e);
-    }
+        let id = parseInt(req.params.id);
+        user = await User.findById(id);
+        if (!user) throw new ErrorMessage('无此用户。');
 
-    res.render('user_edit', {
-      edited_user: user,
-      error_info: e.message
-    });
-  }
+        let allowedEdit = await user.isAllowedEditBy(res.locals.user);
+        if (!allowedEdit) throw new ErrorMessage('您没有权限进行此操作。');
+
+        if (req.body.old_password && req.body.new_password) {
+            if (
+                user.password !== req.body.old_password &&
+                !(await res.locals.user.hasPrivilege('manage_user'))
+            )
+                throw new ErrorMessage('旧密码错误。');
+            user.password = req.body.new_password;
+        }
+
+        if (
+            res.locals.user &&
+            (await res.locals.user.hasPrivilege('manage_user'))
+        ) {
+            if (!syzoj.utils.isValidUsername(req.body.username))
+                throw new ErrorMessage('无效的用户名。');
+            user.username = req.body.username;
+            user.email = req.body.email;
+        }
+
+        if (res.locals.user && res.locals.user.is_admin) {
+            user.nameplate = req.body.nameplate;
+            if (!req.body.privileges) {
+                req.body.privileges = [];
+            } else if (!Array.isArray(req.body.privileges)) {
+                req.body.privileges = [req.body.privileges];
+            }
+
+            let privileges = req.body.privileges;
+            await user.setPrivileges(privileges);
+
+            if (req.body.permission != 'null')
+                user.permission = parseInt(req.body.permission);
+            else user.permission = null;
+        }
+
+        user.information = req.body.information;
+        user.sex = req.body.sex;
+        user.public_email = req.body.public_email === 'on';
+        user.prefer_formatted_code = req.body.prefer_formatted_code === 'on';
+
+        await user.save();
+
+        if (user.id === res.locals.user.id) res.locals.user = user;
+
+        user.privileges = await user.getPrivileges();
+        res.locals.user.allowedManage = await res.locals.user.hasPrivilege(
+            'manage_user',
+        );
+
+        res.render('user_edit', {
+            edited_user: user,
+            error_info: '',
+        });
+    } catch (e) {
+        try {
+            user.privileges = await user.getPrivileges();
+            if (res.locals.user)
+                res.locals.user.allowedManage =
+                    await res.locals.user.hasPrivilege('manage_user');
+        } catch (e) {
+            console.error(e);
+        }
+
+        res.render('user_edit', {
+            edited_user: user,
+            error_info: e.message,
+        });
+    }
 });
 
 app.post('/user/:id/set_permission', async (req, res) => {
-  try {
-    let id = parseInt(req.params.id);
-    let user = await User.findById(id);
-    // if (!user) throw new ErrorMessage('无此用户。');
-    if(!user) return res.send({ success: false });
-    
-    // same as user_edit, but only need permission
-    if (res.locals.user && res.locals.user.is_admin) {
-      if(req.body.permission != 'null')
-        user.permission = parseInt(req.body.permission);
-      else
-        user.permission = null;
+    try {
+        let id = parseInt(req.params.id);
+        let user = await User.findById(id);
+        // if (!user) throw new ErrorMessage('无此用户。');
+        if (!user) return res.send({ success: false });
+
+        // same as user_edit, but only need permission
+        if (res.locals.user && res.locals.user.is_admin) {
+            if (req.body.permission != 'null')
+                user.permission = parseInt(req.body.permission);
+            else user.permission = null;
+        }
+
+        await user.save();
+        res.send({
+            success: true,
+        });
+    } catch (e) {
+        syzoj.log(e);
+        // res.render('error', {
+        //   err: e
+        // });
+        res.send({
+            success: false,
+        });
     }
-  
-    await user.save();
-    res.send({
-      success: true
-    });
-  } catch (e) {
-    syzoj.log(e);
-    // res.render('error', {
-    //   err: e
-    // });
-    res.send({
-      success: false
-    });
-  }
 });
 
 app.post('/user/:id/cheater', async (req, res) => {
-  try {
-    let id = parseInt(req.params.id);
-    if(id == 1){
-	    throw new ErrorMessage('你想干什么呢？')
+    try {
+        let id = parseInt(req.params.id);
+        if (id == 1) {
+            throw new ErrorMessage('你想干什么呢？');
+        }
+        let user = await User.findById(id);
+        if (!user) throw new ErrorMessage('无此用户。');
+
+        if (!(await res.locals.user.hasPrivilege('manage_user')))
+            throw new ErrorMessage('您没有权限进行此操作。');
+
+        await user.skipSubmissions();
+        res.redirect(
+            '/submissions?contest=&problem_id=&submitter=' +
+                user.username +
+                '&min_score=0&max_score=100&language=&status=',
+        );
+    } catch (e) {
+        syzoj.log(e);
+        res.render('error', {
+            err: e,
+        });
     }
-    let user = await User.findById(id);
-    if (!user) throw new ErrorMessage('无此用户。');
-
-    if(!await res.locals.user.hasPrivilege('manage_user'))
-      throw new ErrorMessage('您没有权限进行此操作。');
-
-    await user.skipSubmissions();
-    res.redirect('/submissions?contest=&problem_id=&submitter=' + user.username + '&min_score=0&max_score=100&language=&status=');
-  } catch (e) {
-    syzoj.log(e);
-    res.render('error', {
-      err: e
-    });
-  }
 });
 app.post('/user/:id/ban', async (req, res) => {
-  try {
-    let id = parseInt(req.params.id);
-    if(id == 1){
-            throw new ErrorMessage('你想干什么呢？')
+    try {
+        let id = parseInt(req.params.id);
+        if (id == 1) {
+            throw new ErrorMessage('你想干什么呢？');
+        }
+        let user = await User.findById(id);
+        if (!user) throw new ErrorMessage('无此用户。');
+
+        if (!(await res.locals.user.hasPrivilege('manage_user')))
+            throw new ErrorMessage('您没有权限进行此操作。');
+
+        await user.setBan();
+        res.redirect('/user/' + id);
+    } catch (e) {
+        syzoj.log(e);
+        res.render('error', {
+            err: e,
+        });
     }
-    let user = await User.findById(id);
-    if (!user) throw new ErrorMessage('无此用户。');
-
-    if(!await res.locals.user.hasPrivilege('manage_user'))
-      throw new ErrorMessage('您没有权限进行此操作。');
-
-    await user.setBan();
-    res.redirect('/user/' + id);
-  } catch (e) {
-    syzoj.log(e);
-    res.render('error', {
-      err: e
-    });
-  }
 });

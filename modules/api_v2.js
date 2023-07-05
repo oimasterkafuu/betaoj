@@ -2,185 +2,223 @@ const jwt = require('jsonwebtoken');
 const url = require('url');
 
 app.get('/api/v2/search/users/:keyword*?', async (req, res) => {
-  try {
-    let User = syzoj.model('user');
+    try {
+        let User = syzoj.model('user');
 
-    let keyword = req.params.keyword || '';
-    let conditions = [];
-    const uid = parseInt(keyword) || 0;
+        let keyword = req.params.keyword || '';
+        let conditions = [];
+        const uid = parseInt(keyword) || 0;
 
-    if (uid != null && !isNaN(uid)) {
-      conditions.push({ id: uid });
-    }
-    if (keyword != null && String(keyword).length >= 1) {
-      conditions.push({ username: TypeORM.Like(`%${req.params.keyword}%`) });
-      // only admin can search for nickname
-      if (res.locals.user && res.locals.user.is_admin)
-        conditions.push({ nickname: TypeORM.Like(`%${req.params.keyword}%`) });
-    }
-    if (conditions.length === 0) {
-      res.send({ success: true, results: [] });
-    } else {
-      let users = await User.find({
-        where: conditions,
-        order: {
-          id: 'ASC'
+        if (uid != null && !isNaN(uid)) {
+            conditions.push({ id: uid });
         }
-      }).filter(user => user.nickname && !user.username.startsWith('bannedUser'));
+        if (keyword != null && String(keyword).length >= 1) {
+            conditions.push({
+                username: TypeORM.Like(`%${req.params.keyword}%`),
+            });
+            // only admin can search for nickname
+            if (res.locals.user && res.locals.user.is_admin)
+                conditions.push({
+                    nickname: TypeORM.Like(`%${req.params.keyword}%`),
+                });
+        }
+        if (conditions.length === 0) {
+            res.send({ success: true, results: [] });
+        } else {
+            let users = await User.find({
+                where: conditions,
+                order: {
+                    id: 'ASC',
+                },
+            }).filter(
+                (user) =>
+                    user.nickname && !user.username.startsWith('bannedUser'),
+            );
 
-      let result = [];
+            let result = [];
 
-      result = users.map(x => ({ name: `${x.username}`, value: x.id, url: syzoj.utils.makeUrl(['user', x.id]) }));
-      res.send({ success: true, results: result });
+            result = users.map((x) => ({
+                name: `${x.username}`,
+                value: x.id,
+                url: syzoj.utils.makeUrl(['user', x.id]),
+            }));
+            res.send({ success: true, results: result });
+        }
+    } catch (e) {
+        syzoj.log(e);
+        res.send({ success: false });
     }
-  } catch (e) {
-    syzoj.log(e);
-    res.send({ success: false });
-  }
 });
 
 app.get('/api/v2/search/problems/:keyword*?', async (req, res) => {
-  try {
-    let Problem = syzoj.model('problem');
+    try {
+        let Problem = syzoj.model('problem');
 
-    let keyword = req.params.keyword || '';
-    let problems = await Problem.find({
-      where: {
-        title: TypeORM.Like(`%${req.params.keyword}%`)
-      },
-      order: {
-        id: 'ASC'
-      }
-    });
-    let problemsWithContent = await Problem.find({
-      where: {
-        description: TypeORM.Like(`%${req.params.keyword}%`)
-      },
-      order: {
-        id: 'ASC'
-      }
-    });
+        let keyword = req.params.keyword || '';
+        let problems = await Problem.find({
+            where: {
+                title: TypeORM.Like(`%${req.params.keyword}%`),
+            },
+            order: {
+                id: 'ASC',
+            },
+        });
+        let problemsWithContent = await Problem.find({
+            where: {
+                description: TypeORM.Like(`%${req.params.keyword}%`),
+            },
+            order: {
+                id: 'ASC',
+            },
+        });
 
-    let result = [];
+        let result = [];
 
-    let id = parseInt(keyword);
-    if (id) {
-      let problemById = await Problem.findById(parseInt(keyword));
-      if (problemById && await problemById.isAllowedUseBy(res.locals.user)) {
-        result.push(problemById);
-      }
+        let id = parseInt(keyword);
+        if (id) {
+            let problemById = await Problem.findById(parseInt(keyword));
+            if (
+                problemById &&
+                (await problemById.isAllowedUseBy(res.locals.user))
+            ) {
+                result.push(problemById);
+            }
+        }
+        await problems.forEachAsync(async (problem) => {
+            if (
+                (await problem.isAllowedUseBy(res.locals.user)) &&
+                result.length < syzoj.config.page.edit_contest_problem_list &&
+                problem.id !== id
+            ) {
+                result.push(problem);
+            }
+        });
+        await problemsWithContent.forEachAsync(async (problem) => {
+            if (
+                (await problem.isAllowedUseBy(res.locals.user)) &&
+                result.length < syzoj.config.page.edit_contest_problem_list &&
+                problem.id !== id
+            ) {
+                result.push(problem);
+            }
+        });
+
+        result = result.map((x) => ({
+            name: `#${x.id}. ${x.title}`,
+            value: x.id,
+            url: syzoj.utils.makeUrl(['problem', x.id]),
+        }));
+        res.send({ success: true, results: result });
+    } catch (e) {
+        syzoj.log(e);
+        res.send({ success: false });
     }
-    await problems.forEachAsync(async problem => {
-      if (await problem.isAllowedUseBy(res.locals.user) && result.length < syzoj.config.page.edit_contest_problem_list && problem.id !== id) {
-        result.push(problem);
-      }
-    });
-    await problemsWithContent.forEachAsync(async problem => {
-      if (await problem.isAllowedUseBy(res.locals.user) && result.length < syzoj.config.page.edit_contest_problem_list && problem.id !== id) {
-        result.push(problem);
-      }
-    });
-
-    result = result.map(x => ({ name: `#${x.id}. ${x.title}`, value: x.id, url: syzoj.utils.makeUrl(['problem', x.id]) }));
-    res.send({ success: true, results: result });
-  } catch (e) {
-    syzoj.log(e);
-    res.send({ success: false });
-  }
 });
 
 app.get('/api/v2/search/tags/:keyword*?', async (req, res) => {
-  try {
-    let Problem = syzoj.model('problem');
-    let ProblemTag = syzoj.model('problem_tag');
+    try {
+        let Problem = syzoj.model('problem');
+        let ProblemTag = syzoj.model('problem_tag');
 
-    let keyword = req.params.keyword || '';
-    let tags = await ProblemTag.find({
-      where: {
-        name: TypeORM.Like(`%${req.params.keyword}%`)
-      },
-      order: {
-        name: 'ASC'
-      }
-    });
+        let keyword = req.params.keyword || '';
+        let tags = await ProblemTag.find({
+            where: {
+                name: TypeORM.Like(`%${req.params.keyword}%`),
+            },
+            order: {
+                name: 'ASC',
+            },
+        });
 
-    let result = tags.slice(0, syzoj.config.page.edit_problem_tag_list);
+        let result = tags.slice(0, syzoj.config.page.edit_problem_tag_list);
 
-    result = result.map(x => ({ name: x.name, value: x.id }));
-    res.send({ success: true, results: result });
-  } catch (e) {
-    syzoj.log(e);
-    res.send({ success: false });
-  }
+        result = result.map((x) => ({ name: x.name, value: x.id }));
+        res.send({ success: true, results: result });
+    } catch (e) {
+        syzoj.log(e);
+        res.send({ success: false });
+    }
 });
 
 app.get('/api/v2/search/discussion/:keyword*?', async (req, res) => {
-  try {
-    let Article = syzoj.model('article');
+    try {
+        let Article = syzoj.model('article');
 
-    let keyword = req.params.keyword || '';
-    let conditions = [];
+        let keyword = req.params.keyword || '';
+        let conditions = [];
 
-    if (keyword != null && String(keyword).length >= 1) {
-      conditions.push({ title: TypeORM.Like(`%${req.params.keyword}%`) });
-    }
-    if (conditions.length === 0) {
-      res.send({ success: true, results: [] });
-    } else {
-      let articles = await Article.find({
-        where: conditions,
-        order: {
-          id: 'ASC'
+        if (keyword != null && String(keyword).length >= 1) {
+            conditions.push({ title: TypeORM.Like(`%${req.params.keyword}%`) });
         }
-      });
+        if (conditions.length === 0) {
+            res.send({ success: true, results: [] });
+        } else {
+            let articles = await Article.find({
+                where: conditions,
+                order: {
+                    id: 'ASC',
+                },
+            });
 
-      let result = [];
+            let result = [];
 
-      result = articles.map(x => ({ name: `${x.title}`, value: x.id, url: syzoj.utils.makeUrl(['article', x.id]) }));
-      res.send({ success: true, results: result });
+            result = articles.map((x) => ({
+                name: `${x.title}`,
+                value: x.id,
+                url: syzoj.utils.makeUrl(['article', x.id]),
+            }));
+            res.send({ success: true, results: result });
+        }
+    } catch (e) {
+        syzoj.log(e);
+        res.send({ success: false });
     }
-  } catch (e) {
-    syzoj.log(e);
-    res.send({ success: false });
-  }
 });
 
 app.apiRouter.post('/api/v2/markdown', async (req, res) => {
-  try {
-    let s = await syzoj.utils.markdown(req.body.s.toString(), null, req.body.noReplaceUI === 'true');
-    res.send(s);
-  } catch (e) {
-    syzoj.log(e);
-    res.send(e);
-  }
+    try {
+        let s = await syzoj.utils.markdown(
+            req.body.s.toString(),
+            null,
+            req.body.noReplaceUI === 'true',
+        );
+        res.send(s);
+    } catch (e) {
+        syzoj.log(e);
+        res.send(e);
+    }
 });
 
 function verifyJWT(token) {
-  try {
-    jwt.verify(token, syzoj.config.session_secret);
-    return true;
-  } catch (e) {
-    return false;
-  }
+    try {
+        jwt.verify(token, syzoj.config.session_secret);
+        return true;
+    } catch (e) {
+        return false;
+    }
 }
 
 app.apiRouter.get('/api/v2/download/:token', async (req, res) => {
-  try {
-    const token = req.params.token, data = jwt.decode(token);
-    if (!data) throw new ErrorMessage("无效的令牌。");
-    if (url.parse(syzoj.utils.getCurrentLocation(req, true)).href !== url.parse(syzoj.config.site_for_download).href) {
-      throw new ErrorMessage("无效的下载地址。");
-    }
+    try {
+        const token = req.params.token,
+            data = jwt.decode(token);
+        if (!data) throw new ErrorMessage('无效的令牌。');
+        if (
+            url.parse(syzoj.utils.getCurrentLocation(req, true)).href !==
+            url.parse(syzoj.config.site_for_download).href
+        ) {
+            throw new ErrorMessage('无效的下载地址。');
+        }
 
-    if (verifyJWT(token)) {
-      res.download(data.filename, data.sendName);
-    } else {
-      res.redirect(data.originUrl);
+        if (verifyJWT(token)) {
+            res.download(data.filename, data.sendName);
+        } else {
+            res.redirect(data.originUrl);
+        }
+    } catch (e) {
+        syzoj.log(e);
+        res.render('error', {
+            err: e,
+        });
     }
-  } catch (e) {
-    syzoj.log(e);
-    res.render('error', {
-      err: e
-    });
-  }
-})
+});

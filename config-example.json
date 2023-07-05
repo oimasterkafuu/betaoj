@@ -1,133 +1,133 @@
 {
-  "title": "BetaOJ",
-  "hostname": "127.0.0.1",
-  "port": "5283",
-  "db": {
-    "database": "syzoj",
-    "username": "syzoj",
-    "password": "@DATABASE_PASSWORD@",
-    "host": "127.0.0.1",
-    "migrated_to_typeorm": true,
-    "cache_size": 1000
-  },
-  "logo": {
-    "url": null,
-    "width": null,
-    "height": null
-  },
-  "register_mail": false,
-  "email": {
-    "method": "aliyundm",
-    "options": {
-      "AccessKeyId": "xxxx",
-      "AccessKeySecret": "xxxx",
-      "AccountName": "xxxx"
-    }
-  },
-  "upload_dir": "uploads",
-  "default": {
-    "problem": {
-      "time_limit": 1000,
-      "memory_limit": 256
+    "title": "BetaOJ",
+    "hostname": "127.0.0.1",
+    "port": "5283",
+    "db": {
+        "database": "syzoj",
+        "username": "syzoj",
+        "password": "@DATABASE_PASSWORD@",
+        "host": "127.0.0.1",
+        "migrated_to_typeorm": true,
+        "cache_size": 1000
     },
-    "user": {
-      "show": true,
-      "rating": 1500
-    }
-  },
-  "sorting": {
-    "ranklist": {
-      "field": "rating",
-      "order": "desc"
+    "logo": {
+        "url": null,
+        "width": null,
+        "height": null
     },
-    "problem": {
-      "field": "id",
-      "order": "asc"
-    }
-  },
-  "limit": {
-    "time_limit": 10000,
-    "memory_limit": 1024,
-    "data_size": 209715200,
-    "testdata": 209715200,
-    "submit_code": 102400,
-    "submit_answer": 10485760,
-    "custom_test_input": 20971520,
-    "testdata_filecount": 100
-  },
-  "page": {
-    "problem": 50,
-    "problem_statistics": 10,
-    "judge_state": 10,
-    "ranklist_index": 20,
-    "ranklist": 50,
-    "discussion": 10,
-    "article_comment": 10,
-    "contest": 10,
-    "edit_contest_problem_list": 10,
-    "edit_problem_tag_list": 10
-  },
-  "enabled_languages": [
-    "cpp",
-    "cpp11",
-    "cpp17",
-    "cpp-noilinux",
-    "cpp11-noilinux",
-    "cpp11-clang",
-    "cpp17-clang",
-    "c",
-    "c-noilinux",
-    "csharp",
-    "java",
-    "pascal",
-    "python2",
-    "python3",
-    "nodejs",
-    "ruby",
-    "haskell"
-  ],
-  "filter_enabled_languages": [
-    "cpp",
-    "cpp11",
-    "cpp17",
-    "cpp-noilinux",
-    "cpp11-noilinux",
-    "cpp11-clang",
-    "cpp17-clang",
-    "c",
-    "c-noilinux",
-    "csharp",
-    "java",
-    "pascal",
-    "python2",
-    "python3",
-    "nodejs",
-    "ruby",
-    "haskell"
-  ],
-  "links": [
-    {
-      "title": "LibreOJ",
-      "url": "https://loj.ac/"
-    }
-  ],
-  "session_secret": "@SESSION_SECRET@",
-  "judge_token": "@JUDGE_TOKEN@",
-  "email_jwt_secret": "@EMAIL_JWT_SECRET@",
-  "google_analytics": "UA-XXXXXXXX-X",
-  "gravatar_url": "https://gravatar.loli.net/avatar",
-  "cdnjs_url": "built-in",
-  "self_cdn_url": "built-in",
-  "google_fonts": {
-    "type": "built-in",
-    "url": ""
-  },
-  "no_cdn": true,
-  "submissions_page_fast_pagination": false,
-  "username_regex": "^[a-zA-Z0-9\\-\\_]+$",
-  "site_for_download": "",
-  "renderer_cache_size": "30000",
-  "divine": true,
-  "hitokoto": false,
-  "blackboard": ""
+    "register_mail": false,
+    "email": {
+        "method": "aliyundm",
+        "options": {
+            "AccessKeyId": "xxxx",
+            "AccessKeySecret": "xxxx",
+            "AccountName": "xxxx"
+        }
+    },
+    "upload_dir": "uploads",
+    "default": {
+        "problem": {
+            "time_limit": 1000,
+            "memory_limit": 256
+        },
+        "user": {
+            "show": true,
+            "rating": 1500
+        }
+    },
+    "sorting": {
+        "ranklist": {
+            "field": "rating",
+            "order": "desc"
+        },
+        "problem": {
+            "field": "id",
+            "order": "asc"
+        }
+    },
+    "limit": {
+        "time_limit": 10000,
+        "memory_limit": 1024,
+        "data_size": 209715200,
+        "testdata": 209715200,
+        "submit_code": 102400,
+        "submit_answer": 10485760,
+        "custom_test_input": 20971520,
+        "testdata_filecount": 100
+    },
+    "page": {
+        "problem": 50,
+        "problem_statistics": 10,
+        "judge_state": 10,
+        "ranklist_index": 20,
+        "ranklist": 50,
+        "discussion": 10,
+        "article_comment": 10,
+        "contest": 10,
+        "edit_contest_problem_list": 10,
+        "edit_problem_tag_list": 10
+    },
+    "enabled_languages": [
+        "cpp",
+        "cpp11",
+        "cpp17",
+        "cpp-noilinux",
+        "cpp11-noilinux",
+        "cpp11-clang",
+        "cpp17-clang",
+        "c",
+        "c-noilinux",
+        "csharp",
+        "java",
+        "pascal",
+        "python2",
+        "python3",
+        "nodejs",
+        "ruby",
+        "haskell"
+    ],
+    "filter_enabled_languages": [
+        "cpp",
+        "cpp11",
+        "cpp17",
+        "cpp-noilinux",
+        "cpp11-noilinux",
+        "cpp11-clang",
+        "cpp17-clang",
+        "c",
+        "c-noilinux",
+        "csharp",
+        "java",
+        "pascal",
+        "python2",
+        "python3",
+        "nodejs",
+        "ruby",
+        "haskell"
+    ],
+    "links": [
+        {
+            "title": "LibreOJ",
+            "url": "https://loj.ac/"
+        }
+    ],
+    "session_secret": "@SESSION_SECRET@",
+    "judge_token": "@JUDGE_TOKEN@",
+    "email_jwt_secret": "@EMAIL_JWT_SECRET@",
+    "google_analytics": "UA-XXXXXXXX-X",
+    "gravatar_url": "https://gravatar.loli.net/avatar",
+    "cdnjs_url": "built-in",
+    "self_cdn_url": "built-in",
+    "google_fonts": {
+        "type": "built-in",
+        "url": ""
+    },
+    "no_cdn": true,
+    "submissions_page_fast_pagination": false,
+    "username_regex": "^[a-zA-Z0-9\\-\\_]+$",
+    "site_for_download": "",
+    "renderer_cache_size": "30000",
+    "divine": true,
+    "hitokoto": false,
+    "blackboard": ""
 }

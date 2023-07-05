@@ -1,13 +1,13 @@
 app.get('/problem', async (req, res) => {
-  res.redirect('/problems');
+    res.redirect('/problems');
 });
 
 app.get('/contest', async (req, res) => {
-  res.redirect('/contests');
+    res.redirect('/contests');
 });
 
 app.get('/submission', async (req, res) => {
-  res.redirect('/submissions');
+    res.redirect('/submissions');
 });
 
 // app.get('/judge_state', async (req, res) => {
