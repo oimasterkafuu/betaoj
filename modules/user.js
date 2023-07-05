@@ -209,6 +209,7 @@ app.post('/user/:id/edit', async (req, res) => {
                 throw new ErrorMessage('无效的用户名。');
             user.username = req.body.username;
             user.email = req.body.email;
+            user.nickname = req.body.nickname;
         }
 
         if (res.locals.user && res.locals.user.is_admin) {
@@ -266,7 +267,6 @@ app.post('/user/:id/set_permission', async (req, res) => {
     try {
         let id = parseInt(req.params.id);
         let user = await User.findById(id);
-        // if (!user) throw new ErrorMessage('无此用户。');
         if (!user) return res.send({ success: false });
 
         // same as user_edit, but only need permission
