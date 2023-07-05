@@ -6,7 +6,10 @@
     <div class="column" style="max-width: 450px">
       <h4 class="ui image header">
         <div class="content" style="margin-bottom: 10px; ">
-          学生认证 - 教师端
+          学生认证 - 教师端<br>
+          <div class="sub header">
+            请在下方选择学生的权限，选择后会自动保存。
+          </div>
         </div>
       </h4>
         <table class="ui very basic center aligned table" style="table-layout: fixed; ">
@@ -47,7 +50,6 @@
                         <option value="50" <%= user.permission === 50 ? 'selected': '' %>>省选-</option>
                         <option value="60" <%= user.permission === 60 ? 'selected': '' %>>省选</option>
                         <option value="100" <%= user.permission === 100 ? 'selected': '' %>>神仙</option>
-                        <option value="99999" <%= user.permission === 99999 ? 'selected': '' %>>超级管理</option>
                       </select>
                       <script>
                         $('#permission<%= user.id %>').change(function() {

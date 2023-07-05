@@ -1,4 +1,5 @@
 let User = syzoj.model('user');
+const Email = require('../libs/email');
 
 app.post('/anickname', async (req, res) => {
     try {
@@ -12,6 +13,21 @@ app.post('/anickname', async (req, res) => {
         }
         currUser.nickname = nickname;
         await currUser.save();
+        // send email to admins
+        let admins = await User.find({
+            is_admin: true
+        });
+        let emails = [];
+        for (let admin of admins) {
+            emails.push(admin.email);
+        }
+
+        Email.send(
+            emails,
+            `${currUser.username} 实名认证通知`,
+            `用户 ${currUser.username} 在 ${syzoj.config.title} 实名认证 ${nickname}，请尽快审核。`
+        );
+
         res.send(JSON.stringify({ error_code: 1 }));
     } catch (e) {
         res.send(JSON.stringify({ error_code: 1004 }));
