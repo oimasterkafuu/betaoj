@@ -9,62 +9,63 @@
 </style>
 <% if (show_user.id == 1) { %>
 <style>
-    /* oimaster kawaii */
-    
-    @font-face {
-        font-family: kawaii;
-        src: url("/kawaii.otf") format("opentype");
-    }
-    
-    .ui.header,
-    .ui.button,
-    .ui.input input,
-    .ui.menu,
-    .ui.form input:not([type]),
-    .ui.form input[type=date],
-    .ui.form input[type=datetime-local],
-    .ui.form input[type=email],
-    .ui.form input[type=file],
-    .ui.form input[type=number],
-    .ui.form input[type=password],
-    .ui.form input[type=search],
-    .ui.form input[type=tel],
-    .ui.form input[type=text],
-    .ui.form input[type=time],
-    .ui.form input[type=url],
-    h1,
-    h2,
-    h3,
-    h4,
-    h5,
-    body {
-        font-family:
-            kawaii,
-            Lato,
-            -apple-system,
-            'PingFang SC',
-            /* Apple */
-            'Source Han Sans SC',
-            'Noto Sans CJK SC',
-            /* Google */
-            'Microsoft Yahei',
-            'Lantinghei SC',
-            'Hiragino Sans GB',
-            'Microsoft Sans Serif',
-            /* M$ */
-            'WenQuanYi Micro Hei',
-            /* *nix */
-            sans-serif;
-    }
-    
-    .font-content {
-        font-family: kawaii, 'Open Sans', 'Source Han Sans SC', 'Noto Sans CJK SC', 'PingFang SC', 'Hiragino Sans GB',
-            'Microsoft Yahei', sans-serif;
-    }
-    
-    .markdown-edit {
-        font-family: kawaii, 'Fira Mono', 'Noto Sans CJK SC', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft Yahei', monospace;
-    }
+/* oimaster kawaii */
+
+@font-face {
+    font-family: kawaii;
+    src: url("/kawaii.otf") format("opentype");
+}
+
+.ui.header,
+.ui.button,
+.ui.input input,
+.ui.menu,
+.ui.form input:not([type]),
+.ui.form input[type=date],
+.ui.form input[type=datetime-local],
+.ui.form input[type=email],
+.ui.form input[type=file],
+.ui.form input[type=number],
+.ui.form input[type=password],
+.ui.form input[type=search],
+.ui.form input[type=tel],
+.ui.form input[type=text],
+.ui.form input[type=time],
+.ui.form input[type=url],
+h1,
+h2,
+h3,
+h4,
+h5,
+body {
+    font-family:
+        kawaii,
+        Lato,
+        -apple-system,
+        'PingFang SC',
+        /* Apple */
+        'Source Han Sans SC',
+        'Noto Sans CJK SC',
+        /* Google */
+        'Microsoft Yahei',
+        'Lantinghei SC',
+        'Hiragino Sans GB',
+        'Microsoft Sans Serif',
+        /* M$ */
+        'WenQuanYi Micro Hei',
+        /* *nix */
+        sans-serif;
+}
+
+.font-content {
+    font-family: kawaii, 'Open Sans', 'Source Han Sans SC', 'Noto Sans CJK SC', 'PingFang SC', 'Hiragino Sans GB',
+        'Microsoft Yahei', sans-serif;
+}
+
+.markdown-edit {
+    font-family: kawaii, 'Fira Mono', 'Noto Sans CJK SC', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft Yahei', monospace;
+}
+
 </style>
 <% } %>
 <div class="padding">
@@ -169,7 +170,7 @@
                     <div class="column">
                         <h4 class="ui top attached block header">帖子</h4>
                         <div class="ui bottom attached <% if (!show_user.articles.length) { %>center aligned <% } %>segment">
-													  <% if (!show_user.articles.length) { %>该用户从未发表帖子<% } else { %>
+							<% if (!show_user.articles.length) { %>该用户从未发表帖子<% } else { %>
                             <table class="ui very basic table">
                                 <thead>
                                     <tr>
@@ -186,7 +187,7 @@
                                     <% } %>
                                 </tbody>
                             </table>
-													  <% } %>
+							<% } %>
                         </div>
                     </div>
                 </div>
