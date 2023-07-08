@@ -34,7 +34,6 @@
             syzoj.utils.makeUrl(['submissions'], {contest: contest.id}) :
             syzoj.utils.makeUrl(['contest', contest.id, 'submissions']); %>
           <a class="ui small positive button" href="<%= submissionsUrl %>">提交记录</a>
-           <a class="ui small button" href="<%= syzoj.utils.makeUrl(['contest', contest.id, 'print']) %>">打印题目</a>
         </div>
           <% if (isSupervisior) { %>
         <div class="ui buttons right floated">
