@@ -112,10 +112,10 @@
         <% } %>
       <h4 class="ui top attached block header"><i class="ui search icon"></i>搜索用户</h4>
       <div class="ui bottom attached segment">
-        <form action="<%= syzoj.utils.makeUrl(['users', 'search']) %>" method="get">
+        <form action="<%= syzoj.utils.makeUrl(['find_user']) %>" method="get">
           <div class="ui search" style="width: 100%; " id="searchUser">
             <div class="ui left icon input" style="width: 100%; ">
-              <input class="prompt" style="width: 100%; " type="text" placeholder="ID / 用户名<%= (user && user.is_admin) ? ' / 真实姓名' : '' %> …" name="keyword">
+              <input class="prompt" style="width: 100%; " type="text" placeholder="ID / 用户名<%= (user && user.is_admin) ? ' / 真实姓名' : '' %> …" name="nickname">
               <i class="search icon"></i>
             </div>
             <div class="results" style="width: 100%; "></div>
