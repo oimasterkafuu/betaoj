@@ -25,8 +25,8 @@
 
             <div style="margin-top: 15px; "></div>
           <% } %>
-          <label for="title">题目名称</label>
-          <input class="font-content" type="text" id="title" name="title" value="<%= problem.title %>" placeholder="「来源」名称">
+          <label for="title">题目名称（请主动使用直角引号标记比赛，比赛题目列表中，「来源」标签会被自动移除）</label>
+          <input class="font-content" type="text" id="title" name="title" value="<%= problem.title %>" placeholder="「来源」名称，双击获得一对免费的直角引号！">
         
           <label style="margin-top: 15px; " for="description">题目描述</label>
           <textarea class="markdown-edit" rows="15" id="description" name="description"><%= problem.description %></textarea>
@@ -171,6 +171,11 @@ $(function () {
     .on('mousemove', () => {
         $('#difficulty-show').val('*' + $('#difficulty').val());
     });
+  $('#title').dblclick(() => {
+    let content = $('#title').val();
+    if(content.startsWith('「')) return;
+    $('#title').val('「」' + content);
+  });
 </script>
 
 <script>
