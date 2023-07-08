@@ -114,7 +114,7 @@ function getIcon(filename) {
         <form id="form_upload" class="ui form" action="<%= syzoj.utils.makeUrl(['problem', problem.id, 'testdata', 'upload']) %>" method="post" enctype="multipart/form-data">
           <div class="inline fields">
             <div class="field" style="margin: 0 auto; ">
-              <label for="answer">上传数据文件（压缩包请在「管理」页面上传）</label>
+              <label for="answer">上传数据文件（压缩包请在「<a href="<%= syzoj.utils.makeUrl(['problem', problem.id, 'manage']) %>">管理</a>」页面上传）</label>
               <input type="file" name="file" multiple id="upload_file">
               <div class="ui center aligned vertical segment" style="padding-bottom: 0; ">
                 <div class="ui labeled icon blue button" onclick="check_replace()"><i class="ui edit icon"></i>提交</div>
