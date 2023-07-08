@@ -50,7 +50,7 @@
               <font color="red">提交后不可修改。</font>
             </div>
             <div class="field">
-                <label>排行参数（格式：<code>{ "题目 ID": 分值倍数 }</code>）</label>
+                <label>排行参数（格式：<code>{ "题目 ID（主题库中的）": 分值倍数 }</code>）</label>
                 <input type="text" name="ranking_params" value="<%= contest.ranklist ? JSON.stringify(contest.ranklist.ranking_params) : '' %>">
             </div>
             <div class="field">
