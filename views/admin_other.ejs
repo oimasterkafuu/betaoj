@@ -13,7 +13,7 @@
   <div class="ui bottom attached segment">
     <p><a class="ui labeled icon button" href-post="<%= syzoj.utils.makeUrl(['admin', 'restart'], { url: req.query['url'] || req.originalUrl }) %>"><i class="ui repeat icon"></i>重新启动 BetaOJ Web</a></p>
     <p><a href-post="/admin/sortprob" class="ui negative labeled icon button"><i class="ui repeat icon"></i>重新计算题号</a></p>
-    <p><a href-post="/admin/fixtags" class="ui blue labeled icon button"><i class="ui lightbulb icon"></i>重新计算标签</a></p>
+    <p><a href-post="/admin/exportdb" class="ui blue labeled icon button"><i class="ui database icon"></i>下载数据库</a></p>
   </div>
 </div>
 <%- include('admin_footer'); %>

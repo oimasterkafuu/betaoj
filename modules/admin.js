@@ -9,6 +9,9 @@ const RatingCalculation = syzoj.model('rating_calculation');
 const RatingHistory = syzoj.model('rating_history');
 let ContestPlayer = syzoj.model('contest_player');
 const calcRating = require('../libs/rating');
+const child_process = require('child_process');
+const path = require('path');
+const fs = require('fs-extra');
 
 app.get('/admin/info', async (req, res) => {
     try {
@@ -406,58 +409,6 @@ app.post('/admin/sortprob', async (req, res) => {
     }
 });
 
-app.post('/admin/fixtags', async (req, res) => {
-    try {
-        if (!res.locals.user || !res.locals.user.is_admin)
-            throw new ErrorMessage('您没有权限进行此操作。');
-        const problems = await Problem.find();
-        // let result = '';
-        for (let p of problems) {
-            let tags = await p.getTags();
-            let newTags = [];
-            let origin = ['', ''];
-            for (let tag of tags) {
-                // 删除难度 tags
-                if (tag.name.startsWith('*')) {
-                    let difficulty = tag.name.substr(1);
-                    difficulty = parseInt(difficulty);
-                    if (difficulty) {
-                        p.difficulty = difficulty;
-                        await p.save();
-                        continue;
-                    }
-                }
-                // 删除信息 tags
-                if (tag.color == 'orange') continue;
-                // 删除来源等 tags
-                if (tag.color == 'red') {
-                    origin[0] = tag.name;
-                    continue;
-                }
-                if (tag.color == 'blue') {
-                    origin[1] = tag.name;
-                    continue;
-                }
-                newTags.push(tag.id);
-            }
-            origin = origin.join(' ').trim();
-            if (origin != '') {
-                p.title = '「' + origin + '」' + p.title;
-                p.save();
-            }
-            await p.setTags(newTags);
-            // result += JSON.stringify(tags) + '\n';
-        }
-        // res.send(result);
-        res.redirect(syzoj.utils.makeUrl(['problems']));
-    } catch (e) {
-        syzoj.log(e);
-        res.render('error', {
-            err: e
-        });
-    }
-});
-
 app.post('/admin/rejudge', async (req, res) => {
     try {
         if (!res.locals.user || !res.locals.user.is_admin)
@@ -673,6 +624,42 @@ app.get('/admin/serviceID', async (req, res) => {
 
         res.send({
             serviceID: syzoj.serviceID
+        });
+    } catch (e) {
+        syzoj.log(e);
+        res.render('error', {
+            err: e
+        });
+    }
+});
+
+app.post('/admin/exportdb', async (req, res) => {
+    try {
+        if (!res.locals.user || !res.locals.user.is_admin) throw new ErrorMessage('您没有权限进行此操作。');
+        // use child_process to exec mysqldump
+        // export db syzoj
+        let filename = 'syzoj-' + syzoj.utils.getCurrentDate() + '.sql';
+        let cmd = 'mysqldump -u ' + syzoj.config.db.username + ' -p' + syzoj.config.db.password + ' ' + syzoj.config.db.database + ' > ' + filename;
+
+        let exec = child_process.exec;
+        exec(cmd, function (err, stdout, stderr) {
+            if (err) {
+                syzoj.log(err);
+                res.render('error', {
+                    err: err
+                });
+            } else {
+                res.download(filename, filename, function (err) {
+                    if (err) {
+                        syzoj.log(err);
+                        res.render('error', {
+                            err: err
+                        });
+                    } else {
+                        fs.unlinkSync(filename);
+                    }
+                });
+            }
         });
     } catch (e) {
         syzoj.log(e);
