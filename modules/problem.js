@@ -434,11 +434,11 @@ app.get('/problem/:id', async (req, res) => {
                 continue;
 
             ori += '### 样例输入 ' + (i + 1) + '\n';
-            ori += '```cpp\n';
+            ori += '```\n';
             ori += problem.example[i].input.trim().replaceAll('`', '\\`');
             ori += '\n```\n\n';
             ori += '### 样例输出 ' + (i + 1) + '\n';
-            ori += '```cpp\n';
+            ori += '```\n';
             ori += problem.example[i].output.trim().replaceAll('`', '\\`');
             ori += '\n```\n\n';
         }
