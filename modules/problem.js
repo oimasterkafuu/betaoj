@@ -25,7 +25,7 @@ app.get('/problems', async (req, res) => {
                 'submit_num',
                 'ac_rate',
                 'publicize_time',
-                'difficulty',
+                'difficulty'
             ].includes(sort) ||
             !['asc', 'desc'].includes(order)
         ) {
@@ -38,11 +38,9 @@ app.get('/problems', async (req, res) => {
             !(await res.locals.user.hasPrivilege('manage_problem'))
         ) {
             if (res.locals.user) {
-                query
-                    .where('is_public = 1')
-                    .orWhere('user_id = :user_id', {
-                        user_id: res.locals.user.id,
-                    });
+                query.where('is_public = 1').orWhere('user_id = :user_id', {
+                    user_id: res.locals.user.id
+                });
             } else {
                 query.where('is_public = 1');
             }
@@ -57,17 +55,17 @@ app.get('/problems', async (req, res) => {
         let paginate = syzoj.utils.paginate(
             await Problem.countForPagination(query),
             req.query.page,
-            syzoj.config.page.problem,
+            syzoj.config.page.problem
         );
         let problems = await Problem.queryPage(paginate, query);
 
         await problems.forEachAsync(async (problem) => {
             problem.allowedEdit = await problem.isAllowedEditBy(
-                res.locals.user,
+                res.locals.user
             );
             problem.judge_state = await problem.getJudgeState(
                 res.locals.user,
-                true,
+                true
             );
             problem.tags = await problem.getTags();
         });
@@ -79,12 +77,12 @@ app.get('/problems', async (req, res) => {
             problems: problems,
             paginate: paginate,
             curSort: sort,
-            curOrder: order === 'asc',
+            curOrder: order === 'asc'
         });
     } catch (e) {
         syzoj.log(e);
         res.render('error', {
-            err: e,
+            err: e
         });
     }
 });
@@ -102,7 +100,7 @@ app.get('/problems/search', async (req, res) => {
                 'ac_num',
                 'submit_num',
                 'ac_rate',
-                'difficulty',
+                'difficulty'
             ].includes(sort) ||
             !['asc', 'desc'].includes(order)
         ) {
@@ -120,39 +118,39 @@ app.get('/problems/search', async (req, res) => {
                         new TypeORM.Brackets((qb) => {
                             qb.where('is_public = 1').orWhere(
                                 'user_id = :user_id',
-                                { user_id: res.locals.user.id },
+                                { user_id: res.locals.user.id }
                             );
-                        }),
+                        })
                     )
                     .andWhere(
                         new TypeORM.Brackets((qb) => {
                             qb.where('title LIKE :title', {
-                                title: `%${req.query.keyword}%`,
+                                title: `%${req.query.keyword}%`
                             })
                                 .orWhere('description LIKE :description', {
-                                    description: `%${req.query.keyword}%`,
+                                    description: `%${req.query.keyword}%`
                                 })
                                 .orWhere('id = :id', { id: id });
-                        }),
+                        })
                     );
             } else {
                 query.where('is_public = 1').andWhere(
                     new TypeORM.Brackets((qb) => {
                         qb.where('title LIKE :title', {
-                            title: `%${req.query.keyword}%`,
+                            title: `%${req.query.keyword}%`
                         })
                             .orWhere('description LIKE :description', {
-                                description: `%${req.query.keyword}%`,
+                                description: `%${req.query.keyword}%`
                             })
                             .orWhere('id = :id', { id: id });
-                    }),
+                    })
                 );
             }
         } else {
             query
                 .where('title LIKE :title', { title: `%${req.query.keyword}%` })
                 .orWhere('description LIKE :description', {
-                    description: `%${req.query.keyword}%`,
+                    description: `%${req.query.keyword}%`
                 })
                 .orWhere('id = :id', { id: id });
         }
@@ -167,17 +165,17 @@ app.get('/problems/search', async (req, res) => {
         let paginate = syzoj.utils.paginate(
             await Problem.countForPagination(query),
             req.query.page,
-            syzoj.config.page.problem,
+            syzoj.config.page.problem
         );
         let problems = await Problem.queryPage(paginate, query);
 
         await problems.forEachAsync(async (problem) => {
             problem.allowedEdit = await problem.isAllowedEditBy(
-                res.locals.user,
+                res.locals.user
             );
             problem.judge_state = await problem.getJudgeState(
                 res.locals.user,
-                true,
+                true
             );
             problem.tags = await problem.getTags();
         });
@@ -189,12 +187,12 @@ app.get('/problems/search', async (req, res) => {
             problems: problems,
             paginate: paginate,
             curSort: sort,
-            curOrder: order === 'asc',
+            curOrder: order === 'asc'
         });
     } catch (e) {
         syzoj.log(e);
         res.render('error', {
-            err: e,
+            err: e
         });
     }
 });
@@ -202,10 +200,10 @@ app.get('/problems/search', async (req, res) => {
 app.get('/problems/tag/:tagIDs', async (req, res) => {
     try {
         let tagIDs = Array.from(
-            new Set(req.params.tagIDs.split(',').map((x) => parseInt(x))),
+            new Set(req.params.tagIDs.split(',').map((x) => parseInt(x)))
         );
         let tags = await tagIDs.mapAsync(async (tagID) =>
-            ProblemTag.findById(tagID),
+            ProblemTag.findById(tagID)
         );
         const sort = req.query.sort || syzoj.config.sorting.problem.field;
         const order = req.query.order || syzoj.config.sorting.problem.order;
@@ -217,7 +215,7 @@ app.get('/problems/tag/:tagIDs', async (req, res) => {
                 'ac_num',
                 'submit_num',
                 'ac_rate',
-                'difficulty',
+                'difficulty'
             ].includes(sort) ||
             !['asc', 'desc'].includes(order)
         ) {
@@ -266,10 +264,10 @@ app.get('/problems/tag/:tagIDs', async (req, res) => {
         let paginate = syzoj.utils.paginate(
             await Problem.countQuery(sql),
             req.query.page,
-            syzoj.config.page.problem,
+            syzoj.config.page.problem
         );
         let problems = await Problem.query(
-            sql + ` ORDER BY ${sortVal} ${order} ` + paginate.toSQL(),
+            sql + ` ORDER BY ${sortVal} ${order} ` + paginate.toSQL()
         );
 
         problems = await problems.mapAsync(async (problem) => {
@@ -277,11 +275,11 @@ app.get('/problems/tag/:tagIDs', async (req, res) => {
             problem = await Problem.findById(problem.id);
 
             problem.allowedEdit = await problem.isAllowedEditBy(
-                res.locals.user,
+                res.locals.user
             );
             problem.judge_state = await problem.getJudgeState(
                 res.locals.user,
-                true,
+                true
             );
             problem.tags = await problem.getTags();
 
@@ -296,12 +294,12 @@ app.get('/problems/tag/:tagIDs', async (req, res) => {
             tags: tags,
             paginate: paginate,
             curSort: sort,
-            curOrder: order === 'asc',
+            curOrder: order === 'asc'
         });
     } catch (e) {
         syzoj.log(e);
         res.render('error', {
-            err: e,
+            err: e
         });
     }
 });
@@ -319,7 +317,7 @@ app.get('/problems/difficulty/:diff', async (req, res) => {
                 'ac_num',
                 'submit_num',
                 'ac_rate',
-                'difficulty',
+                'difficulty'
             ].includes(sort) ||
             !['asc', 'desc'].includes(order)
         ) {
@@ -354,10 +352,10 @@ app.get('/problems/difficulty/:diff', async (req, res) => {
         let paginate = syzoj.utils.paginate(
             await Problem.countQuery(sql),
             req.query.page,
-            syzoj.config.page.problem,
+            syzoj.config.page.problem
         );
         let problems = await Problem.query(
-            sql + ` ORDER BY ${sortVal} ${order} ` + paginate.toSQL(),
+            sql + ` ORDER BY ${sortVal} ${order} ` + paginate.toSQL()
         );
 
         problems = await problems.mapAsync(async (problem) => {
@@ -365,11 +363,11 @@ app.get('/problems/difficulty/:diff', async (req, res) => {
             problem = await Problem.findById(problem.id);
 
             problem.allowedEdit = await problem.isAllowedEditBy(
-                res.locals.user,
+                res.locals.user
             );
             problem.judge_state = await problem.getJudgeState(
                 res.locals.user,
-                true,
+                true
             );
             problem.tags = await problem.getTags();
 
@@ -383,12 +381,12 @@ app.get('/problems/difficulty/:diff', async (req, res) => {
             problems: problems,
             paginate: paginate,
             curSort: sort,
-            curOrder: order === 'asc',
+            curOrder: order === 'asc'
         });
     } catch (e) {
         syzoj.log(e);
         res.render('error', {
-            err: e,
+            err: e
         });
     }
 });
@@ -405,7 +403,7 @@ app.get('/problem/:id', async (req, res) => {
 
         problem.allowedEdit = await problem.isAllowedEditBy(res.locals.user);
         problem.allowedManage = await problem.isAllowedManageBy(
-            res.locals.user,
+            res.locals.user
         );
 
         if (problem.is_public || problem.allowedEdit) {
@@ -413,7 +411,7 @@ app.get('/problem/:id', async (req, res) => {
                 'description',
                 'input_format',
                 'output_format',
-                'limit_and_hint',
+                'limit_and_hint'
             ]);
         } else {
             throw new ErrorMessage('您没有权限进行此操作。');
@@ -447,7 +445,7 @@ app.get('/problem/:id', async (req, res) => {
 
         let testcases = await syzoj.utils.parseTestdata(
             problem.getTestdataPath(),
-            problem.type === 'submit-answer',
+            problem.type === 'submit-answer'
         );
 
         let discussionCount = await Article.count({ problem_id: id });
@@ -459,12 +457,12 @@ app.get('/problem/:id', async (req, res) => {
                 ? await res.locals.user.getLastSubmitLanguage()
                 : null,
             testcases: testcases,
-            discussionCount: discussionCount,
+            discussionCount: discussionCount
         });
     } catch (e) {
         syzoj.log(e);
         res.render('error', {
-            err: e,
+            err: e
         });
     }
 });
@@ -513,13 +511,13 @@ app.get('/problem/:id/edit', async (req, res) => {
             if (!res.locals.user)
                 throw new ErrorMessage('请登录后继续。', {
                     登录: syzoj.utils.makeUrl(['login'], {
-                        url: req.originalUrl,
-                    }),
+                        url: req.originalUrl
+                    })
                 });
             problem = await Problem.create({
                 time_limit: syzoj.config.default.problem.time_limit,
                 memory_limit: syzoj.config.default.problem.memory_limit,
-                type: 'traditional',
+                type: 'traditional'
             });
             problem.id = id;
             problem.allowedEdit = true;
@@ -532,23 +530,23 @@ app.get('/problem/:id/edit', async (req, res) => {
             if (!(await problem.isAllowedUseBy(res.locals.user)))
                 throw new ErrorMessage('您没有权限进行此操作。');
             problem.allowedEdit = await problem.isAllowedEditBy(
-                res.locals.user,
+                res.locals.user
             );
             problem.tags = await problem.getTags();
             problem.example = JSON.parse(problem.example);
         }
 
         problem.allowedManage = await problem.isAllowedManageBy(
-            res.locals.user,
+            res.locals.user
         );
 
         res.render('problem_edit', {
-            problem: problem,
+            problem: problem
         });
     } catch (e) {
         syzoj.log(e);
         res.render('error', {
-            err: e,
+            err: e
         });
     }
 });
@@ -561,14 +559,14 @@ app.post('/problem/:id/edit', async (req, res) => {
             if (!res.locals.user)
                 throw new ErrorMessage('请登录后继续。', {
                     登录: syzoj.utils.makeUrl(['login'], {
-                        url: req.originalUrl,
-                    }),
+                        url: req.originalUrl
+                    })
                 });
 
             problem = await Problem.create({
                 time_limit: syzoj.config.default.problem.time_limit,
                 memory_limit: syzoj.config.default.problem.memory_limit,
-                type: 'traditional',
+                type: 'traditional'
             });
 
             if (await res.locals.user.hasPrivilege('manage_problem')) {
@@ -634,7 +632,7 @@ app.post('/problem/:id/edit', async (req, res) => {
             /^https:\/\/www\.luogu\.com\.cn\/problem\/[A-Z][0-9]{1,6}$/;
         if (isLuoguReg.test(problem.description.trim())) {
             let oriContent = await fetch(problem.description.trim(), {
-                headers: [['x-luogu-type', 'content-only']],
+                headers: [['x-luogu-type', 'content-only']]
             });
 
             if (oriContent.status == 200) {
@@ -666,26 +664,26 @@ app.post('/problem/:id/edit', async (req, res) => {
 
                     problem.description = problem.description.replaceAll(
                         '](/',
-                        '](https://www.luogu.com.cn/',
+                        '](https://www.luogu.com.cn/'
                     );
                     problem.input_format = problem.input_format.replaceAll(
                         '](/',
-                        '](https://www.luogu.com.cn/',
+                        '](https://www.luogu.com.cn/'
                     );
                     problem.output_format = problem.output_format.replaceAll(
                         '](/',
-                        '](https://www.luogu.com.cn/',
+                        '](https://www.luogu.com.cn/'
                     );
                     problem.limit_and_hint = problem.limit_and_hint.replaceAll(
                         '](/',
-                        '](https://www.luogu.com.cn/',
+                        '](https://www.luogu.com.cn/'
                     );
 
                     problem.example = [];
                     for (let i of jsonData.currentData.problem.samples) {
                         problem.example.push({
                             input: i[0],
-                            output: i[1],
+                            output: i[1]
                         });
                     }
 
@@ -714,7 +712,7 @@ app.post('/problem/:id/edit', async (req, res) => {
     } catch (e) {
         syzoj.log(e);
         res.render('error', {
-            err: e,
+            err: e
         });
     }
 });
@@ -855,17 +853,17 @@ app.get('/problem/:id/manage', async (req, res) => {
 
         let testcases = await syzoj.utils.parseTestdata(
             problem.getTestdataPath(),
-            problem.type === 'submit-answer',
+            problem.type === 'submit-answer'
         );
 
         res.render('problem_manage', {
             problem: problem,
-            testcases: testcases,
+            testcases: testcases
         });
     } catch (e) {
         syzoj.log(e);
         res.render('error', {
-            err: e,
+            err: e
         });
     }
 });
@@ -874,7 +872,7 @@ app.post(
     '/problem/:id/manage',
     app.multer.fields([
         { name: 'testdata', maxCount: 1 },
-        { name: 'additional_file', maxCount: 1 },
+        { name: 'additional_file', maxCount: 1 }
     ]),
     async (req, res) => {
         try {
@@ -903,7 +901,7 @@ app.post(
             ) {
                 if ((await JudgeState.count({ problem_id: id })) !== 0) {
                     throw new ErrorMessage(
-                        '已有提交的题目不允许在提交答案和非提交答案之间更改。',
+                        '已有提交的题目不允许在提交答案和非提交答案之间更改。'
                     );
                 }
             }
@@ -914,13 +912,13 @@ app.post(
                 throw new ErrorMessage(
                     '无效的题目数据配置。',
                     null,
-                    validateMsg,
+                    validateMsg
                 );
 
             if (req.files['testdata']) {
                 await problem.updateTestdata(
                     req.files['testdata'][0].path,
-                    await res.locals.user.hasPrivilege('manage_problem'),
+                    await res.locals.user.hasPrivilege('manage_problem')
                 );
             }
 
@@ -928,7 +926,7 @@ app.post(
                 await problem.updateFile(
                     req.files['additional_file'][0].path,
                     'additional_file',
-                    await res.locals.user.hasPrivilege('manage_problem'),
+                    await res.locals.user.hasPrivilege('manage_problem')
                 );
             }
 
@@ -938,10 +936,10 @@ app.post(
         } catch (e) {
             syzoj.log(e);
             res.render('error', {
-                err: e,
+                err: e
             });
         }
-    },
+    }
 );
 
 // Set problem public
@@ -963,7 +961,7 @@ async function setPublic(req, res, is_public) {
             'UPDATE `judge_state` SET `is_public` = ' +
                 is_public +
                 ' WHERE `problem_id` = ' +
-                id,
+                id
         );
 
         if (is_public == true && problem.id >= 1000) {
@@ -1000,7 +998,7 @@ async function setPublic(req, res, is_public) {
     } catch (e) {
         syzoj.log(e);
         res.render('error', {
-            err: e,
+            err: e
         });
     }
 }
@@ -1031,8 +1029,8 @@ app.post(
             if (!curUser)
                 throw new ErrorMessage('请登录后继续。', {
                     登录: syzoj.utils.makeUrl(['login'], {
-                        url: syzoj.utils.makeUrl(['problem', id]),
-                    }),
+                        url: syzoj.utils.makeUrl(['problem', id])
+                    })
                 });
 
             let judge_state;
@@ -1043,7 +1041,7 @@ app.post(
                     // Submited by editor
                     try {
                         path = await File.zipFiles(
-                            JSON.parse(req.body.answer_by_editor),
+                            JSON.parse(req.body.answer_by_editor)
                         );
                     } catch (e) {
                         throw new ErrorMessage('无法解析提交数据。');
@@ -1073,7 +1071,7 @@ app.post(
                     language: null,
                     user_id: curUser.id,
                     problem_id: id,
-                    is_public: problem.is_public,
+                    is_public: problem.is_public
                 });
             } else {
                 let code;
@@ -1104,7 +1102,7 @@ app.post(
                     language: req.body.language,
                     user_id: curUser.id,
                     problem_id: id,
-                    is_public: problem.is_public,
+                    is_public: problem.is_public
                 });
             }
 
@@ -1140,23 +1138,23 @@ app.post(
             ) {
                 let key = syzoj.utils.getFormattedCodeKey(
                     judge_state.code,
-                    req.body.language,
+                    req.body.language
                 );
                 let formattedCode = await FormattedCode.findOne({
                     where: {
-                        key: key,
-                    },
+                        key: key
+                    }
                 });
 
                 if (!formattedCode) {
                     let formatted = await CodeFormatter(
                         judge_state.code,
-                        syzoj.languages[req.body.language].format,
+                        syzoj.languages[req.body.language].format
                     );
                     if (formatted) {
                         formattedCode = await FormattedCode.create({
                             key: key,
-                            code: formatted,
+                            code: formatted
                         });
 
                         try {
@@ -1177,20 +1175,20 @@ app.post(
 
             if (contest && !(await contest.isSupervisior(curUser))) {
                 res.redirect(
-                    syzoj.utils.makeUrl(['contest', contest_id, 'submissions']),
+                    syzoj.utils.makeUrl(['contest', contest_id, 'submissions'])
                 );
             } else {
                 res.redirect(
-                    syzoj.utils.makeUrl(['submission', judge_state.id]),
+                    syzoj.utils.makeUrl(['submission', judge_state.id])
                 );
             }
         } catch (e) {
             syzoj.log(e);
             res.render('error', {
-                err: e,
+                err: e
             });
         }
-    },
+    }
 );
 
 app.post('/problem/:id/delete', async (req, res) => {
@@ -1208,7 +1206,7 @@ app.post('/problem/:id/delete', async (req, res) => {
     } catch (e) {
         syzoj.log(e);
         res.render('error', {
-            err: e,
+            err: e
         });
     }
 });
@@ -1225,7 +1223,7 @@ app.get('/problem/:id/testdata', async (req, res) => {
         let testdata = await problem.listTestdata();
         let testcases = await syzoj.utils.parseTestdata(
             problem.getTestdataPath(),
-            problem.type === 'submit-answer',
+            problem.type === 'submit-answer'
         );
 
         problem.allowedEdit = await problem.isAllowedEditBy(res.locals.user);
@@ -1233,13 +1231,13 @@ app.get('/problem/:id/testdata', async (req, res) => {
         res.render('problem_data', {
             problem: problem,
             testdata: testdata,
-            testcases: testcases,
+            testcases: testcases
         });
     } catch (e) {
         syzoj.log(e);
         res.status(404);
         res.render('error', {
-            err: e,
+            err: e
         });
     }
 });
@@ -1262,7 +1260,7 @@ app.post(
                         file.originalname,
                         file.path,
                         file.size,
-                        await res.locals.user.hasPrivilege('manage_problem'),
+                        await res.locals.user.hasPrivilege('manage_problem')
                     );
                 }
             }
@@ -1271,10 +1269,10 @@ app.post(
         } catch (e) {
             syzoj.log(e);
             res.render('error', {
-                err: e,
+                err: e
             });
         }
-    },
+    }
 );
 
 app.post('/problem/:id/testdata/delete/:filename', async (req, res) => {
@@ -1297,7 +1295,7 @@ app.post('/problem/:id/testdata/delete/:filename', async (req, res) => {
     } catch (e) {
         syzoj.log(e);
         res.render('error', {
-            err: e,
+            err: e
         });
     }
 });
@@ -1314,14 +1312,14 @@ function downloadOrRedirect(req, res, filename, sendName) {
                         {
                             filename: filename,
                             sendName: sendName,
-                            originUrl: syzoj.utils.getCurrentLocation(req),
+                            originUrl: syzoj.utils.getCurrentLocation(req)
                         },
                         syzoj.config.session_secret,
                         {
-                            expiresIn: '2m',
-                        },
-                    ),
-                ]),
+                            expiresIn: '2m'
+                        }
+                    )
+                ])
         );
     } else {
         res.download(filename, sendName);
@@ -1360,7 +1358,7 @@ app.get('/problem/:id/testdata/download/:filename?', async (req, res) => {
         syzoj.log(e);
         res.status(404);
         res.render('error', {
-            err: e,
+            err: e
         });
     }
 });
@@ -1394,13 +1392,13 @@ app.get('/problem/:id/download/additional_file', async (req, res) => {
             req,
             res,
             problem.additional_file.getPath(),
-            `additional_file_${id}.zip`,
+            `additional_file_${id}.zip`
         );
     } catch (e) {
         syzoj.log(e);
         res.status(404);
         res.render('error', {
-            err: e,
+            err: e
         });
     }
 });
@@ -1420,23 +1418,23 @@ app.get('/problem/:id/statistics/:type', async (req, res) => {
         let paginate = syzoj.utils.paginate(
             count,
             req.query.page,
-            syzoj.config.page.problem_statistics,
+            syzoj.config.page.problem_statistics
         );
         let statistics = await problem.getStatistics(req.params.type, paginate);
 
         await statistics.judge_state.forEachAsync(async (x) =>
-            x.loadRelationships(),
+            x.loadRelationships()
         );
 
         res.render('statistics', {
             statistics: statistics,
             paginate: paginate,
-            problem: problem,
+            problem: problem
         });
     } catch (e) {
         syzoj.log(e);
         res.render('error', {
-            err: e,
+            err: e
         });
     }
 });

@@ -8,7 +8,7 @@ export enum StatisticsType {
     LONGEST = 'longest',
     MEMORY_MIN = 'min',
     MEMORY_MAX = 'max',
-    EARLIEST = 'earliest',
+    EARLIEST = 'earliest'
 }
 
 @TypeORM.Entity()

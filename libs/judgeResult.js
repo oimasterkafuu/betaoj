@@ -58,8 +58,8 @@ function convertResult(taskId, source) {
                 reduce(
                     s.cases
                         .filter((c) => c.result != null)
-                        .map((c) => map(c.result)),
-                ),
+                        .map((c) => map(c.result))
+                )
             );
             if (list.every((x) => x == null)) return null;
             else return reduce(list);
@@ -68,7 +68,7 @@ function convertResult(taskId, source) {
         memory = forEveryTestcase((c) => (c.memory ? c.memory : 0), _.max);
         if (
             source.judge.subtasks.some((s) =>
-                s.cases.some((c) => c.status === interfaces.TaskStatus.Failed),
+                s.cases.some((c) => c.status === interfaces.TaskStatus.Failed)
             )
         ) {
             winston.debug(`Some subtasks failed, returning system error`);
@@ -90,7 +90,7 @@ function convertResult(taskId, source) {
             ? interfaces.TaskStatus.Done
             : interfaces.TaskStatus.Failed,
         statusString: statusString,
-        result: source,
+        result: source
     };
     winston.debug(`Result for ${taskId}`, result);
     return result;

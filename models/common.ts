@@ -12,12 +12,12 @@ interface Paginater {
 
 enum PaginationType {
     PREV = -1,
-    NEXT = 1,
+    NEXT = 1
 }
 
 enum PaginationIDOrder {
     ASC = 1,
-    DESC = -1,
+    DESC = -1
 }
 
 const caches: Map<string, LRUCache<number, Model>> = new Map();
@@ -27,8 +27,8 @@ function ensureCache(modelName) {
         caches.set(
             modelName,
             new LRUCache({
-                max: syzoj.config.db.cache_size,
-            }),
+                max: syzoj.config.db.cache_size
+            })
         );
     }
 
@@ -52,7 +52,7 @@ export default class Model extends TypeORM.BaseEntity {
 
     static async findById<T extends TypeORM.BaseEntity>(
         this: TypeORM.ObjectType<T>,
-        id?: number,
+        id?: number
     ): Promise<T | undefined> {
         const doQuery = async () =>
             await (this as any).findOne(parseInt(id as any) || 0);
@@ -109,7 +109,7 @@ export default class Model extends TypeORM.BaseEntity {
 
     static async countQuery<T extends TypeORM.BaseEntity>(
         this: TypeORM.ObjectType<T>,
-        query: TypeORM.SelectQueryBuilder<T> | string,
+        query: TypeORM.SelectQueryBuilder<T> | string
     ) {
         let parameters: any[] = null;
         if (typeof query !== 'string') {
@@ -120,9 +120,9 @@ export default class Model extends TypeORM.BaseEntity {
             (
                 await TypeORM.getManager().query(
                     `SELECT COUNT(*) FROM (${query}) AS \`__tmp_table\``,
-                    parameters,
+                    parameters
                 )
-            )[0]['COUNT(*)'],
+            )[0]['COUNT(*)']
         );
     }
 
@@ -142,7 +142,7 @@ export default class Model extends TypeORM.BaseEntity {
         paginater: Paginater,
         where,
         order,
-        largeData = false,
+        largeData = false
     ) {
         if (!paginater.pageCnt) return [];
 
@@ -160,7 +160,7 @@ export default class Model extends TypeORM.BaseEntity {
         if (largeData) {
             const rawResult = await queryBuilder.select('id').getRawMany();
             return await Promise.all(
-                rawResult.map(async (result) => this.findById(result.id)),
+                rawResult.map(async (result) => this.findById(result.id))
             );
         }
 
@@ -172,7 +172,7 @@ export default class Model extends TypeORM.BaseEntity {
         queryBuilder: TypeORM.SelectQueryBuilder<T>,
         { currPageTop, currPageBottom, perPage },
         idOrder: PaginationIDOrder,
-        pageType: PaginationType,
+        pageType: PaginationType
     ) {
         const queryBuilderBak = queryBuilder.clone();
 
@@ -181,9 +181,9 @@ export default class Model extends TypeORM.BaseEntity {
                 hasPrevPage: false,
                 hasNextPage: false,
                 top: 0,
-                bottom: 0,
+                bottom: 0
             },
-            data: [],
+            data: []
         };
 
         queryBuilder.take(perPage);
@@ -193,11 +193,11 @@ export default class Model extends TypeORM.BaseEntity {
                     `id ${
                         idOrder === PaginationIDOrder.DESC ? '>' : '<'
                     } :currPageTop`,
-                    { currPageTop },
+                    { currPageTop }
                 );
                 queryBuilder.orderBy(
                     'id',
-                    idOrder === PaginationIDOrder.DESC ? 'ASC' : 'DESC',
+                    idOrder === PaginationIDOrder.DESC ? 'ASC' : 'DESC'
                 );
             }
         } else if (pageType === PaginationType.NEXT) {
@@ -206,17 +206,17 @@ export default class Model extends TypeORM.BaseEntity {
                     `id ${
                         idOrder === PaginationIDOrder.DESC ? '<' : '>'
                     } :currPageBottom`,
-                    { currPageBottom },
+                    { currPageBottom }
                 );
                 queryBuilder.orderBy(
                     'id',
-                    idOrder === PaginationIDOrder.DESC ? 'DESC' : 'ASC',
+                    idOrder === PaginationIDOrder.DESC ? 'DESC' : 'ASC'
                 );
             }
         } else
             queryBuilder.orderBy(
                 'id',
-                idOrder === PaginationIDOrder.DESC ? 'DESC' : 'ASC',
+                idOrder === PaginationIDOrder.DESC ? 'DESC' : 'ASC'
             );
 
         result.data = await queryBuilder.getMany();
@@ -240,8 +240,8 @@ export default class Model extends TypeORM.BaseEntity {
                                 idOrder === PaginationIDOrder.DESC ? '>' : '<'
                             } :id`,
                             {
-                                id: result.meta.top,
-                            },
+                                id: result.meta.top
+                            }
                         )
                         .take(1)
                         .getOne())),
@@ -252,12 +252,12 @@ export default class Model extends TypeORM.BaseEntity {
                                 idOrder === PaginationIDOrder.DESC ? '<' : '>'
                             } :id`,
                             {
-                                id: result.meta.bottom,
-                            },
+                                id: result.meta.bottom
+                            }
                         )
                         .take(1)
-                        .getOne())),
-            ].map((f) => f()),
+                        .getOne()))
+            ].map((f) => f())
         );
 
         return result;

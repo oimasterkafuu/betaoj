@@ -8,7 +8,7 @@ const jwt = require('jsonwebtoken');
 const {
     getSubmissionInfo,
     getRoughResult,
-    processOverallResult,
+    processOverallResult
 } = require('../libs/submissions_process');
 
 const displayConfig = {
@@ -20,7 +20,7 @@ const displayConfig = {
     showTestdata: true,
     showDetailResult: true,
     inContest: false,
-    showRejudge: false,
+    showRejudge: false
 };
 
 // s is JudgeState
@@ -54,7 +54,7 @@ app.get('/submissions', async (req, res) => {
             ) {
                 query.andWhere('type = 1');
                 query.andWhere('type_info = :type_info', {
-                    type_info: contestId,
+                    type_info: contestId
                 });
                 inContest = true;
             } else {
@@ -76,9 +76,9 @@ app.get('/submissions', async (req, res) => {
                 query.andWhere(
                     new TypeORM.Brackets((qb) => {
                         qb.orWhere('language = :language', {
-                            language: '',
+                            language: ''
                         }).orWhere('language IS NULL');
-                    }),
+                    })
                 );
                 isFiltered = true;
             } else if (req.query.language === 'non-submit-answer') {
@@ -88,7 +88,7 @@ app.get('/submissions', async (req, res) => {
                 isFiltered = true;
             } else {
                 query.andWhere('language = :language', {
-                    language: req.query.language,
+                    language: req.query.language
                 });
             }
         }
@@ -108,7 +108,7 @@ app.get('/submissions', async (req, res) => {
                 if (!problem) throw new ErrorMessage('无此题目。');
                 if (await problem.isAllowedUseBy(res.locals.user)) {
                     query.andWhere('problem_id = :problem_id', {
-                        problem_id: parseInt(req.query.problem_id) || 0,
+                        problem_id: parseInt(req.query.problem_id) || 0
                     });
                     isFiltered = true;
                 } else {
@@ -119,7 +119,7 @@ app.get('/submissions', async (req, res) => {
             }
         } else if (req.query.problem_id) {
             query.andWhere('problem_id = :problem_id', {
-                problem_id: parseInt(req.query.problem_id) || 0,
+                problem_id: parseInt(req.query.problem_id) || 0
             });
             isFiltered = true;
         }
@@ -132,10 +132,10 @@ app.get('/submissions', async (req, res) => {
                 syzoj.utils.paginateFast(
                     req.query.currPageTop,
                     req.query.currPageBottom,
-                    syzoj.config.page.judge_state,
+                    syzoj.config.page.judge_state
                 ),
                 -1,
-                parseInt(req.query.page),
+                parseInt(req.query.page)
             );
 
             judge_state = queryResult.data;
@@ -144,13 +144,13 @@ app.get('/submissions', async (req, res) => {
             paginate = syzoj.utils.paginate(
                 await JudgeState.countQuery(query),
                 req.query.page,
-                syzoj.config.page.judge_state,
+                syzoj.config.page.judge_state
             );
             judge_state = await JudgeState.queryPage(
                 paginate,
                 query,
                 { id: 'DESC' },
-                true,
+                true
             );
         }
 
@@ -167,25 +167,25 @@ app.get('/submissions', async (req, res) => {
                               {
                                   taskId: x.task_id,
                                   type: 'rough',
-                                  displayConfig: displayConfig,
+                                  displayConfig: displayConfig
                               },
-                              syzoj.config.session_secret,
+                              syzoj.config.session_secret
                           )
                         : null,
                 result: getRoughResult(x, displayConfig, true),
-                running: false,
+                running: false
             })),
             paginate: paginate,
             pushType: 'rough',
             form: req.query,
             displayConfig: displayConfig,
             isFiltered: isFiltered,
-            fast_pagination: syzoj.config.submissions_page_fast_pagination,
+            fast_pagination: syzoj.config.submissions_page_fast_pagination
         });
     } catch (e) {
         syzoj.log(e);
         res.render('error', {
-            err: e,
+            err: e
         });
     }
 });
@@ -223,30 +223,30 @@ app.get('/submission/:id', async (req, res) => {
         if (judge.problem.type !== 'submit-answer') {
             let key = syzoj.utils.getFormattedCodeKey(
                 judge.code,
-                judge.language,
+                judge.language
             );
             if (key) {
                 let formattedCode = await FormattedCode.findOne({
                     where: {
-                        key: key,
-                    },
+                        key: key
+                    }
                 });
 
                 if (formattedCode) {
                     judge.formattedCode = await syzoj.utils.highlight(
                         formattedCode.code,
-                        syzoj.languages[judge.language].highlight,
+                        syzoj.languages[judge.language].highlight
                     );
                 }
             }
             judge.code = await syzoj.utils.highlight(
                 judge.code,
-                syzoj.languages[judge.language].highlight,
+                syzoj.languages[judge.language].highlight
             );
         }
 
         displayConfig.showRejudge = await judge.problem.isAllowedEditBy(
-            res.locals.user,
+            res.locals.user
         );
         res.render('submission', {
             info: getSubmissionInfo(judge, displayConfig),
@@ -268,17 +268,17 @@ app.get('/submission/:id', async (req, res) => {
                           {
                               taskId: judge.task_id,
                               type: 'detail',
-                              displayConfig: displayConfig,
+                              displayConfig: displayConfig
                           },
-                          syzoj.config.session_secret,
+                          syzoj.config.session_secret
                       )
                     : null,
-            displayConfig: displayConfig,
+            displayConfig: displayConfig
         });
     } catch (e) {
         syzoj.log(e);
         res.render('error', {
-            err: e,
+            err: e
         });
     }
 });
@@ -300,7 +300,7 @@ app.post('/submission/:id/rejudge', async (req, res) => {
         await judge.loadRelationships();
 
         let allowedRejudge = await judge.problem.isAllowedEditBy(
-            res.locals.user,
+            res.locals.user
         );
         if (!allowedRejudge) throw new ErrorMessage('您没有权限进行此操作。');
 
@@ -310,7 +310,7 @@ app.post('/submission/:id/rejudge', async (req, res) => {
     } catch (e) {
         syzoj.log(e);
         res.render('error', {
-            err: e,
+            err: e
         });
     }
 });
@@ -339,7 +339,7 @@ app.post('/submission/:id/skip', async (req, res) => {
     } catch (e) {
         syzoj.log(e);
         res.render('error', {
-            err: e,
+            err: e
         });
     }
 });

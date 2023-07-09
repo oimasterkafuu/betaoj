@@ -17,12 +17,12 @@ app.get('/problems/tag/:id/edit', async (req, res) => {
         }
 
         res.render('problem_tag_edit', {
-            tag: tag,
+            tag: tag
         });
     } catch (e) {
         syzoj.log(e);
         res.render('error', {
-            err: e,
+            err: e
         });
     }
 });
@@ -47,7 +47,7 @@ app.post('/problems/tag/:id/edit', async (req, res) => {
         if (tag.name !== req.body.name) {
             if (
                 await ProblemTag.findOne({
-                    where: { name: String(req.body.name) },
+                    where: { name: String(req.body.name) }
                 })
             ) {
                 throw new ErrorMessage('标签名称已被使用。');
@@ -63,7 +63,7 @@ app.post('/problems/tag/:id/edit', async (req, res) => {
     } catch (e) {
         syzoj.log(e);
         res.render('error', {
-            err: e,
+            err: e
         });
     }
 });

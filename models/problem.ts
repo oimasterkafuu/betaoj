@@ -19,13 +19,13 @@ import * as LRUCache from 'lru-cache';
 import * as DeepCopy from 'deepcopy';
 
 const problemTagCache = new LRUCache<number, number[]>({
-    max: syzoj.config.db.cache_size,
+    max: syzoj.config.db.cache_size
 });
 
 enum ProblemType {
     Traditional = 'traditional',
     SubmitAnswer = 'submit-answer',
-    Interaction = 'interaction',
+    Interaction = 'interaction'
 }
 
 const statisticsTypes = {
@@ -35,7 +35,7 @@ const statisticsTypes = {
     longest: ['code_length', 'DESC'],
     min: ['max_memory', 'ASC'],
     max: ['max_memory', 'DESC'],
-    earliest: ['submit_time', 'ASC'],
+    earliest: ['submit_time', 'ASC']
 };
 
 const statisticsCodeOnly = ['fastest', 'slowest', 'min', 'max'];
@@ -117,7 +117,7 @@ export default class Problem extends Model {
         nullable: true,
         type: 'enum',
         enum: ProblemType,
-        default: ProblemType.Traditional,
+        default: ProblemType.Traditional
     })
     type: ProblemType;
 
@@ -155,7 +155,7 @@ export default class Problem extends Model {
         return syzoj.utils.resolvePath(
             syzoj.config.upload_dir,
             'testdata',
-            this.id.toString(),
+            this.id.toString()
         );
     }
 
@@ -163,7 +163,7 @@ export default class Problem extends Model {
         return syzoj.utils.resolvePath(
             syzoj.config.upload_dir,
             'testdata-archive',
-            this.id.toString() + '.zip',
+            this.id.toString() + '.zip'
         );
     }
 
@@ -186,17 +186,17 @@ export default class Problem extends Model {
             await fs.ensureDir(dir);
 
             let execFileAsync = util.promisify(
-                require('child_process').execFile,
+                require('child_process').execFile
             );
             await execFileAsync(__dirname + '/../bin/unzip', [
                 '-j',
                 '-o',
                 '-d',
                 dir,
-                path,
+                path
             ]);
             await fs.move(path, this.getTestdataArchivePath(), {
-                overwrite: true,
+                overwrite: true
             });
         });
     }
@@ -228,11 +228,11 @@ export default class Problem extends Model {
                 throw new ErrorMessage('数据包中的文件太多。');
 
             await fs.move(filepath, path.join(dir, filename), {
-                overwrite: true,
+                overwrite: true
             });
 
             let execFileAsync = util.promisify(
-                require('child_process').execFile,
+                require('child_process').execFile
             );
             try {
                 await execFileAsync('dos2unix', [path.join(dir, filename)]);
@@ -259,11 +259,11 @@ export default class Problem extends Model {
 
             let list = await this.listTestdata(),
                 pathlist = list.files.map((file) =>
-                    path.join(dir, file.filename),
+                    path.join(dir, file.filename)
                 );
             if (!pathlist.length) throw new ErrorMessage('无测试数据。');
             await fs.ensureDir(
-                path.resolve(this.getTestdataArchivePath(), '..'),
+                path.resolve(this.getTestdataArchivePath(), '..')
             );
             await p7zip.add(this.getTestdataArchivePath(), pathlist);
         });
@@ -292,29 +292,29 @@ export default class Problem extends Model {
                     if (!stat.isFile()) return undefined;
                     return {
                         filename: x,
-                        size: stat.size,
+                        size: stat.size
                     };
-                }),
+                })
             );
 
             list = list.filter((x) => x);
 
             let res = {
                 files: list,
-                zip: null,
+                zip: null
             };
 
             try {
                 let stat = await fs.stat(this.getTestdataArchivePath());
                 if (stat.isFile()) {
                     res.zip = {
-                        size: stat.size,
+                        size: stat.size
                     };
                 }
             } catch (e) {
                 if (list) {
                     res.zip = {
-                        size: null,
+                        size: null
                     };
                 }
             }
@@ -374,7 +374,7 @@ export default class Problem extends Model {
 
         let where: any = {
             user_id: user.id,
-            problem_id: this.id,
+            problem_id: this.id
         };
 
         if (acFirst) {
@@ -383,8 +383,8 @@ export default class Problem extends Model {
             let state = await JudgeState.findOne({
                 where: where,
                 order: {
-                    submit_time: 'DESC',
-                },
+                    submit_time: 'DESC'
+                }
             });
 
             if (state) return state;
@@ -395,8 +395,8 @@ export default class Problem extends Model {
         return await JudgeState.findOne({
             where: where,
             order: {
-                submit_time: 'DESC',
-            },
+                submit_time: 'DESC'
+            }
         });
     }
 
@@ -406,15 +406,15 @@ export default class Problem extends Model {
             async () => {
                 this.submit_num = await JudgeState.count({
                     problem_id: this.id,
-                    type: TypeORM.Not(1),
+                    type: TypeORM.Not(1)
                 });
                 this.ac_num = await JudgeState.count({
                     score: 100,
                     problem_id: this.id,
-                    type: TypeORM.Not(1),
+                    type: TypeORM.Not(1)
                 });
                 await this.save();
-            },
+            }
         );
     }
 
@@ -435,10 +435,10 @@ export default class Problem extends Model {
                             .select([column, 'id'])
                             .where('user_id = :user_id', { user_id })
                             .andWhere('status = :status', {
-                                status: 'Accepted',
+                                status: 'Accepted'
                             })
                             .andWhere('problem_id = :problem_id', {
-                                problem_id: this.id,
+                                problem_id: this.id
                             })
                             .orderBy({ [column]: order })
                             .take(1)
@@ -453,11 +453,11 @@ export default class Problem extends Model {
                         const baseColumns = {
                             user_id,
                             problem_id: this.id,
-                            type: type as StatisticsType,
+                            type: type as StatisticsType
                         };
 
                         let record = await SubmissionStatistics.findOne(
-                            baseColumns,
+                            baseColumns
                         );
 
                         if (toDelete) {
@@ -476,9 +476,9 @@ export default class Problem extends Model {
                         record.submission_id = resultRow['id'];
 
                         await record.save();
-                    },
+                    }
                 );
-            }),
+            })
         );
     }
 
@@ -493,7 +493,7 @@ export default class Problem extends Model {
 
         return await SubmissionStatistics.count({
             problem_id: this.id,
-            type: type,
+            type: type
         });
     }
 
@@ -511,7 +511,7 @@ export default class Problem extends Model {
             judge_state: null,
             scoreDistribution: null,
             prefixSum: null,
-            suffixSum: null,
+            suffixSum: null
         };
 
         const order = statisticsTypes[type][1];
@@ -520,11 +520,11 @@ export default class Problem extends Model {
                 paginate,
                 {
                     problem_id: this.id,
-                    type: type,
+                    type: type
                 },
                 {
-                    '`key`': order,
-                },
+                    '`key`': order
+                }
             )
         ).map((x) => x.submission_id);
 
@@ -562,7 +562,7 @@ export default class Problem extends Model {
             if (scoreCount[i] !== undefined)
                 statistics.scoreDistribution.push({
                     score: i,
-                    count: parseInt(scoreCount[i]),
+                    count: parseInt(scoreCount[i])
                 });
         }
 
@@ -587,8 +587,8 @@ export default class Problem extends Model {
         } else {
             let maps = await ProblemTagMap.find({
                 where: {
-                    problem_id: this.id,
-                },
+                    problem_id: this.id
+                }
             });
 
             tagIDs = maps.map((x) => x.tag_id);
@@ -616,8 +616,8 @@ export default class Problem extends Model {
             let map = await ProblemTagMap.findOne({
                 where: {
                     problem_id: this.id,
-                    tag_id: tagID,
-                },
+                    tag_id: tagID
+                }
             });
 
             await map.destroy();
@@ -626,7 +626,7 @@ export default class Problem extends Model {
         for (let tagID of addTagIDs) {
             let map = await ProblemTagMap.create({
                 problem_id: this.id,
-                tag_id: tagID,
+                tag_id: tagID
             });
 
             await map.save();
@@ -644,31 +644,31 @@ export default class Problem extends Model {
             'UPDATE `problem`               SET `id`         = ' +
                 id +
                 ' WHERE `id`         = ' +
-                this.id,
+                this.id
         );
         await entityManager.query(
             'UPDATE `judge_state`           SET `problem_id` = ' +
                 id +
                 ' WHERE `problem_id` = ' +
-                this.id,
+                this.id
         );
         await entityManager.query(
             'UPDATE `problem_tag_map`       SET `problem_id` = ' +
                 id +
                 ' WHERE `problem_id` = ' +
-                this.id,
+                this.id
         );
         await entityManager.query(
             'UPDATE `article`               SET `problem_id` = ' +
                 id +
                 ' WHERE `problem_id` = ' +
-                this.id,
+                this.id
         );
         await entityManager.query(
             'UPDATE `submission_statistics` SET `problem_id` = ' +
                 id +
                 ' WHERE `problem_id` = ' +
-                this.id,
+                this.id
         );
 
         let contests = await Contest.find();
@@ -744,8 +744,8 @@ export default class Problem extends Model {
 
         let submissions = await JudgeState.find({
                 where: {
-                    problem_id: this.id,
-                },
+                    problem_id: this.id
+                }
             }),
             submitCnt = {},
             acUsers = new Set();
@@ -769,19 +769,19 @@ export default class Problem extends Model {
 
         await entityManager.query(
             'DELETE FROM `judge_state`           WHERE `problem_id` = ' +
-                this.id,
+                this.id
         );
         await entityManager.query(
             'DELETE FROM `problem_tag_map`       WHERE `problem_id` = ' +
-                this.id,
+                this.id
         );
         await entityManager.query(
             'DELETE FROM `article`               WHERE `problem_id` = ' +
-                this.id,
+                this.id
         );
         await entityManager.query(
             'DELETE FROM `submission_statistics` WHERE `problem_id` = ' +
-                this.id,
+                this.id
         );
 
         await this.destroy();

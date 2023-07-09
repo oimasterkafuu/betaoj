@@ -12,13 +12,13 @@ if (syzoj.config.email.method === 'sendmail') {
             to: to,
             type: 'text/html',
             subject: subject,
-            html: body,
+            html: body
         });
     };
 } else if (syzoj.config.email.method === 'aliyundm') {
     const dm = DM({
         AccessKeyId: syzoj.config.email.options.AccessKeyId,
-        AccessKeySecret: syzoj.config.email.options.AccessKeySecret,
+        AccessKeySecret: syzoj.config.email.options.AccessKeySecret
     });
     doSendEmail = async function send_aliyundm(to, subject, body) {
         const result = await dm.singleSendMail({
@@ -28,7 +28,7 @@ if (syzoj.config.email.method === 'sendmail') {
             ToAddress: to,
             FromAlias: syzoj.config.title,
             Subject: subject,
-            HtmlBody: body,
+            HtmlBody: body
         });
         if (result.Code != null) {
             throw new Error('阿里云 API 错误：' + JSON.stringify(result));
@@ -45,15 +45,14 @@ if (syzoj.config.email.method === 'sendmail') {
                 : false,
         auth: {
             user: syzoj.config.email.options.username,
-            pass: syzoj.config.email.options.password,
+            pass: syzoj.config.email.options.password
         },
         tls: {
-            rejectUnauthorized:
-                !syzoj.config.email.options.allowUnauthorizedTls,
-        },
+            rejectUnauthorized: !syzoj.config.email.options.allowUnauthorizedTls
+        }
     };
     const transporter = Bluebird.promisifyAll(
-        nodemailer.createTransport(smtpConfig),
+        nodemailer.createTransport(smtpConfig)
     );
 
     doSendEmail = async function send_smtp(to, subject, body) {
@@ -64,7 +63,7 @@ if (syzoj.config.email.method === 'sendmail') {
             }>`,
             to: to,
             subject: subject,
-            html: body,
+            html: body
         });
     };
 } else {

@@ -13,7 +13,7 @@ function formatter(args) {
 
 function configureWinston(verbose) {
     winston.configure({
-        transports: [new winston.transports.Console({ formatter: formatter })],
+        transports: [new winston.transports.Console({ formatter: formatter })]
     });
     if (verbose) {
         winston.level = 'debug';

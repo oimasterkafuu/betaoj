@@ -14,12 +14,12 @@ app.get('/api/v2/search/users/:keyword*?', async (req, res) => {
         }
         if (keyword != null && String(keyword).length >= 1) {
             conditions.push({
-                username: TypeORM.Like(`%${req.params.keyword}%`),
+                username: TypeORM.Like(`%${req.params.keyword}%`)
             });
             // only admin can search for nickname
             if (res.locals.user && res.locals.user.is_admin)
                 conditions.push({
-                    nickname: TypeORM.Like(`%${req.params.keyword}%`),
+                    nickname: TypeORM.Like(`%${req.params.keyword}%`)
                 });
         }
         if (conditions.length === 0) {
@@ -28,11 +28,11 @@ app.get('/api/v2/search/users/:keyword*?', async (req, res) => {
             let users = await User.find({
                 where: conditions,
                 order: {
-                    id: 'ASC',
-                },
+                    id: 'ASC'
+                }
             }).filter(
                 (user) =>
-                    user.nickname && !user.username.startsWith('bannedUser'),
+                    user.nickname && !user.username.startsWith('bannedUser')
             );
 
             let result = [];
@@ -40,7 +40,7 @@ app.get('/api/v2/search/users/:keyword*?', async (req, res) => {
             result = users.map((x) => ({
                 name: `${x.username}`,
                 value: x.id,
-                url: syzoj.utils.makeUrl(['user', x.id]),
+                url: syzoj.utils.makeUrl(['user', x.id])
             }));
             res.send({ success: true, results: result });
         }
@@ -57,19 +57,19 @@ app.get('/api/v2/search/problems/:keyword*?', async (req, res) => {
         let keyword = req.params.keyword || '';
         let problems = await Problem.find({
             where: {
-                title: TypeORM.Like(`%${req.params.keyword}%`),
+                title: TypeORM.Like(`%${req.params.keyword}%`)
             },
             order: {
-                id: 'ASC',
-            },
+                id: 'ASC'
+            }
         });
         let problemsWithContent = await Problem.find({
             where: {
-                description: TypeORM.Like(`%${req.params.keyword}%`),
+                description: TypeORM.Like(`%${req.params.keyword}%`)
             },
             order: {
-                id: 'ASC',
-            },
+                id: 'ASC'
+            }
         });
 
         let result = [];
@@ -106,7 +106,7 @@ app.get('/api/v2/search/problems/:keyword*?', async (req, res) => {
         result = result.map((x) => ({
             name: `#${x.id}. ${x.title}`,
             value: x.id,
-            url: syzoj.utils.makeUrl(['problem', x.id]),
+            url: syzoj.utils.makeUrl(['problem', x.id])
         }));
         res.send({ success: true, results: result });
     } catch (e) {
@@ -123,11 +123,11 @@ app.get('/api/v2/search/tags/:keyword*?', async (req, res) => {
         let keyword = req.params.keyword || '';
         let tags = await ProblemTag.find({
             where: {
-                name: TypeORM.Like(`%${req.params.keyword}%`),
+                name: TypeORM.Like(`%${req.params.keyword}%`)
             },
             order: {
-                name: 'ASC',
-            },
+                name: 'ASC'
+            }
         });
 
         let result = tags.slice(0, syzoj.config.page.edit_problem_tag_list);
@@ -156,8 +156,8 @@ app.get('/api/v2/search/discussion/:keyword*?', async (req, res) => {
             let articles = await Article.find({
                 where: conditions,
                 order: {
-                    id: 'ASC',
-                },
+                    id: 'ASC'
+                }
             });
 
             let result = [];
@@ -165,7 +165,7 @@ app.get('/api/v2/search/discussion/:keyword*?', async (req, res) => {
             result = articles.map((x) => ({
                 name: `${x.title}`,
                 value: x.id,
-                url: syzoj.utils.makeUrl(['article', x.id]),
+                url: syzoj.utils.makeUrl(['article', x.id])
             }));
             res.send({ success: true, results: result });
         }
@@ -180,7 +180,7 @@ app.apiRouter.post('/api/v2/markdown', async (req, res) => {
         let s = await syzoj.utils.markdown(
             req.body.s.toString(),
             null,
-            req.body.noReplaceUI === 'true',
+            req.body.noReplaceUI === 'true'
         );
         res.send(s);
     } catch (e) {
@@ -218,7 +218,7 @@ app.apiRouter.get('/api/v2/download/:token', async (req, res) => {
     } catch (e) {
         syzoj.log(e);
         res.render('error', {
-            err: e,
+            err: e
         });
     }
 });

@@ -15,7 +15,7 @@ function getContestantSeed(contestantIndex, allContestants) {
         if (contestantIndex != i) {
             seed += getEloWinProbability(
                 allContestants[i].currentRating,
-                rating,
+                rating
             );
         }
     }
@@ -27,8 +27,8 @@ function getRatingSeed(rating, allContestants) {
         1 +
         _.sum(
             allContestants.map((c) =>
-                getEloWinProbability(c.currentRating, rating),
-            ),
+                getEloWinProbability(c.currentRating, rating)
+            )
         )
     );
 }
@@ -75,7 +75,7 @@ function calculateDeltas(allContestants) {
     // Sum of top-4*sqrt should be adjusted to zero.
     const zeroSumCount = Math.min(
         Math.trunc(4 * Math.round(Math.sqrt(numberOfContestants))),
-        numberOfContestants,
+        numberOfContestants
     );
     const deltaSum2 = _.sum(deltas.slice(0, zeroSumCount));
     const inc2 = Math.min(Math.max(-deltaSum2 / zeroSumCount, -10), 0);
@@ -89,6 +89,6 @@ module.exports = function (allContestants) {
     return allContestants.map((contestant, i) => ({
         user: contestant.user,
         rank: contestant.rank,
-        currentRating: contestant.currentRating + deltas[i],
+        currentRating: contestant.currentRating + deltas[i]
     }));
 };

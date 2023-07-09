@@ -15,20 +15,20 @@ app.get('/', async (req, res) => {
             { is_show: true },
             {
                 [syzoj.config.sorting.ranklist.field]:
-                    syzoj.config.sorting.ranklist.order,
-            },
+                    syzoj.config.sorting.ranklist.order
+            }
         );
         await ranklist.forEachAsync(async (x) => x.renderInformation());
 
         let notices = (
             await Article.find({
                 where: { is_notice: true },
-                order: { public_time: 'DESC' },
+                order: { public_time: 'DESC' }
             })
         ).map((article) => ({
             title: article.title,
             url: syzoj.utils.makeUrl(['article', article.id]),
-            date: syzoj.utils.formatDate(article.public_time, 'L'),
+            date: syzoj.utils.formatDate(article.public_time, 'L')
         }));
 
         let fortune = null;
@@ -40,8 +40,8 @@ app.get('/', async (req, res) => {
             [1, 5],
             { is_public: true },
             {
-                start_time: 'DESC',
-            },
+                start_time: 'DESC'
+            }
         );
 
         let problems = (
@@ -49,8 +49,8 @@ app.get('/', async (req, res) => {
                 [1, 5],
                 { is_public: true },
                 {
-                    publicize_time: 'DESC',
-                },
+                    publicize_time: 'DESC'
+                }
             )
         ).map((problem) => ({
             id: problem.id,
@@ -59,10 +59,10 @@ app.get('/', async (req, res) => {
                 timeAgo.format(new Date(problem.publicize_time)),
                 syzoj.utils.formatDate(
                     Math.round(
-                        new Date(problem.publicize_time).getTime() / 1000,
-                    ),
-                ),
-            ],
+                        new Date(problem.publicize_time).getTime() / 1000
+                    )
+                )
+            ]
         }));
 
         let blackboard = syzoj.config.blackboard;
@@ -75,12 +75,12 @@ app.get('/', async (req, res) => {
             contests: contests,
             problems: problems,
             links: syzoj.config.links,
-            blackboard: blackboard,
+            blackboard: blackboard
         });
     } catch (e) {
         syzoj.log(e);
         res.render('error', {
-            err: e,
+            err: e
         });
     }
 });
@@ -91,7 +91,7 @@ app.get('/help', async (req, res) => {
     } catch (e) {
         syzoj.log(e);
         res.render('error', {
-            err: e,
+            err: e
         });
     }
 });

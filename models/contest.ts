@@ -11,7 +11,7 @@ import ContestPlayer from './contest_player';
 enum ContestType {
     NOI = 'noi',
     IOI = 'ioi',
-    ICPC = 'acm',
+    ICPC = 'acm'
 }
 
 @TypeORM.Entity()
@@ -136,13 +136,13 @@ export default class Contest extends Model {
             async () => {
                 let player = await ContestPlayer.findInContest({
                     contest_id: this.id,
-                    user_id: judge_state.user_id,
+                    user_id: judge_state.user_id
                 });
 
                 if (!player) {
                     player = await ContestPlayer.create({
                         contest_id: this.id,
-                        user_id: judge_state.user_id,
+                        user_id: judge_state.user_id
                     });
                     await player.save();
                 }
@@ -153,7 +153,7 @@ export default class Contest extends Model {
                 await this.loadRelationships();
                 await this.ranklist.updatePlayer(this, player);
                 await this.ranklist.save();
-            },
+            }
         );
     }
 

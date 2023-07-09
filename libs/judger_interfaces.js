@@ -41,7 +41,7 @@ var TestcaseResultType;
         'InvalidInteraction';
 })(
     (TestcaseResultType =
-        exports.TestcaseResultType || (exports.TestcaseResultType = {})),
+        exports.TestcaseResultType || (exports.TestcaseResultType = {}))
 );
 var RPCReplyType;
 (function (RPCReplyType) {
@@ -58,7 +58,7 @@ var ProgressReportType;
     ProgressReportType[(ProgressReportType['Reported'] = 5)] = 'Reported';
 })(
     (ProgressReportType =
-        exports.ProgressReportType || (exports.ProgressReportType = {})),
+        exports.ProgressReportType || (exports.ProgressReportType = {}))
 );
 exports.redisBinarySuffix = '-bin';
 exports.redisMetadataSuffix = '-meta';

@@ -71,7 +71,7 @@ export default class Article extends Model {
             ['Article::resetReplyCountAndTime', this.id],
             async () => {
                 this.comments_num = await ArticleComment.count({
-                    article_id: this.id,
+                    article_id: this.id
                 });
                 if (this.comments_num === 0) {
                     this.sort_time = this.public_time;
@@ -79,12 +79,12 @@ export default class Article extends Model {
                     this.sort_time = (
                         await ArticleComment.findOne({
                             where: { article_id: this.id },
-                            order: { public_time: 'DESC' },
+                            order: { public_time: 'DESC' }
                         })
                     ).public_time;
                 }
                 await this.save();
-            },
+            }
         );
     }
 }

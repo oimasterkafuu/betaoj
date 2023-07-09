@@ -18,8 +18,8 @@ app.get('/admin/info', async (req, res) => {
         let allSubmissionsCount = await JudgeState.count();
         let todaySubmissionsCount = await JudgeState.count({
             submit_time: TypeORM.MoreThanOrEqual(
-                syzoj.utils.getCurrentDate(true),
-            ),
+                syzoj.utils.getCurrentDate(true)
+            )
         });
         let problemsCount = await Problem.count();
         let articlesCount = await Article.count();
@@ -32,12 +32,12 @@ app.get('/admin/info', async (req, res) => {
             problemsCount: problemsCount,
             articlesCount: articlesCount,
             contestsCount: contestsCount,
-            usersCount: usersCount,
+            usersCount: usersCount
         });
     } catch (e) {
         syzoj.log(e);
         res.render('error', {
-            err: e,
+            err: e
         });
     }
 });
@@ -48,11 +48,11 @@ let configItems = {
     默认参数: null,
     'default.problem.time_limit': {
         name: '时间限制（单位：ms）',
-        type: Number,
+        type: Number
     },
     'default.problem.memory_limit': {
         name: '空间限制（单位：MiB）',
-        type: Number,
+        type: Number
     },
     限制: null,
     'limit.time_limit': { name: '最大时间限制（单位：ms）', type: Number },
@@ -62,15 +62,15 @@ let configItems = {
     'limit.submit_code': { name: '代码长度（单位：byte）', type: Number },
     'limit.submit_answer': {
         name: '提交答案题目答案大小（单位：byte）',
-        type: Number,
+        type: Number
     },
     'limit.custom_test_input': {
         name: '自定义测试输入文件大小（单位：byte）',
-        type: Number,
+        type: Number
     },
     'limit.testdata_filecount': {
         name: '测试数据文件数量（单位：byte）',
-        type: Number,
+        type: Number
     },
     每页显示数量: null,
     'page.problem': { name: '题库', type: Number },
@@ -79,7 +79,7 @@ let configItems = {
     'page.ranklist': { name: '排行榜', type: Number },
     'page.discussion': { name: '讨论', type: Number },
     'page.article_comment': { name: '评论', type: Number },
-    'page.contest': { name: '比赛', type: Number },
+    'page.contest': { name: '比赛', type: Number }
 };
 
 app.get('/admin/config', async (req, res) => {
@@ -93,12 +93,12 @@ app.get('/admin/config', async (req, res) => {
         }
 
         res.render('admin_config', {
-            items: configItems,
+            items: configItems
         });
     } catch (e) {
         syzoj.log(e);
         res.render('error', {
-            err: e,
+            err: e
         });
     }
 });
@@ -132,7 +132,7 @@ app.post('/admin/config', async (req, res) => {
     } catch (e) {
         syzoj.log(e);
         res.render('error', {
-            err: e,
+            err: e
         });
     }
 });
@@ -148,7 +148,7 @@ app.get('/admin/privilege', async (req, res) => {
             if (!users[p.user_id]) {
                 users[p.user_id] = {
                     user: await User.findById(p.user_id),
-                    privileges: [],
+                    privileges: []
                 };
             }
 
@@ -156,12 +156,12 @@ app.get('/admin/privilege', async (req, res) => {
         }
 
         res.render('admin_privilege', {
-            users: Object.values(users),
+            users: Object.values(users)
         });
     } catch (e) {
         syzoj.log(e);
         res.render('error', {
-            err: e,
+            err: e
         });
     }
 });
@@ -182,7 +182,7 @@ app.post('/admin/privilege', async (req, res) => {
     } catch (e) {
         syzoj.log(e);
         res.render('error', {
-            err: e,
+            err: e
         });
     }
 });
@@ -193,24 +193,24 @@ app.get('/admin/rating', async (req, res) => {
             throw new ErrorMessage('您没有权限进行此操作。');
         const contests = await Contest.find({
             order: {
-                start_time: 'DESC',
-            },
+                start_time: 'DESC'
+            }
         });
         const calcs = await RatingCalculation.find({
             order: {
-                id: 'DESC',
-            },
+                id: 'DESC'
+            }
         });
         for (const calc of calcs) await calc.loadRelationships();
 
         res.render('admin_rating', {
             contests: contests,
-            calcs: calcs,
+            calcs: calcs
         });
     } catch (e) {
         syzoj.log(e);
         res.render('error', {
-            err: e,
+            err: e
         });
     }
 });
@@ -224,7 +224,7 @@ app.post('/admin/rating/add', async (req, res) => {
 
         await contest.loadRelationships();
         const newcalc = await RatingCalculation.create({
-            contest_id: contest.id,
+            contest_id: contest.id
         });
         await newcalc.save();
 
@@ -237,12 +237,12 @@ app.post('/admin/rating/add', async (req, res) => {
             const user = await User.findById(
                 (
                     await ContestPlayer.findById(contest.ranklist.ranklist[i])
-                ).user_id,
+                ).user_id
             );
             players.push({
                 user: user,
                 rank: i,
-                currentRating: user.rating,
+                currentRating: user.rating
             });
         }
         const newRating = calcRating(players);
@@ -254,7 +254,7 @@ app.post('/admin/rating/add', async (req, res) => {
                 rating_calculation_id: newcalc.id,
                 user_id: user.id,
                 rating_after: newRating[i].currentRating,
-                rank: newRating[i].rank,
+                rank: newRating[i].rank
             });
             await newHistory.save();
         }
@@ -263,7 +263,7 @@ app.post('/admin/rating/add', async (req, res) => {
     } catch (e) {
         syzoj.log(e);
         res.render('error', {
-            err: e,
+            err: e
         });
     }
 });
@@ -274,11 +274,11 @@ app.post('/admin/rating/delete', async (req, res) => {
             throw new ErrorMessage('您没有权限进行此操作。');
         const calcList = await RatingCalculation.find({
             where: {
-                id: TypeORM.MoreThanOrEqual(req.body.calc_id),
+                id: TypeORM.MoreThanOrEqual(req.body.calc_id)
             },
             order: {
-                id: 'DESC',
-            },
+                id: 'DESC'
+            }
         });
         if (calcList.length === 0) throw new ErrorMessage('ID 不正确');
 
@@ -290,7 +290,7 @@ app.post('/admin/rating/delete', async (req, res) => {
     } catch (e) {
         syzoj.log(e);
         res.render('error', {
-            err: e,
+            err: e
         });
     }
 });
@@ -304,7 +304,7 @@ app.get('/admin/other', async (req, res) => {
     } catch (e) {
         syzoj.log(e);
         res.render('error', {
-            err: e,
+            err: e
         });
     }
 });
@@ -316,12 +316,12 @@ app.get('/admin/rejudge', async (req, res) => {
 
         res.render('admin_rejudge', {
             form: {},
-            count: null,
+            count: null
         });
     } catch (e) {
         syzoj.log(e);
         res.render('error', {
-            err: e,
+            err: e
         });
     }
 });
@@ -357,7 +357,7 @@ app.post('/admin/other', async (req, res) => {
     } catch (e) {
         syzoj.log(e);
         res.render('error', {
-            err: e,
+            err: e
         });
     }
 });
@@ -401,7 +401,7 @@ app.post('/admin/sortprob', async (req, res) => {
     } catch (e) {
         syzoj.log(e);
         res.render('error', {
-            err: e,
+            err: e
         });
     }
 });
@@ -453,7 +453,7 @@ app.post('/admin/fixtags', async (req, res) => {
     } catch (e) {
         syzoj.log(e);
         res.render('error', {
-            err: e,
+            err: e
         });
     }
 });
@@ -487,12 +487,12 @@ app.post('/admin/rejudge', async (req, res) => {
         let minTime = syzoj.utils.parseDate(req.body.min_time);
         if (!isNaN(minTime))
             query.andWhere('submit_time >= :minTime', {
-                minTime: parseInt(minTime),
+                minTime: parseInt(minTime)
             });
         let maxTime = syzoj.utils.parseDate(req.body.max_time);
         if (!isNaN(maxTime))
             query.andWhere('submit_time <= :maxTime', {
-                maxTime: parseInt(maxTime),
+                maxTime: parseInt(maxTime)
             });
 
         if (req.body.language) {
@@ -500,9 +500,9 @@ app.post('/admin/rejudge', async (req, res) => {
                 query.andWhere(
                     new TypeORM.Brackets((qb) => {
                         qb.orWhere('language = :language', {
-                            language: '',
+                            language: ''
                         }).orWhere('language IS NULL');
-                    }),
+                    })
                 );
             } else if (req.body.language === 'non-submit-answer') {
                 query
@@ -510,7 +510,7 @@ app.post('/admin/rejudge', async (req, res) => {
                     .andWhere('language IS NOT NULL');
             } else {
                 query.andWhere('language = :language', {
-                    language: req.body.language,
+                    language: req.body.language
                 });
             }
         }
@@ -521,7 +521,7 @@ app.post('/admin/rejudge', async (req, res) => {
 
         if (req.body.problem_id) {
             query.andWhere('problem_id = :problem_id', {
-                problem_id: parseInt(req.body.problem_id) || 0,
+                problem_id: parseInt(req.body.problem_id) || 0
             });
         }
 
@@ -535,12 +535,12 @@ app.post('/admin/rejudge', async (req, res) => {
 
         res.render('admin_rejudge', {
             form: req.body,
-            count: count,
+            count: count
         });
     } catch (e) {
         syzoj.log(e);
         res.render('error', {
-            err: e,
+            err: e
         });
     }
 });
@@ -551,12 +551,12 @@ app.get('/admin/links', async (req, res) => {
             throw new ErrorMessage('您没有权限进行此操作。');
 
         res.render('admin_links', {
-            links: syzoj.config.links || [],
+            links: syzoj.config.links || []
         });
     } catch (e) {
         syzoj.log(e);
         res.render('error', {
-            err: e,
+            err: e
         });
     }
 });
@@ -576,7 +576,7 @@ app.post('/admin/links', async (req, res) => {
     } catch (e) {
         syzoj.log(e);
         res.render('error', {
-            err: e,
+            err: e
         });
     }
 });
@@ -587,12 +587,12 @@ app.get('/admin/blackboard', async (req, res) => {
             throw new ErrorMessage('您没有权限进行此操作。');
 
         res.render('admin_blackboard', {
-            data: syzoj.config.blackboard || '',
+            data: syzoj.config.blackboard || ''
         });
     } catch (e) {
         syzoj.log(e);
         res.render('error', {
-            err: e,
+            err: e
         });
     }
 });
@@ -611,7 +611,7 @@ app.post('/admin/blackboard', async (req, res) => {
     } catch (e) {
         syzoj.log(e);
         res.render('error', {
-            err: e,
+            err: e
         });
     }
 });
@@ -622,12 +622,12 @@ app.get('/admin/raw', async (req, res) => {
             throw new ErrorMessage('您没有权限进行此操作。');
 
         res.render('admin_raw', {
-            data: JSON.stringify(syzoj.configInFile, null, 2),
+            data: JSON.stringify(syzoj.configInFile, null, 2)
         });
     } catch (e) {
         syzoj.log(e);
         res.render('error', {
-            err: e,
+            err: e
         });
     }
 });
@@ -645,7 +645,7 @@ app.post('/admin/raw', async (req, res) => {
     } catch (e) {
         syzoj.log(e);
         res.render('error', {
-            err: e,
+            err: e
         });
     }
 });
@@ -661,7 +661,7 @@ app.post('/admin/restart', async (req, res) => {
     } catch (e) {
         syzoj.log(e);
         res.render('error', {
-            err: e,
+            err: e
         });
     }
 });
@@ -672,12 +672,12 @@ app.get('/admin/serviceID', async (req, res) => {
             throw new ErrorMessage('您没有权限进行此操作。');
 
         res.send({
-            serviceID: syzoj.serviceID,
+            serviceID: syzoj.serviceID
         });
     } catch (e) {
         syzoj.log(e);
         res.render('error', {
-            err: e,
+            err: e
         });
     }
 });

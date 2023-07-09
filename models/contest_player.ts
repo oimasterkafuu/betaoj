@@ -48,7 +48,7 @@ export default class ContestPlayer extends Model {
                     this.score_details[judge_state.problem_id] = {
                         score: judge_state.score,
                         judge_id: judge_state.id,
-                        submissions: {},
+                        submissions: {}
                     };
                 }
 
@@ -57,11 +57,11 @@ export default class ContestPlayer extends Model {
                 ] = {
                     judge_id: judge_state.id,
                     score: judge_state.score,
-                    time: judge_state.submit_time,
+                    time: judge_state.submit_time
                 };
 
                 let arr: any = Object.values(
-                    this.score_details[judge_state.problem_id].submissions,
+                    this.score_details[judge_state.problem_id].submissions
                 );
                 arr.sort((a, b) => a.time - b.time);
 
@@ -99,7 +99,7 @@ export default class ContestPlayer extends Model {
 
             this.score_details[judge_state.problem_id] = {
                 score: judge_state.score,
-                judge_id: judge_state.id,
+                judge_id: judge_state.id
             };
 
             this.score = 0;
@@ -115,7 +115,7 @@ export default class ContestPlayer extends Model {
                         unacceptedCount: 0,
                         acceptedTime: 0,
                         judge_id: 0,
-                        submissions: {},
+                        submissions: {}
                     };
                 }
 
@@ -125,11 +125,11 @@ export default class ContestPlayer extends Model {
                     judge_id: judge_state.id,
                     accepted: judge_state.status === 'Accepted',
                     compiled: judge_state.score != null,
-                    time: judge_state.submit_time,
+                    time: judge_state.submit_time
                 };
 
                 let arr: any = Object.values(
-                    this.score_details[judge_state.problem_id].submissions,
+                    this.score_details[judge_state.problem_id].submissions
                 );
                 arr.sort((a, b) => a.time - b.time);
 

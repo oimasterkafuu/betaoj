@@ -16,7 +16,7 @@ export default class ContestRanklist extends Model {
 
     @TypeORM.Column({
         default: JSON.stringify({ player_num: 0 }),
-        type: 'json',
+        type: 'json'
     })
     ranklist: any;
 
@@ -52,19 +52,19 @@ export default class ContestRanklist extends Model {
                         continue;
 
                     let judge_state = await JudgeState.findById(
-                        player.score_details[i].judge_id,
+                        player.score_details[i].judge_id
                     );
                     if (!judge_state) continue;
 
                     player.latest = Math.max(
                         player.latest,
-                        judge_state.submit_time,
+                        judge_state.submit_time
                     );
 
                     if (player.score_details[i].score != null) {
                         let multiplier = this.ranking_params[i] || 1.0;
                         player.score_details[i].weighted_score = Math.round(
-                            player.score_details[i].score * multiplier,
+                            player.score_details[i].score * multiplier
                         );
                         player.score += player.score_details[i].weighted_score;
                     }

@@ -39,19 +39,19 @@ app.get('/teach', async (req, res) => {
             throw new ErrorMessage('您没有权限进行此操作。');
         let users = (
             await User.find({
-                where: [{ permission: null }],
+                where: [{ permission: null }]
             })
         ).filter(
-            (user) => user.nickname && !user.username.startsWith('bannedUser'),
+            (user) => user.nickname && !user.username.startsWith('bannedUser')
         );
 
         res.render('teach', {
-            users,
+            users
         });
     } catch (e) {
         syzoj.log(e);
         res.render('error', {
-            err: e,
+            err: e
         });
     }
 });
@@ -63,7 +63,7 @@ app.get('*', async (req, res, next) => {
     } catch (e) {
         syzoj.log(e);
         res.render('error', {
-            err: e,
+            err: e
         });
     }
 });
@@ -74,7 +74,7 @@ app.post('*', async (req, res, next) => {
     } catch (e) {
         syzoj.log(e);
         res.render('error', {
-            err: e,
+            err: e
         });
     }
 });
@@ -86,10 +86,10 @@ app.get('*', async (req, res, next) => {
         }
         let users = (
             await User.find({
-                where: [{ permission: null }],
+                where: [{ permission: null }]
             })
         ).filter(
-            (user) => user.nickname && !user.username.startsWith('bannedUser'),
+            (user) => user.nickname && !user.username.startsWith('bannedUser')
         );
 
         res.locals.needPass = users.length;
@@ -107,10 +107,10 @@ app.post('*', async (req, res, next) => {
         }
         let users = (
             await User.find({
-                where: [{ permission: null }],
+                where: [{ permission: null }]
             })
         ).filter(
-            (user) => user.nickname && !user.username.startsWith('bannedUser'),
+            (user) => user.nickname && !user.username.startsWith('bannedUser')
         );
 
         res.locals.needPass = users.length;

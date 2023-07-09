@@ -19,10 +19,10 @@ app.get('/discussion/:type?', async (req, res) => {
         let paginate = syzoj.utils.paginate(
             await Article.countForPagination(where),
             req.query.page,
-            syzoj.config.page.discussion,
+            syzoj.config.page.discussion
         );
         let articles = await Article.queryPage(paginate, where, {
-            sort_time: 'DESC',
+            sort_time: 'DESC'
         });
 
         for (let article of articles) {
@@ -36,12 +36,12 @@ app.get('/discussion/:type?', async (req, res) => {
             articles: articles,
             paginate: paginate,
             problem: null,
-            in_problems: in_problems,
+            in_problems: in_problems
         });
     } catch (e) {
         syzoj.log(e);
         res.render('error', {
-            err: e,
+            err: e
         });
     }
 });
@@ -59,10 +59,10 @@ app.get('/discussion/problem/:pid', async (req, res) => {
         let paginate = syzoj.utils.paginate(
             await Article.countForPagination(where),
             req.query.page,
-            syzoj.config.page.discussion,
+            syzoj.config.page.discussion
         );
         let articles = await Article.queryPage(paginate, where, {
-            sort_time: 'DESC',
+            sort_time: 'DESC'
         });
 
         for (let article of articles) await article.loadRelationships();
@@ -71,12 +71,12 @@ app.get('/discussion/problem/:pid', async (req, res) => {
             articles: articles,
             paginate: paginate,
             problem: problem,
-            in_problems: false,
+            in_problems: false
         });
     } catch (e) {
         syzoj.log(e);
         res.render('error', {
-            err: e,
+            err: e
         });
     }
 });
@@ -90,7 +90,7 @@ app.get('/article/:id', async (req, res) => {
         await article.loadRelationships();
         article.allowedEdit = await article.isAllowedEditBy(res.locals.user);
         article.allowedComment = await article.isAllowedCommentBy(
-            res.locals.user,
+            res.locals.user
         );
         article.content = await syzoj.utils.markdown(article.content);
 
@@ -99,17 +99,17 @@ app.get('/article/:id', async (req, res) => {
         let paginate = syzoj.utils.paginate(
             commentsCount,
             req.query.page,
-            syzoj.config.page.article_comment,
+            syzoj.config.page.article_comment
         );
 
         let comments = await ArticleComment.queryPage(paginate, where, {
-            public_time: 'DESC',
+            public_time: 'DESC'
         });
 
         for (let comment of comments) {
             comment.content = await syzoj.utils.markdown(comment.content);
             comment.allowedEdit = await comment.isAllowedEditBy(
-                res.locals.user,
+                res.locals.user
             );
             await comment.loadRelationships();
         }
@@ -127,12 +127,12 @@ app.get('/article/:id', async (req, res) => {
             comments: comments,
             paginate: paginate,
             problem: problem,
-            commentsCount: commentsCount,
+            commentsCount: commentsCount
         });
     } catch (e) {
         syzoj.log(e);
         res.render('error', {
-            err: e,
+            err: e
         });
     }
 });
@@ -141,7 +141,7 @@ app.get('/article/:id/edit', async (req, res) => {
     try {
         if (!res.locals.user)
             throw new ErrorMessage('请登录后继续。', {
-                登录: syzoj.utils.makeUrl(['login'], { url: req.originalUrl }),
+                登录: syzoj.utils.makeUrl(['login'], { url: req.originalUrl })
             });
 
         let id = parseInt(req.params.id);
@@ -154,7 +154,7 @@ app.get('/article/:id/edit', async (req, res) => {
             article.allow_comment = true;
         } else {
             article.allowedEdit = await article.isAllowedEditBy(
-                res.locals.user,
+                res.locals.user
             );
             if (!article.allowedEdit)
                 throw new ErrorMessage('您没有权限进行此操作。');
@@ -163,12 +163,12 @@ app.get('/article/:id/edit', async (req, res) => {
         // throw new ErrorMessage(JSON.stringify(article));
 
         res.render('article_edit', {
-            article: article,
+            article: article
         });
     } catch (e) {
         syzoj.log(e);
         res.render('error', {
-            err: e,
+            err: e
         });
     }
 });
@@ -177,7 +177,7 @@ app.post('/article/:id/edit', async (req, res) => {
     try {
         if (!res.locals.user)
             throw new ErrorMessage('请登录后继续。', {
-                登录: syzoj.utils.makeUrl(['login'], { url: req.originalUrl }),
+                登录: syzoj.utils.makeUrl(['login'], { url: req.originalUrl })
             });
 
         let id = parseInt(req.params.id);
@@ -219,7 +219,7 @@ app.post('/article/:id/edit', async (req, res) => {
             /^https:\/\/www\.luogu\.com\.cn\/paste\/[a-zA-Z0-9]{8}$/;
         if (isLuoguReg.test(article.content.trim())) {
             let oriContent = await fetch(article.content.trim(), {
-                headers: [['x-luogu-type', 'content-only']],
+                headers: [['x-luogu-type', 'content-only']]
             });
 
             if (oriContent.status == 200) {
@@ -236,7 +236,7 @@ app.post('/article/:id/edit', async (req, res) => {
     } catch (e) {
         syzoj.log(e);
         res.render('error', {
-            err: e,
+            err: e
         });
     }
 });
@@ -245,7 +245,7 @@ app.post('/article/:id/delete', async (req, res) => {
     try {
         if (!res.locals.user)
             throw new ErrorMessage('请登录后继续。', {
-                登录: syzoj.utils.makeUrl(['login'], { url: req.originalUrl }),
+                登录: syzoj.utils.makeUrl(['login'], { url: req.originalUrl })
             });
 
         let id = parseInt(req.params.id);
@@ -261,9 +261,9 @@ app.post('/article/:id/delete', async (req, res) => {
         await Promise.all(
             (
                 await ArticleComment.find({
-                    article_id: article.id,
+                    article_id: article.id
                 })
-            ).map((comment) => comment.destroy()),
+            ).map((comment) => comment.destroy())
         );
 
         await article.destroy();
@@ -272,7 +272,7 @@ app.post('/article/:id/delete', async (req, res) => {
     } catch (e) {
         syzoj.log(e);
         res.render('error', {
-            err: e,
+            err: e
         });
     }
 });
@@ -281,7 +281,7 @@ app.post('/article/:id/comment', async (req, res) => {
     try {
         if (!res.locals.user)
             throw new ErrorMessage('请登录后继续。', {
-                登录: syzoj.utils.makeUrl(['login'], { url: req.originalUrl }),
+                登录: syzoj.utils.makeUrl(['login'], { url: req.originalUrl })
             });
 
         let id = parseInt(req.params.id);
@@ -298,7 +298,7 @@ app.post('/article/:id/comment', async (req, res) => {
             content: req.body.comment,
             article_id: id,
             user_id: res.locals.user.id,
-            public_time: syzoj.utils.getCurrentDate(),
+            public_time: syzoj.utils.getCurrentDate()
         });
 
         await comment.save();
@@ -309,7 +309,7 @@ app.post('/article/:id/comment', async (req, res) => {
     } catch (e) {
         syzoj.log(e);
         res.render('error', {
-            err: e,
+            err: e
         });
     }
 });
@@ -318,7 +318,7 @@ app.post('/article/:article_id/comment/:id/delete', async (req, res) => {
     try {
         if (!res.locals.user)
             throw new ErrorMessage('请登录后继续。', {
-                登录: syzoj.utils.makeUrl(['login'], { url: req.originalUrl }),
+                登录: syzoj.utils.makeUrl(['login'], { url: req.originalUrl })
             });
 
         let id = parseInt(req.params.id);
@@ -341,7 +341,7 @@ app.post('/article/:article_id/comment/:id/delete', async (req, res) => {
     } catch (e) {
         syzoj.log(e);
         res.render('error', {
-            err: e,
+            err: e
         });
     }
 });

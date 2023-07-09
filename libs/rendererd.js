@@ -19,7 +19,7 @@ const xss = new XSS.FilterXSS({
         ) {
             return name + '="' + XSS.escapeAttrValue(value) + '"';
         }
-    },
+    }
 });
 
 const LRUCache = require('lru-cache');
@@ -27,7 +27,7 @@ const cache = new LRUCache({ max: parseInt(process.argv[2]) });
 
 async function highlight(code, lang) {
     return await renderer.highlight(code, lang, cache, {
-        wrapper: null,
+        wrapper: null
     });
 }
 
@@ -47,12 +47,12 @@ process.on('message', async (msg) => {
     if (msg.type === 'markdown') {
         process.send({
             id: msg.id,
-            result: await markdown(msg.source),
+            result: await markdown(msg.source)
         });
     } else if (msg.type === 'highlight') {
         process.send({
             id: msg.id,
-            result: await highlight(msg.source.code, msg.source.lang),
+            result: await highlight(msg.source.code, msg.source.lang)
         });
     }
 });

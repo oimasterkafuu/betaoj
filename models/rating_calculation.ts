@@ -24,8 +24,8 @@ export default class RatingCalculation extends Model {
     async delete() {
         const histories = await RatingHistory.find({
             where: {
-                rating_calculation_id: this.id,
-            },
+                rating_calculation_id: this.id
+            }
         });
         for (const history of histories) {
             await history.loadRelationships();
@@ -33,11 +33,11 @@ export default class RatingCalculation extends Model {
             await history.destroy();
             const ratingItem = await RatingHistory.findOne({
                 where: {
-                    user_id: user.id,
+                    user_id: user.id
                 },
                 order: {
-                    rating_calculation_id: 'DESC',
-                },
+                    rating_calculation_id: 'DESC'
+                }
             });
             user.rating = ratingItem
                 ? ratingItem.rating_after

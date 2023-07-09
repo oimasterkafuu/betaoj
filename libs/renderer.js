@@ -1,7 +1,7 @@
 const child_process = require('child_process');
 
 const rendererd = child_process.fork(__dirname + '/rendererd', [
-    parseInt(syzoj.config.renderer_cache_size),
+    parseInt(syzoj.config.renderer_cache_size)
 ]);
 
 const resolver = {};
@@ -17,7 +17,7 @@ exports.markdown = (markdownCode, callback) => {
     rendererd.send({
         id: currentId,
         type: 'markdown',
-        source: markdownCode,
+        source: markdownCode
     });
 };
 
@@ -28,7 +28,7 @@ exports.highlight = (code, lang, callback) => {
         type: 'highlight',
         source: {
             code,
-            lang,
-        },
+            lang
+        }
     });
 };

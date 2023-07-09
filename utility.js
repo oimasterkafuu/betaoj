@@ -41,7 +41,7 @@ module.exports = {
             s = s
                 .split('<pre>')
                 .join(
-                    '<div class="ui existing segment"><pre style="margin-top: 0; margin-bottom: 0; ">',
+                    '<div class="ui existing segment"><pre style="margin-top: 0; margin-bottom: 0; ">'
                 )
                 .split('</pre>')
                 .join('</pre></div>')
@@ -105,7 +105,7 @@ module.exports = {
                 '%s:%s:%s',
                 toStringWithPad(x / 3600),
                 toStringWithPad((x / 60) % 60),
-                toStringWithPad(x % 60),
+                toStringWithPad(x % 60)
             )
         );
     },
@@ -125,7 +125,7 @@ module.exports = {
     },
     judgeServer(suffix) {
         return JSON.stringify(
-            url.resolve(syzoj.config.judge_server_addr, suffix),
+            url.resolve(syzoj.config.judge_server_addr, suffix)
         );
     },
     parseDate(s) {
@@ -175,7 +175,7 @@ module.exports = {
             let list = await (
                 await fs.readdirAsync(dir)
             ).filterAsync(
-                async (x) => await syzoj.utils.isFile(path.join(dir, x)),
+                async (x) => await syzoj.utils.isFile(path.join(dir, x))
             );
 
             let res = [];
@@ -188,7 +188,7 @@ module.exports = {
                         if (list.includes(`${parsedName.name}.out`)) {
                             let o = {
                                 input: file,
-                                output: `${parsedName.name}.out`,
+                                output: `${parsedName.name}.out`
                             };
                             if (submitAnswer)
                                 o.answer = `${parsedName.name}.out`;
@@ -198,7 +198,7 @@ module.exports = {
                         if (list.includes(`${parsedName.name}.ans`)) {
                             let o = {
                                 input: file,
-                                output: `${parsedName.name}.ans`,
+                                output: `${parsedName.name}.ans`
                             };
                             if (submitAnswer)
                                 o.answer = `${parsedName.name}.out`;
@@ -231,7 +231,7 @@ module.exports = {
                 res.spj = list.some((s) => s.startsWith('spj_'));
             } else {
                 let config = require('js-yaml').load(
-                    await fs.readFileAsync(dir + '/data.yml'),
+                    await fs.readFileAsync(dir + '/data.yml')
                 );
 
                 let input = config.inputFile,
@@ -255,7 +255,7 @@ module.exports = {
                         if (answer) o.answer = getFileName(answer, c, false);
 
                         return o;
-                    }),
+                    })
                 }));
 
                 res = res.filter((x) => x.cases && x.cases.length !== 0);
@@ -288,7 +288,7 @@ module.exports = {
             toSQL: () => {
                 if (!pageCnt) return '';
                 else return ` LIMIT ${(currPage - 1) * perPage},${perPage}`;
-            },
+            }
         };
     },
     paginateFast(currPageTop, currPageBottom, perPage) {
@@ -301,7 +301,7 @@ module.exports = {
         return {
             currPageTop: parseIntOrNull(currPageTop),
             currPageBottom: parseIntOrNull(currPageBottom),
-            perPage,
+            perPage
         };
     },
     removeTitleTag(s) {
@@ -351,7 +351,7 @@ module.exports = {
         let fs = require('fs-extra');
         fs.writeFileAsync(
             syzoj.configDir,
-            JSON.stringify(syzoj.configInFile, null, 2),
+            JSON.stringify(syzoj.configInFile, null, 2)
         );
     },
     withTimeoutRetry(func) {
@@ -360,7 +360,7 @@ module.exports = {
             function attempt() {
                 if (attemptCount++)
                     console.log(
-                        `syzoj.utils.withTimeout(): attemptCount = ${attemptCount}`,
+                        `syzoj.utils.withTimeout(): attemptCount = ${attemptCount}`
                     );
                 Promise.method(func)()
                     .timeout(5000)
@@ -387,5 +387,5 @@ module.exports = {
         else if (rating < 2400) return 'orange';
         else if (rating < 2900) return 'red';
         else return 'legendary'; // who will reach this first?
-    },
+    }
 };

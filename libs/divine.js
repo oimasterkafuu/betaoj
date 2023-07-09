@@ -16,7 +16,7 @@ module.exports = (name, sex) => {
     let res = {
         fortune: undefined,
         good: [],
-        bad: [],
+        bad: []
     };
 
     let date = new Date();
@@ -25,8 +25,8 @@ module.exports = (name, sex) => {
             hash(
                 date.getFullYear().toString() +
                     date.getMonth().toString() +
-                    date.getDate().toString(),
-            ),
+                    date.getDate().toString()
+            )
     );
     let random = new Random(Random.engines.mt19937().seed(h));
 

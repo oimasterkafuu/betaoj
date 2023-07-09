@@ -24,7 +24,7 @@ enum Status {
     TIME_LIMIT_EXCEEDED = 'Time Limit Exceeded',
     UNKNOWN = 'Unknown',
     WRONG_ANSWER = 'Wrong Answer',
-    WAITING = 'Waiting',
+    WAITING = 'Waiting'
 }
 
 @TypeORM.Entity()
@@ -185,7 +185,7 @@ export default class JudgeState extends Model {
             } catch (err) {
                 console.log(
                     'Error while connecting to judge frontend: ' +
-                        err.toString(),
+                        err.toString()
                 );
                 throw new ErrorMessage('无法开始评测。');
             }

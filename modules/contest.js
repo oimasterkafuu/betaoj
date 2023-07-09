@@ -9,7 +9,7 @@ const jwt = require('jsonwebtoken');
 const {
     getSubmissionInfo,
     getRoughResult,
-    processOverallResult,
+    processOverallResult
 } = require('../libs/submissions_process');
 
 app.get('/contests', async (req, res) => {
@@ -21,24 +21,24 @@ app.get('/contests', async (req, res) => {
         let paginate = syzoj.utils.paginate(
             await Contest.countForPagination(where),
             req.query.page,
-            syzoj.config.page.contest,
+            syzoj.config.page.contest
         );
         let contests = await Contest.queryPage(paginate, where, {
-            start_time: 'DESC',
+            start_time: 'DESC'
         });
 
         await contests.forEachAsync(
-            async (x) => (x.subtitle = await syzoj.utils.markdown(x.subtitle)),
+            async (x) => (x.subtitle = await syzoj.utils.markdown(x.subtitle))
         );
 
         res.render('contests', {
             contests: contests,
-            paginate: paginate,
+            paginate: paginate
         });
     } catch (e) {
         syzoj.log(e);
         res.render('error', {
-            err: e,
+            err: e
         });
     }
 });
@@ -80,12 +80,12 @@ app.get('/contest/:id/edit', async (req, res) => {
         res.render('contest_edit', {
             contest: contest,
             problems: problems,
-            admins: admins,
+            admins: admins
         });
     } catch (e) {
         syzoj.log(e);
         res.render('error', {
-            err: e,
+            err: e
         });
     }
 });
@@ -156,7 +156,7 @@ app.post('/contest/:id/edit', async (req, res) => {
     } catch (e) {
         syzoj.log(e);
         res.render('error', {
-            err: e,
+            err: e
         });
     }
 });
@@ -187,7 +187,7 @@ app.get('/contest/:id', async (req, res) => {
 
         let problems_id = await contest.getProblems();
         let problems = await problems_id.mapAsync(
-            async (id) => await Problem.findById(id),
+            async (id) => await Problem.findById(id)
         );
 
         let player = null;
@@ -195,7 +195,7 @@ app.get('/contest/:id', async (req, res) => {
         if (res.locals.user) {
             player = await ContestPlayer.findInContest({
                 contest_id: contest.id,
-                user_id: res.locals.user.id,
+                user_id: res.locals.user.id
             });
         }
 
@@ -203,23 +203,23 @@ app.get('/contest/:id', async (req, res) => {
             problem: x,
             status: null,
             judge_id: null,
-            statistics: null,
+            statistics: null
         }));
         if (player) {
             for (let problem of problems) {
                 if (contest.type === 'noi') {
                     if (player.score_details[problem.problem.id]) {
                         let judge_state = await JudgeState.findById(
-                            player.score_details[problem.problem.id].judge_id,
+                            player.score_details[problem.problem.id].judge_id
                         );
                         problem.status = judge_state.status;
                         if (
                             !contest.ended &&
                             !(await problem.problem.isAllowedEditBy(
-                                res.locals.user,
+                                res.locals.user
                             )) &&
                             !['Compile Error', 'Waiting', 'Compiling'].includes(
-                                problem.status,
+                                problem.status
                             )
                         ) {
                             problem.status = 'Submitted';
@@ -230,7 +230,7 @@ app.get('/contest/:id', async (req, res) => {
                 } else if (contest.type === 'ioi') {
                     if (player.score_details[problem.problem.id]) {
                         let judge_state = await JudgeState.findById(
-                            player.score_details[problem.problem.id].judge_id,
+                            player.score_details[problem.problem.id].judge_id
                         );
                         problem.status = judge_state.status;
                         problem.judge_id =
@@ -253,7 +253,7 @@ app.get('/contest/:id', async (req, res) => {
                                     .accepted,
                             unacceptedCount:
                                 player.score_details[problem.problem.id]
-                                    .unacceptedCount,
+                                    .unacceptedCount
                         };
                         problem.judge_id =
                             player.score_details[problem.problem.id].judge_id;
@@ -315,12 +315,12 @@ app.get('/contest/:id', async (req, res) => {
             problems: problems,
             admins: admins,
             hasStatistics: hasStatistics,
-            isSupervisior: isSupervisior,
+            isSupervisior: isSupervisior
         });
     } catch (e) {
         syzoj.log(e);
         res.render('error', {
-            err: e,
+            err: e
         });
     }
 });
@@ -345,7 +345,7 @@ app.get('/contest/:id/ranklist', async (req, res) => {
             [
                 contest.allowedSeeingResult() && contest.allowedSeeingOthers(),
                 contest.isEnded(),
-                await contest.isSupervisior(curUser),
+                await contest.isSupervisior(curUser)
             ].every((x) => !x)
         )
             throw new ErrorMessage('您没有权限进行此操作。');
@@ -365,7 +365,7 @@ app.get('/contest/:id/ranklist', async (req, res) => {
 
             for (let i in player.score_details) {
                 player.score_details[i].judge_state = await JudgeState.findById(
-                    player.score_details[i].judge_id,
+                    player.score_details[i].judge_id
                 );
 
                 /*** XXX: Clumsy duplication, see ContestRanklist::updatePlayer() ***/
@@ -376,7 +376,7 @@ app.get('/contest/:id/ranklist', async (req, res) => {
                         player.score_details[i].score == null
                             ? null
                             : Math.round(
-                                  player.score_details[i].score * multiplier,
+                                  player.score_details[i].score * multiplier
                               );
                     player.score += player.score_details[i].weighted_score;
                 }
@@ -386,24 +386,24 @@ app.get('/contest/:id/ranklist', async (req, res) => {
 
             return {
                 user: user,
-                player: player,
+                player: player
             };
         });
 
         let problems_id = await contest.getProblems();
         let problems = await problems_id.mapAsync(
-            async (id) => await Problem.findById(id),
+            async (id) => await Problem.findById(id)
         );
 
         res.render('contest_ranklist', {
             contest: contest,
             ranklist: ranklist,
-            problems: problems,
+            problems: problems
         });
     } catch (e) {
         syzoj.log(e);
         res.render('error', {
-            err: e,
+            err: e
         });
     }
 });
@@ -427,10 +427,9 @@ app.get('/contest/:id/homework', async (req, res) => {
             throw new ErrorMessage('比赛未公开。');
 
         if (
-            [
-                contest.isEnded(),
-                await contest.isSupervisior(curUser),
-            ].every((x) => !x)
+            [contest.isEnded(), await contest.isSupervisior(curUser)].every(
+                (x) => !x
+            )
         )
             throw new ErrorMessage('您没有权限进行此操作。');
 
@@ -451,32 +450,35 @@ app.get('/contest/:id/homework', async (req, res) => {
             for (let problemId in player.score_details) {
                 let submission = await JudgeState.find({
                     where: [{ user_id: user.id, problem_id: problemId }],
-                    order: { score : 'DESC' },
+                    order: { score: 'DESC' }
                 });
 
                 if (submission.length === 0) {
                     player.score_details[problemId].judge_id = null;
                     player.score_details[problemId].judge_state = null;
-                    player.score_details[problemId].score = player.score_details[problemId].weighted_score = 0;
+                    player.score_details[problemId].score =
+                        player.score_details[problemId].weighted_score = 0;
                 }
 
                 submission = submission[0];
-                
+
                 player.score_details[problemId].judge_id = submission.id;
                 player.score_details[problemId].judge_state = submission;
-                player.score_details[problemId].score = player.score_details[problemId].weighted_score = submission.score;
+                player.score_details[problemId].score = player.score_details[
+                    problemId
+                ].weighted_score = submission.score;
                 player.score += submission.score;
             }
 
             return {
                 user: user,
-                player: player,
+                player: player
             };
         });
 
         let problems_id = await contest.getProblems();
         let problems = await problems_id.mapAsync(
-            async (id) => await Problem.findById(id),
+            async (id) => await Problem.findById(id)
         );
 
         contest.title = contest.title + ' - 赛后补题';
@@ -484,12 +486,12 @@ app.get('/contest/:id/homework', async (req, res) => {
         res.render('contest_ranklist', {
             contest: contest,
             ranklist: ranklist,
-            problems: problems,
+            problems: problems
         });
     } catch (e) {
         syzoj.log(e);
         res.render('error', {
-            err: e,
+            err: e
         });
     }
 });
@@ -504,7 +506,7 @@ function getDisplayConfig(contest) {
         showDetailResult: contest.allowedSeeingTestcase(),
         showTestdata: false,
         inContest: true,
-        showRejudge: false,
+        showRejudge: false
     };
 }
 
@@ -523,7 +525,7 @@ app.get('/contest/:id/submissions', async (req, res) => {
 
         if (contest.isEnded()) {
             res.redirect(
-                syzoj.utils.makeUrl(['submissions'], { contest: contest_id }),
+                syzoj.utils.makeUrl(['submissions'], { contest: contest_id })
             );
             return;
         }
@@ -571,9 +573,9 @@ app.get('/contest/:id/submissions', async (req, res) => {
                 query.andWhere(
                     new TypeORM.Brackets((qb) => {
                         qb.orWhere('language = :language', {
-                            language: '',
+                            language: ''
                         }).orWhere('language IS NULL');
-                    }),
+                    })
                 );
             } else if (req.body.language === 'non-submit-answer') {
                 query
@@ -581,7 +583,7 @@ app.get('/contest/:id/submissions', async (req, res) => {
                     .andWhere('language IS NOT NULL');
             } else {
                 query.andWhere('language = :language', {
-                    language: req.body.language,
+                    language: req.body.language
                 });
             }
             isFiltered = true;
@@ -590,7 +592,7 @@ app.get('/contest/:id/submissions', async (req, res) => {
         if (displayConfig.showResult) {
             if (req.query.status) {
                 query.andWhere('status = :status', {
-                    status: req.query.status,
+                    status: req.query.status
                 });
                 isFiltered = true;
             }
@@ -614,10 +616,10 @@ app.get('/contest/:id/submissions', async (req, res) => {
                 syzoj.utils.paginateFast(
                     req.query.currPageTop,
                     req.query.currPageBottom,
-                    syzoj.config.page.judge_state,
+                    syzoj.config.page.judge_state
                 ),
                 -1,
-                parseInt(req.query.page),
+                parseInt(req.query.page)
             );
 
             judge_state = queryResult.data;
@@ -626,13 +628,13 @@ app.get('/contest/:id/submissions', async (req, res) => {
             paginate = syzoj.utils.paginate(
                 await JudgeState.countQuery(query),
                 req.query.page,
-                syzoj.config.page.judge_state,
+                syzoj.config.page.judge_state
             );
             judge_state = await JudgeState.queryPage(
                 paginate,
                 query,
                 { id: 'DESC' },
-                true,
+                true
             );
         }
 
@@ -654,25 +656,25 @@ app.get('/contest/:id/submissions', async (req, res) => {
                               {
                                   taskId: x.task_id,
                                   type: pushType,
-                                  displayConfig: displayConfig,
+                                  displayConfig: displayConfig
                               },
-                              syzoj.config.session_secret,
+                              syzoj.config.session_secret
                           )
                         : null,
                 result: getRoughResult(x, displayConfig),
-                running: false,
+                running: false
             })),
             paginate: paginate,
             form: req.query,
             displayConfig: displayConfig,
             pushType: pushType,
             isFiltered: isFiltered,
-            fast_pagination: syzoj.config.submissions_page_fast_pagination,
+            fast_pagination: syzoj.config.submissions_page_fast_pagination
         });
     } catch (e) {
         syzoj.log(e);
         res.render('error', {
-            err: e,
+            err: e
         });
     }
 });
@@ -705,7 +707,7 @@ app.get('/contest/submission/:id', async (req, res) => {
             judge.codeLength = Buffer.from(judge.code).length;
             judge.code = await syzoj.utils.highlight(
                 judge.code,
-                syzoj.languages[judge.language].highlight,
+                syzoj.languages[judge.language].highlight
             );
         }
 
@@ -731,18 +733,18 @@ app.get('/contest/submission/:id', async (req, res) => {
                           {
                               taskId: judge.task_id,
                               displayConfig: displayConfig,
-                              type: 'detail',
+                              type: 'detail'
                           },
-                          syzoj.config.session_secret,
+                          syzoj.config.session_secret
                       )
                     : null,
             displayConfig: displayConfig,
-            contest: contest,
+            contest: contest
         });
     } catch (e) {
         syzoj.log(e);
         res.render('error', {
-            err: e,
+            err: e
         });
     }
 });
@@ -800,7 +802,7 @@ app.get('/contest/:id/problem/:pid', async (req, res) => {
         ) {
             if (await problem.isAllowedUseBy(res.locals.user)) {
                 return res.redirect(
-                    syzoj.utils.makeUrl(['problem', problem_id]),
+                    syzoj.utils.makeUrl(['problem', problem_id])
                 );
             }
             throw new ErrorMessage('比赛尚未开始。');
@@ -813,13 +815,13 @@ app.get('/contest/:id/problem/:pid', async (req, res) => {
             'input_format',
             'output_format',
             'example',
-            'limit_and_hint',
+            'limit_and_hint'
         ]);
 
         let state = await problem.getJudgeState(res.locals.user, false);
         let testcases = await syzoj.utils.parseTestdata(
             problem.getTestdataPath(),
-            problem.type === 'submit-answer',
+            problem.type === 'submit-answer'
         );
 
         await problem.loadRelationships();
@@ -832,12 +834,12 @@ app.get('/contest/:id/problem/:pid', async (req, res) => {
             lastLanguage: res.locals.user
                 ? await res.locals.user.getLastSubmitLanguage()
                 : null,
-            testcases: testcases,
+            testcases: testcases
         });
     } catch (e) {
         syzoj.log(e);
         res.render('error', {
-            err: e,
+            err: e
         });
     }
 });
@@ -872,8 +874,8 @@ app.get('/contest/:id/:pid/download/additional_file', async (req, res) => {
                         'problem',
                         problem_id,
                         'download',
-                        'additional_file',
-                    ]),
+                        'additional_file'
+                    ])
                 );
             }
             throw new ErrorMessage('比赛尚未开始。');
@@ -885,13 +887,13 @@ app.get('/contest/:id/:pid/download/additional_file', async (req, res) => {
 
         res.download(
             problem.additional_file.getPath(),
-            `additional_file_${id}_${pid}.zip`,
+            `additional_file_${id}_${pid}.zip`
         );
     } catch (e) {
         syzoj.log(e);
         res.status(404);
         res.render('error', {
-            err: e,
+            err: e
         });
     }
 });

@@ -13,7 +13,7 @@ const getSubmissionInfo = (s, displayConfig) => ({
             : null
         : null,
     codeSize: displayConfig.showCode ? s.code_length : null,
-    submitTime: syzoj.utils.formatDate(s.submit_time),
+    submitTime: syzoj.utils.formatDate(s.submit_time)
 });
 
 const getRoughResult = (x, displayConfig, roughOnly) => {
@@ -27,7 +27,7 @@ const getRoughResult = (x, displayConfig, roughOnly) => {
                     result: 'Judging',
                     time: 0,
                     memory: 0,
-                    score: 0,
+                    score: 0
                 });
             } else return res;
         } else {
@@ -35,7 +35,7 @@ const getRoughResult = (x, displayConfig, roughOnly) => {
                 result: x.status,
                 time: displayConfig.showUsage ? x.total_time : null,
                 memory: displayConfig.showUsage ? x.max_memory : null,
-                score: displayConfig.showScore ? x.score : null,
+                score: displayConfig.showScore ? x.score : null
             };
         }
     } else {
@@ -59,7 +59,7 @@ const processOverallResult = (source, config) => {
     if (source.error != null) {
         return {
             error: source.error,
-            systemMessage: source.systemMessage,
+            systemMessage: source.systemMessage
         };
     }
     return {
@@ -97,12 +97,12 @@ const processOverallResult = (source, config) => {
                                       : undefined,
                                   spjMessage: config.showTestdata
                                       ? cs.result.spjMessage
-                                      : undefined,
-                              },
-                          })),
-                      })),
+                                      : undefined
+                              }
+                          }))
+                      }))
               }
-            : null,
+            : null
     };
 };
 

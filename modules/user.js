@@ -18,12 +18,12 @@ app.get('/ranklist', async (req, res) => {
         let paginate = syzoj.utils.paginate(
             await User.countForPagination({ is_show: true }),
             req.query.page,
-            syzoj.config.page.ranklist,
+            syzoj.config.page.ranklist
         );
         let ranklist = await User.queryPage(
             paginate,
             { is_show: true },
-            { [sort]: order.toUpperCase() },
+            { [sort]: order.toUpperCase() }
         );
         await ranklist.forEachAsync(async (x) => x.renderInformation());
 
@@ -31,12 +31,12 @@ app.get('/ranklist', async (req, res) => {
             ranklist: ranklist,
             paginate: paginate,
             curSort: sort,
-            curOrder: order === 'asc',
+            curOrder: order === 'asc'
         });
     } catch (e) {
         syzoj.log(e);
         res.render('error', {
-            err: e,
+            err: e
         });
     }
 });
@@ -49,7 +49,7 @@ app.get('/find_user', async (req, res) => {
     } catch (e) {
         syzoj.log(e);
         res.render('error', {
-            err: e,
+            err: e
         });
     }
 });
@@ -59,8 +59,8 @@ app.get('/login', async (req, res) => {
     if (res.locals.user) {
         res.render('error', {
             err: new ErrorMessage('您已经登录了，请先注销。', {
-                注销: syzoj.utils.makeUrl(['logout'], { url: req.originalUrl }),
-            }),
+                注销: syzoj.utils.makeUrl(['logout'], { url: req.originalUrl })
+            })
         });
     } else {
         res.render('login');
@@ -72,8 +72,8 @@ app.get('/sign_up', async (req, res) => {
     if (res.locals.user) {
         res.render('error', {
             err: new ErrorMessage('您已经登录了，请先注销。', {
-                注销: syzoj.utils.makeUrl(['logout'], { url: req.originalUrl }),
-            }),
+                注销: syzoj.utils.makeUrl(['logout'], { url: req.originalUrl })
+            })
         });
     } else {
         res.render('sign_up');
@@ -103,24 +103,24 @@ app.get('/user/:id', async (req, res) => {
 
         const ratingHistoryValues = await RatingHistory.find({
             where: { user_id: user.id },
-            order: { rating_calculation_id: 'ASC' },
+            order: { rating_calculation_id: 'ASC' }
         });
         const ratingHistories = [
             {
                 contestName: '初始积分',
                 value: syzoj.config.default.user.rating,
                 delta: null,
-                rank: null,
-            },
+                rank: null
+            }
         ];
 
         for (const history of ratingHistoryValues) {
             const contest = await Contest.findById(
                 (
                     await RatingCalculation.findById(
-                        history.rating_calculation_id,
+                        history.rating_calculation_id
                     )
-                ).contest_id,
+                ).contest_id
             );
             ratingHistories.push({
                 contestName: contest.title,
@@ -130,8 +130,8 @@ app.get('/user/:id', async (req, res) => {
                     ratingHistories[ratingHistories.length - 1].value,
                 rank: history.rank,
                 participants: await ContestPlayer.count({
-                    contest_id: contest.id,
-                }),
+                    contest_id: contest.id
+                })
             });
         }
         ratingHistories.reverse();
@@ -139,12 +139,12 @@ app.get('/user/:id', async (req, res) => {
         res.render('user', {
             show_user: user,
             statistics: statistics,
-            ratingHistories: ratingHistories,
+            ratingHistories: ratingHistories
         });
     } catch (e) {
         syzoj.log(e);
         res.render('error', {
-            err: e,
+            err: e
         });
     }
 });
@@ -163,17 +163,17 @@ app.get('/user/:id/edit', async (req, res) => {
         user.privileges = await user.getPrivileges();
 
         res.locals.user.allowedManage = await res.locals.user.hasPrivilege(
-            'manage_user',
+            'manage_user'
         );
 
         res.render('user_edit', {
             edited_user: user,
-            error_info: null,
+            error_info: null
         });
     } catch (e) {
         syzoj.log(e);
         res.render('error', {
-            err: e,
+            err: e
         });
     }
 });
@@ -239,12 +239,12 @@ app.post('/user/:id/edit', async (req, res) => {
 
         user.privileges = await user.getPrivileges();
         res.locals.user.allowedManage = await res.locals.user.hasPrivilege(
-            'manage_user',
+            'manage_user'
         );
 
         res.render('user_edit', {
             edited_user: user,
-            error_info: '',
+            error_info: ''
         });
     } catch (e) {
         try {
@@ -258,7 +258,7 @@ app.post('/user/:id/edit', async (req, res) => {
 
         res.render('user_edit', {
             edited_user: user,
-            error_info: e.message,
+            error_info: e.message
         });
     }
 });
@@ -278,7 +278,7 @@ app.post('/user/:id/set_permission', async (req, res) => {
 
         await user.save();
         res.send({
-            success: true,
+            success: true
         });
     } catch (e) {
         syzoj.log(e);
@@ -286,7 +286,7 @@ app.post('/user/:id/set_permission', async (req, res) => {
         //   err: e
         // });
         res.send({
-            success: false,
+            success: false
         });
     }
 });
@@ -307,12 +307,12 @@ app.post('/user/:id/cheater', async (req, res) => {
         res.redirect(
             '/submissions?contest=&problem_id=&submitter=' +
                 user.username +
-                '&min_score=0&max_score=100&language=&status=',
+                '&min_score=0&max_score=100&language=&status='
         );
     } catch (e) {
         syzoj.log(e);
         res.render('error', {
-            err: e,
+            err: e
         });
     }
 });
@@ -333,7 +333,7 @@ app.post('/user/:id/ban', async (req, res) => {
     } catch (e) {
         syzoj.log(e);
         res.render('error', {
-            err: e,
+            err: e
         });
     }
 });

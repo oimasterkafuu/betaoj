@@ -21,7 +21,7 @@ function processOverallResult(source, config) {
     if (source.error != null) {
         return {
             error: source.error,
-            systemMessage: source.systemMessage,
+            systemMessage: source.systemMessage
         };
     }
     return {
@@ -58,12 +58,12 @@ function processOverallResult(source, config) {
                                       : undefined,
                                   spjMessage: config.showTestdata
                                       ? cs.result.spjMessage
-                                      : undefined,
-                              },
-                          })),
-                      })),
+                                      : undefined
+                              }
+                          }))
+                      }))
               }
-            : null,
+            : null
     };
 }
 function getCompileStatus(status) {
@@ -81,7 +81,7 @@ function processRoughResult(source, config) {
         result: result,
         time: config.showUsage ? source.time : null,
         memory: config.showUsage ? source.memory : null,
-        score: config.showScore ? source.score : null,
+        score: config.showScore ? source.score : null
     };
 }
 function forAllClients(ns, taskId, exec) {
@@ -94,7 +94,7 @@ function forAllClients(ns, taskId, exec) {
             if (debug)
                 winston.warn(
                     `Error while listing socketio clients in ${taskId}`,
-                    err,
+                    err
                 );
         }
     });
@@ -124,18 +124,18 @@ function initializeSocketIO(s) {
                     const taskId = req.taskId;
                     if (debug)
                         winston.verbose(
-                            `A client trying to join ${name} namespace for ${taskId}.`,
+                            `A client trying to join ${name} namespace for ${taskId}.`
                         );
                     socket.join(taskId.toString());
                     exec(req, socket).then(
                         (x) => cb(x),
-                        (err) => cb({ ok: false, message: err.toString() }),
+                        (err) => cb({ ok: false, message: err.toString() })
                     );
                 } catch (err) {
                     if (debug) winston.info('Error while joining.');
                     cb({
                         ok: false,
-                        message: err.toString(),
+                        message: err.toString()
                     });
                     return;
                 }
@@ -151,8 +151,8 @@ function initializeSocketIO(s) {
                 if (debug)
                     winston.debug(
                         `Judge task #${taskId} has been finished, ${JSON.stringify(
-                            currentJudgeList[taskId],
-                        )}`,
+                            currentJudgeList[taskId]
+                        )}`
                     );
                 return {
                     ok: true,
@@ -160,41 +160,41 @@ function initializeSocketIO(s) {
                     finished: true,
                     result: processOverallResult(
                         currentJudgeList[taskId],
-                        clientDisplayConfigList[socket.id],
+                        clientDisplayConfigList[socket.id]
                     ),
                     roughResult: processRoughResult(
                         finishedJudgeList[taskId],
-                        clientDisplayConfigList[socket.id],
-                    ),
+                        clientDisplayConfigList[socket.id]
+                    )
                 };
             } else {
                 if (debug)
                     winston.debug(
-                        `Judge task #${taskId} has not been finished`,
+                        `Judge task #${taskId} has not been finished`
                     );
                 if (currentJudgeList[taskId]) {
                     clientDetailProgressList[socket.id] = {
                         version: 0,
                         content: processOverallResult(
                             currentJudgeList[taskId],
-                            clientDisplayConfigList[socket.id],
-                        ),
+                            clientDisplayConfigList[socket.id]
+                        )
                     };
                     return {
                         ok: true,
                         finished: false,
                         running: true,
-                        current: clientDetailProgressList[socket.id],
+                        current: clientDetailProgressList[socket.id]
                     };
                 } else {
                     return {
                         ok: true,
                         finished: false,
-                        running: false,
+                        running: false
                     };
                 }
             }
-        },
+        }
     );
     roughProgressNamespace = initializeNamespace(
         'rough',
@@ -207,23 +207,23 @@ function initializeSocketIO(s) {
                     finished: true,
                     result: processRoughResult(
                         finishedJudgeList[taskId],
-                        clientDisplayConfigList[socket.id],
-                    ),
+                        clientDisplayConfigList[socket.id]
+                    )
                 };
             } else if (currentJudgeList[taskId]) {
                 return {
                     ok: true,
                     running: true,
-                    finished: false,
+                    finished: false
                 };
             } else {
                 return {
                     ok: true,
                     running: false,
-                    finished: false,
+                    finished: false
                 };
             }
-        },
+        }
     );
     compileProgressNamespace = initializeNamespace(
         'compile',
@@ -234,22 +234,22 @@ function initializeSocketIO(s) {
                     ok: true,
                     running: false,
                     finished: true,
-                    result: compiledList[taskId],
+                    result: compiledList[taskId]
                 };
             } else if (currentJudgeList[taskId]) {
                 return {
                     ok: true,
                     running: true,
-                    finished: false,
+                    finished: false
                 };
             } else {
                 return {
                     ok: true,
                     running: false,
-                    finished: false,
+                    finished: false
                 };
             }
-        },
+        }
     );
 
     return ioInstance;
@@ -262,7 +262,7 @@ function createTask(taskId) {
     forAllClients(detailProgressNamespace, taskId, (clientId) => {
         clientDetailProgressList[clientId] = {
             version: 0,
-            content: {},
+            content: {}
         };
     });
     roughProgressNamespace
@@ -282,11 +282,11 @@ function updateCompileStatus(taskId, result) {
         result:
             result.status === interfaces.TaskStatus.Done
                 ? 'Submitted'
-                : 'Compile Error',
+                : 'Compile Error'
     };
     compileProgressNamespace.to(taskId.toString()).emit('finish', {
         taskId: taskId,
-        result: compiledList[taskId],
+        result: compiledList[taskId]
     });
 }
 exports.updateCompileStatus = updateCompileStatus;
@@ -298,7 +298,7 @@ function updateProgress(taskId, data) {
         result: 'Running',
         time: finalResult.time,
         memory: finalResult.memory,
-        score: finalResult.score,
+        score: finalResult.score
     };
     forAllClients(detailProgressNamespace, taskId, (client) => {
         try {
@@ -310,7 +310,7 @@ function updateProgress(taskId, data) {
                 const original = clientDetailProgressList[client].content;
                 const updated = processOverallResult(
                     currentJudgeList[taskId],
-                    clientDisplayConfigList[client],
+                    clientDisplayConfigList[client]
                 );
                 const version = clientDetailProgressList[client].version;
                 detailProgressNamespace.sockets[client].emit('update', {
@@ -318,7 +318,7 @@ function updateProgress(taskId, data) {
                     from: version,
                     to: version + 1,
                     delta: diff.diff(original, updated),
-                    roughResult: roughResult,
+                    roughResult: roughResult
                 });
                 clientDetailProgressList[client].version++;
             }
@@ -335,7 +335,7 @@ function updateResult(taskId, data) {
             compiledList[taskId] = { result: 'System Error' };
             compileProgressNamespace.to(taskId.toString()).emit('finish', {
                 taskId: taskId,
-                result: compiledList[taskId],
+                result: compiledList[taskId]
             });
         }
     }
@@ -344,7 +344,7 @@ function updateResult(taskId, data) {
         result: finalResult.statusString,
         time: finalResult.time,
         memory: finalResult.memory,
-        score: finalResult.score,
+        score: finalResult.score
     };
     finishedJudgeList[taskId] = roughResult;
     forAllClients(roughProgressNamespace, taskId, (client) => {
@@ -353,8 +353,8 @@ function updateResult(taskId, data) {
             taskId: taskId,
             result: processRoughResult(
                 finishedJudgeList[taskId],
-                clientDisplayConfigList[client],
-            ),
+                clientDisplayConfigList[client]
+            )
         });
     });
     forAllClients(detailProgressNamespace, taskId, (client) => {
@@ -364,12 +364,12 @@ function updateResult(taskId, data) {
                 taskId: taskId,
                 result: processOverallResult(
                     currentJudgeList[taskId],
-                    clientDisplayConfigList[client],
+                    clientDisplayConfigList[client]
                 ),
                 roughResult: processRoughResult(
                     finishedJudgeList[taskId],
-                    clientDisplayConfigList[client],
-                ),
+                    clientDisplayConfigList[client]
+                )
             });
             delete clientDetailProgressList[client];
         }

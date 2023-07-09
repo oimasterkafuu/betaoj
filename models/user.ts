@@ -69,16 +69,16 @@ export default class User extends Model {
     static async fromEmail(email): Promise<User> {
         return User.findOne({
             where: {
-                email: String(email),
-            },
+                email: String(email)
+            }
         });
     }
 
     static async fromName(name): Promise<User> {
         return User.findOne({
             where: {
-                username: String(name),
-            },
+                username: String(name)
+            }
         });
     }
 
@@ -103,15 +103,15 @@ export default class User extends Model {
             ['User::refreshSubmitInfo', this.id],
             async () => {
                 this.ac_num = await JudgeState.countQuery(
-                    this.getQueryBuilderForACProblems(),
+                    this.getQueryBuilderForACProblems()
                 );
                 this.submit_num = await JudgeState.count({
                     user_id: this.id,
-                    type: TypeORM.Not(1), // Not a contest submission
+                    type: TypeORM.Not(1) // Not a contest submission
                 });
 
                 await this.save();
-            },
+            }
         );
     }
 
@@ -125,8 +125,8 @@ export default class User extends Model {
     async getArticles() {
         return await Article.find({
             where: {
-                user_id: this.id,
-            },
+                user_id: this.id
+            }
         });
     }
 
@@ -136,12 +136,12 @@ export default class User extends Model {
             'Wrong Answer': [
                 'Wrong Answer',
                 'File Error',
-                'Output Limit Exceeded',
+                'Output Limit Exceeded'
             ],
             'Runtime Error': ['Runtime Error'],
             'Time Limit Exceeded': ['Time Limit Exceeded'],
             'Memory Limit Exceeded': ['Memory Limit Exceeded'],
-            'Compile Error': ['Compile Error'],
+            'Compile Error': ['Compile Error']
         };
 
         let res = {};
@@ -151,7 +151,7 @@ export default class User extends Model {
                 res[status] += await JudgeState.count({
                     user_id: this.id,
                     type: 0,
-                    status: s,
+                    status: s
                 });
             }
         }
@@ -166,8 +166,8 @@ export default class User extends Model {
     async getPrivileges() {
         let privileges = await UserPrivilege.find({
             where: {
-                user_id: this.id,
-            },
+                user_id: this.id
+            }
         });
 
         return privileges.map((x) => x.privilege);
@@ -177,18 +177,18 @@ export default class User extends Model {
         let oldPrivileges = await this.getPrivileges();
 
         let delPrivileges = oldPrivileges.filter(
-            (x) => !newPrivileges.includes(x),
+            (x) => !newPrivileges.includes(x)
         );
         let addPrivileges = newPrivileges.filter(
-            (x) => !oldPrivileges.includes(x),
+            (x) => !oldPrivileges.includes(x)
         );
 
         for (let privilege of delPrivileges) {
             let obj = await UserPrivilege.findOne({
                 where: {
                     user_id: this.id,
-                    privilege: privilege,
-                },
+                    privilege: privilege
+                }
             });
 
             await obj.destroy();
@@ -197,7 +197,7 @@ export default class User extends Model {
         for (let privilege of addPrivileges) {
             let obj = await UserPrivilege.create({
                 user_id: this.id,
-                privilege: privilege,
+                privilege: privilege
             });
 
             await obj.save();
@@ -208,7 +208,7 @@ export default class User extends Model {
         if (this.is_admin) return true;
 
         let x = await UserPrivilege.findOne({
-            where: { user_id: this.id, privilege: privilege },
+            where: { user_id: this.id, privilege: privilege }
         });
         return !!x;
     }
@@ -216,11 +216,11 @@ export default class User extends Model {
     async getLastSubmitLanguage() {
         let a = await JudgeState.findOne({
             where: {
-                user_id: this.id,
+                user_id: this.id
             },
             order: {
-                submit_time: 'DESC',
-            },
+                submit_time: 'DESC'
+            }
         });
         if (a) return a.language;
 
@@ -230,8 +230,8 @@ export default class User extends Model {
     async skipSubmissions() {
         let submissions = await JudgeState.find({
             where: {
-                user_id: this.id,
-            },
+                user_id: this.id
+            }
         });
         for (let submission of submissions) {
             await submission.skip();

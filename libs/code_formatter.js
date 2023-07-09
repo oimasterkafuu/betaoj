@@ -18,12 +18,12 @@ module.exports = async (code, lang) => {
             await fs.writeFile(tempFile, code);
             process = child_process.spawn(`${__dirname}/../bin/jcf`, [
                 tempFile,
-                '-inplace',
+                '-inplace'
             ]);
         } else {
             process = child_process.spawn(
                 `clang-format -style="{BasedOnStyle: Google, IndentWidth: 4, AccessModifierOffset: -4, SortIncludes: false, AllowShortIfStatementsOnASingleLine: false, ColumnLimit: 110, Cpp11BracedListStyle: false }" -assume-filename="a.${lang}"`,
-                { shell: true },
+                { shell: true }
             );
             process.stdin.setEncoding('utf-8');
             process.stdin.write(code);

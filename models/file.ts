@@ -65,7 +65,7 @@ export default class File extends Model {
         if (!file) {
             file = await File.create({
                 type: type,
-                md5: key,
+                md5: key
             });
             await file.save();
         }

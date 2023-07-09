@@ -53,7 +53,7 @@ const judgeQueue = (() => {
 
                 const timer = setTimeout(() => {
                     queueConsumers = queueConsumers.filter(
-                        (cb) => cb !== onNewItem,
+                        (cb) => cb !== onNewItem
                     );
                     resolve(null);
                 }, timeout);
@@ -65,7 +65,7 @@ const judgeQueue = (() => {
 
                 queueConsumers.push(onNewItem);
             });
-        },
+        }
     };
 })();
 
@@ -82,7 +82,7 @@ async function connect() {
             // Ignore requests with invalid token.
             if (token != syzoj.config.judge_token) {
                 winston.warn(
-                    `Judge client ${socket.id} emitted waitForTask with invalid token.`,
+                    `Judge client ${socket.id} emitted waitForTask with invalid token.`
                 );
                 return;
             }
@@ -91,7 +91,7 @@ async function connect() {
 
             if (waitingForTask) {
                 winston.warn(
-                    `Judge client ${socket.id} emitted waitForTask, but already waiting, ignoring.`,
+                    `Judge client ${socket.id} emitted waitForTask, but already waiting, ignoring.`
                 );
                 return;
             }
@@ -108,20 +108,20 @@ async function connect() {
 
             if (!obj) {
                 winston.warn(
-                    `Judge client ${socket.id} disconnected, stop poll the queue.`,
+                    `Judge client ${socket.id} disconnected, stop poll the queue.`
                 );
                 // Socket disconnected and no task got.
                 return;
             }
 
             winston.warn(
-                `Judge task ${obj.data.content.taskId} poped from queue.`,
+                `Judge task ${obj.data.content.taskId} poped from queue.`
             );
 
             // Re-push to queue if got task but judge client already disconnected.
             if (socket.disconnected) {
                 winston.warn(
-                    `Judge client ${socket.id} got task but disconnected re-pushing task ${obj.data.content.taskId} to queue.`,
+                    `Judge client ${socket.id} got task but disconnected re-pushing task ${obj.data.content.taskId} to queue.`
                 );
                 judgeQueue.push(obj.data, obj.priority);
                 return;
@@ -131,12 +131,12 @@ async function connect() {
             const task = obj.data;
             pendingAckTaskObj = obj;
             winston.warn(
-                `Sending task ${task.content.taskId} to judge client ${socket.id}.`,
+                `Sending task ${task.content.taskId} to judge client ${socket.id}.`
             );
             socket.emit('onTask', msgPack.encode(task), () => {
                 // Acked.
                 winston.warn(
-                    `Judge client ${socket.id} acked task ${task.content.taskId}.`,
+                    `Judge client ${socket.id} acked task ${task.content.taskId}.`
                 );
                 pendingAckTaskObj = null;
                 waitingForTask = false;
@@ -147,16 +147,16 @@ async function connect() {
             winston.warn(
                 `Judge client ${
                     socket.id
-                } disconnected, reason = ${util.inspect(reason)}.`,
+                } disconnected, reason = ${util.inspect(reason)}.`
             );
             if (pendingAckTaskObj) {
                 // A task sent but not acked, push to queue again.
                 winston.warn(
-                    `Re-pushing task ${pendingAckTaskObj.data.content.taskId} to judge queue.`,
+                    `Re-pushing task ${pendingAckTaskObj.data.content.taskId} to judge queue.`
                 );
                 judgeQueue.push(
                     pendingAckTaskObj.data,
-                    pendingAckTaskObj.priority,
+                    pendingAckTaskObj.priority
                 );
                 pendingAckTaskObj = null;
             }
@@ -166,14 +166,14 @@ async function connect() {
             // Ignore requests with invalid token.
             if (token !== syzoj.config.judge_token) {
                 winston.warn(
-                    `Judge client ${socket.id} emitted reportProgress with invalid token.`,
+                    `Judge client ${socket.id} emitted reportProgress with invalid token.`
                 );
                 return;
             }
 
             const progress = msgPack.decode(payload);
             winston.verbose(
-                `Got progress from progress exchange, id: ${progress.taskId}`,
+                `Got progress from progress exchange, id: ${progress.taskId}`
             );
 
             if (progress.type === interface.ProgressReportType.Started) {
@@ -182,31 +182,31 @@ async function connect() {
                     result: 'Compiling',
                     score: 0,
                     time: 0,
-                    memory: 0,
+                    memory: 0
                 });
             } else if (
                 progress.type === interface.ProgressReportType.Compiled
             ) {
                 progressPusher.updateCompileStatus(
                     progress.taskId,
-                    progress.progress,
+                    progress.progress
                 );
             } else if (
                 progress.type === interface.ProgressReportType.Progress
             ) {
                 const convertedResult = judgeResult.convertResult(
                     progress.taskId,
-                    progress.progress,
+                    progress.progress
                 );
                 judgeStateCache.set(progress.taskId, {
                     result: getRunningTaskStatusString(progress.progress),
                     score: convertedResult.score,
                     time: convertedResult.time,
-                    memory: convertedResult.memory,
+                    memory: convertedResult.memory
                 });
                 progressPusher.updateProgress(
                     progress.taskId,
-                    progress.progress,
+                    progress.progress
                 );
             } else if (
                 progress.type === interface.ProgressReportType.Finished
@@ -226,7 +226,7 @@ async function connect() {
             // Ignore requests with invalid token.
             if (token !== syzoj.config.judge_token) {
                 winston.warn(
-                    `Judge client ${socket.id} emitted reportResult with invalid token.`,
+                    `Judge client ${socket.id} emitted reportResult with invalid token.`
                 );
                 return;
             }
@@ -236,14 +236,14 @@ async function connect() {
 
             const judge_state = await JudgeState.findOne({
                 where: {
-                    task_id: result.taskId,
-                },
+                    task_id: result.taskId
+                }
             });
 
             if (result.type === interface.ProgressReportType.Finished) {
                 const convertedResult = judgeResult.convertResult(
                     result.taskId,
-                    result.progress,
+                    result.progress
                 );
                 winston.verbose('Reporting report finished: ' + result.taskId);
                 progressPusher.cleanupProgress(result.taskId);
@@ -278,7 +278,7 @@ module.exports.judge = async function (judge_state, problem, priority) {
             type = enums.ProblemType.AnswerSubmission;
             param = null;
             extraData = await fs.readFile(
-                syzoj.model('file').resolvePath('answer', judge_state.code),
+                syzoj.model('file').resolvePath('answer', judge_state.code)
             );
             break;
         case 'interaction':
@@ -287,7 +287,7 @@ module.exports.judge = async function (judge_state, problem, priority) {
                 language: judge_state.language,
                 code: judge_state.code,
                 timeLimit: problem.time_limit,
-                memoryLimit: problem.memory_limit,
+                memoryLimit: problem.memory_limit
             };
             break;
         default:
@@ -302,7 +302,7 @@ module.exports.judge = async function (judge_state, problem, priority) {
                     : null,
                 fileIOOutput: problem.file_io
                     ? problem.file_io_output_name
-                    : null,
+                    : null
             };
             break;
     }
@@ -314,15 +314,15 @@ module.exports.judge = async function (judge_state, problem, priority) {
         type: type,
         priority: priority,
         realPriority: priority - parseInt(judge_state.id) / 10000000,
-        param: param,
+        param: param
     };
 
     judgeQueue.push(
         {
             content: content,
-            extraData: extraData,
+            extraData: extraData
         },
-        content.realPriority,
+        content.realPriority
     );
 
     winston.warn(`Judge task ${content.taskId} enqueued.`);

@@ -14,8 +14,8 @@ const optionDefinitions = [
         name: 'config',
         alias: 'c',
         type: String,
-        defaultValue: __dirname + '/config.json',
-    },
+        defaultValue: __dirname + '/config.json'
+    }
 ];
 
 const options = commandLineArgs(optionDefinitions);
@@ -27,8 +27,8 @@ global.Promise = require('bluebird');
 // Disable 'Warning: a promise was created in a handler at ...'
 Promise.config({
     warnings: {
-        wForgottenReturn: false,
-    },
+        wForgottenReturn: false
+    }
 });
 
 function parseBoolean(s) {
@@ -41,7 +41,7 @@ const configBase = require('./config-example.json');
 const configInFile = JSON.parse(
     (fs.existsSync(options.config) &&
         fs.readFileSync(options.config, 'utf-8')) ||
-        '{}',
+        '{}'
 );
 const configEnvOverrideItems = {
     SYZOJ_WEB_LISTEN_HOSTNAME: [String, 'hostname'],
@@ -65,8 +65,8 @@ const configEnvOverrideItems = {
     SYZOJ_WEB_EMAIL_SMTP_PASSWORD: [String, 'email.options.password'],
     SYZOJ_WEB_EMAIL_SMTP_ALLOW_UNAUTHORIZED_TLS: [
         String,
-        'email.options.allowUnauthorizedTls',
-    ],
+        'email.options.allowUnauthorizedTls'
+    ]
 };
 const configEnvOverride = (() => {
     const override = {};
@@ -78,14 +78,14 @@ const configEnvOverride = (() => {
     return override;
 })();
 const configOverrideExtra = eval(
-    '(' + (process.env['SYZOJ_WEB_CONFIG_OVERRIDE'] || '{}') + ')',
+    '(' + (process.env['SYZOJ_WEB_CONFIG_OVERRIDE'] || '{}') + ')'
 );
 function loadConfig(config) {
     return deepAssign(
         deepCopy(configBase),
         config,
         configEnvOverride,
-        configOverrideExtra,
+        configOverrideExtra
     );
 }
 
@@ -108,8 +108,8 @@ global.syzoj = {
         if (configInFile.db && !configInFile.db.migrated_to_typeorm) {
             app.use((req, res) =>
                 res.send(
-                    'Please refer to <a href="https://github.com/syzoj/syzoj/wiki/TypeORM-%E8%BF%81%E7%A7%BB%E6%8C%87%E5%8D%97">TypeORM Migration Guide</a>.',
-                ),
+                    'Please refer to <a href="https://github.com/syzoj/syzoj/wiki/TypeORM-%E8%BF%81%E7%A7%BB%E6%8C%87%E5%8D%97">TypeORM Migration Guide</a>.'
+                )
             );
             app.listen(parseInt(syzoj.config.port), syzoj.config.hostname);
             return false;
@@ -144,8 +144,8 @@ global.syzoj = {
         // Set assets dir
         app.use(
             Express.static(__dirname + '/static', {
-                maxAge: syzoj.production ? '1y' : 0,
-            }),
+                maxAge: syzoj.production ? '1y' : 0
+            })
         );
 
         // Set template engine ejs
@@ -156,8 +156,8 @@ global.syzoj = {
         app.use(
             bodyParser.urlencoded({
                 extended: true,
-                limit: '50mb',
-            }),
+                limit: '50mb'
+            })
         );
         app.use(bodyParser.json({ limit: '50mb' }));
 
@@ -167,7 +167,7 @@ global.syzoj = {
 
         let multer = require('multer');
         app.multer = multer({
-            dest: syzoj.utils.resolvePath(syzoj.config.upload_dir, 'tmp'),
+            dest: syzoj.utils.resolvePath(syzoj.config.upload_dir, 'tmp')
         });
 
         // This should before load api_v2, to init the `res.locals.user`
@@ -179,7 +179,7 @@ global.syzoj = {
                 app.apiRouter = router;
                 require('./modules/api_v2');
                 return router;
-            })(),
+            })()
         );
 
         app.server = http.createServer(app);
@@ -210,9 +210,9 @@ global.syzoj = {
                     this.log(
                         `SYZOJ is listening on ${
                             syzoj.config.hostname
-                        }:${parseInt(syzoj.config.port)}...`,
+                        }:${parseInt(syzoj.config.port)}...`
                     );
-                },
+                }
             );
         }
     },
@@ -220,7 +220,7 @@ global.syzoj = {
         console.log('Will now fork a new process.');
         const child = require('child_process').fork(__filename, [
             '-c',
-            options.config,
+            options.config
         ]);
         child.on('message', (message) => {
             if (message !== 'quit') return;
@@ -230,7 +230,7 @@ global.syzoj = {
                 if (err)
                     console.error(
                         'Error sending "quited" to child process:',
-                        err,
+                        err
                     );
                 process.exit();
             });
@@ -242,7 +242,7 @@ global.syzoj = {
         const OriginalNormalizeType =
             TypeORMMysqlDriver.MysqlDriver.prototype.normalizeType;
         TypeORMMysqlDriver.MysqlDriver.prototype.normalizeType = function (
-            column,
+            column
         ) {
             if (column.type === 'json') {
                 return 'longtext';
@@ -259,12 +259,12 @@ global.syzoj = {
             .readdirSync(modelsPath)
             .filter(
                 (filename) =>
-                    filename.endsWith('.ts') && filename !== 'common.ts',
+                    filename.endsWith('.ts') && filename !== 'common.ts'
             )
             .map(
                 (filename) =>
                     require(modelsBuiltPath + filename.replace('.ts', '.js'))
-                        .default,
+                        .default
             );
 
         await TypeORM.createConnection({
@@ -278,8 +278,8 @@ global.syzoj = {
             synchronize: true,
             logging: !syzoj.production,
             extra: {
-                connectionLimit: 50,
-            },
+                connectionLimit: 50
+            }
         });
     },
     loadModules() {
@@ -291,7 +291,7 @@ global.syzoj = {
             files
                 .filter((file) => file.endsWith('.js'))
                 .forEach((file) =>
-                    this.modules.push(require(`./modules/${file}`)),
+                    this.modules.push(require(`./modules/${file}`))
                 );
         });
     },
@@ -310,7 +310,7 @@ global.syzoj = {
             rolling: true,
             saveUninitialized: false,
             resave: false,
-            store: new FileStore({ retries: 0 }),
+            store: new FileStore({ retries: 0 })
         };
         if (syzoj.production) {
             app.set('trust proxy', 1);
@@ -343,8 +343,8 @@ global.syzoj = {
                         User.findOne({
                             where: {
                                 username: String(obj[0]),
-                                password: String(obj[1]),
-                            },
+                                password: String(obj[1])
+                            }
                         })
                             .then((user) => {
                                 if (!user) throw null;
@@ -382,7 +382,7 @@ global.syzoj = {
             res.locals.res = res;
             next();
         });
-    },
+    }
 };
 
 syzoj.untilStarted = syzoj.run();
