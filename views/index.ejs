@@ -86,30 +86,46 @@
                 <%- blackboard %>
             </div>
         <% } %>
-        <% if (syzoj.config.hitokoto) { %>
-            <h4 class="ui top attached block header"><i class="ui quote left icon"></i>一言（ひとこと）</h4>
-            <div class="ui bottom attached center aligned segment">
-              <div class="ui active centered inline loader" id="hitokoto-loader"></div>
-              <script>
-              $.get('https://v1.hitokoto.cn/?c=a', function (data) {
-                if (typeof data === 'string') data = JSON.parse(data);
-                $('#hitokoto-loader').removeClass('active');
-                $('#hitokoto-content').css('display', '').text(data.hitokoto);
-                if (data.from) {
-                  $('#hitokoto-from').css('display', '').text('——' + data.from);
-                }
-              });
-              </script>
-              <div style="font-size: 1em; line-height: 1.5em; display: none; " id="hitokoto-content"></div>
-              <div style="text-align: right; margin-top: 15px; font-size: 0.9em; color: #666; display: none; " id="hitokoto-from"></div>
-            </div>
-        <% } %>
         <% if (user && user.permission == null) { %>
             <h4 class="ui top attached block header"><i class="ui hand point right icon"></i>警告</h4>
             <div class="ui bottom attached aligned segment">
                 您的账号还<font color="red">没有被审核</font>。请尽快联系管理员进行审核。
             </div>
         <% } %>
+        <h4 class="ui top attached block header"><i class="ui calendar icon"></i>近期比赛</h4>
+        <div class="ui bottom attached <% if (!contests || !contests.length) { %>center aligned <% } %>segment">
+          <% if (!contests || !contests.length) { %>
+          还没有举行过任何比赛
+          <% } else { %>
+          <table class="ui very basic center aligned table">
+            <thead>
+              <tr>
+                <th>比赛名称</th>
+                <th>开始时间</th>
+              </tr>
+            </thead>
+            <tbody>
+              <%
+              for (let contest of contests) {
+                let now = syzoj.utils.getCurrentDate();
+                let tag = '';
+              %>
+              <tr>
+                <% if (now < contest.start_time) { %>
+                  <% tag = '<span class="ui header"><div class="ui mini red label">未开始</div></span>' %>
+                <% } else if (now >= contest.start_time && now < contest.end_time) { %>
+                  <% tag = '<span class="ui header"><div class="ui mini green label">进行中</div></span>' %>
+                <% } else { %>
+                  <% tag = '<span class="ui header"><div class="ui mini grey label">已结束</div></span>' %>
+                <% } %>
+                <td><a href="<%= syzoj.utils.makeUrl(['contest', contest.id]) %>"><%= contest.title %> <%- tag %></a></td>
+                <td><%= syzoj.utils.formatDate(contest.start_time) %></td>
+              </tr>
+              <% } %>
+            </tbody>
+          </table>
+          <% } %>
+        </div>
       <h4 class="ui top attached block header"><i class="ui search icon"></i>搜索用户</h4>
       <div class="ui bottom attached segment">
         <form action="<%= syzoj.utils.makeUrl(['find_user']) %>" method="get">
@@ -143,6 +159,36 @@
 	  </tbody>
 	</table>
       </div>
+      <h4 class="ui top attached block header"><i class="ui search icon"></i>搜索题目</h4>
+      <div class="ui bottom attached segment">
+        <form action="<%= syzoj.utils.makeUrl(['problems', 'search']) %>" method="get">
+          <div class="ui search" style="width: 100%; " id="searchProblem">
+            <div class="ui left icon input" style="width: 100%; ">
+              <input class="prompt" style="width: 100%; " type="text" placeholder="ID / 题目名 …" name="keyword">
+              <i class="search icon"></i>
+            </div>
+            <div class="results" style="width: 100%; "></div>
+          </div>
+        </form>
+      </div>
+      <% if (syzoj.config.hitokoto) { %>
+          <h4 class="ui top attached block header"><i class="ui quote left icon"></i>一言</h4>
+          <div class="ui bottom attached center aligned segment">
+            <div class="ui active centered inline loader" id="hitokoto-loader"></div>
+            <script>
+            $.get('https://v1.hitokoto.cn/?c=a', function (data) {
+              if (typeof data === 'string') data = JSON.parse(data);
+              $('#hitokoto-loader').removeClass('active');
+              $('#hitokoto-content').css('display', '').text(data.hitokoto);
+              if (data.from) {
+                $('#hitokoto-from').css('display', '').text('——' + data.from);
+              }
+            });
+            </script>
+            <div style="font-size: 1em; line-height: 1.5em; display: none; " id="hitokoto-content"></div>
+            <div style="text-align: right; margin-top: 15px; font-size: 0.9em; color: #666; display: none; " id="hitokoto-from"></div>
+          </div>
+      <% } %>
         <%
         if (fortune) {
             let color;
@@ -196,52 +242,6 @@
             </div>
         </div>
         <% } %>
-      <h4 class="ui top attached block header"><i class="ui search icon"></i>搜索题目</h4>
-      <div class="ui bottom attached segment">
-        <form action="<%= syzoj.utils.makeUrl(['problems', 'search']) %>" method="get">
-          <div class="ui search" style="width: 100%; " id="searchProblem">
-            <div class="ui left icon input" style="width: 100%; ">
-              <input class="prompt" style="width: 100%; " type="text" placeholder="ID / 题目名 …" name="keyword">
-              <i class="search icon"></i>
-            </div>
-            <div class="results" style="width: 100%; "></div>
-          </div>
-        </form>
-      </div>
-      <h4 class="ui top attached block header"><i class="ui calendar icon"></i>近期比赛</h4>
-      <div class="ui bottom attached <% if (!contests || !contests.length) { %>center aligned <% } %>segment">
-        <% if (!contests || !contests.length) { %>
-        还没有举行过任何比赛
-        <% } else { %>
-        <table class="ui very basic center aligned table">
-          <thead>
-            <tr>
-              <th>比赛名称</th>
-              <th>开始时间</th>
-            </tr>
-          </thead>
-          <tbody>
-            <%
-            for (let contest of contests) {
-              let now = syzoj.utils.getCurrentDate();
-              let tag = '';
-            %>
-            <tr>
-              <% if (now < contest.start_time) { %>
-                <% tag = '<span class="ui header"><div class="ui mini red label">未开始</div></span>' %>
-              <% } else if (now >= contest.start_time && now < contest.end_time) { %>
-                <% tag = '<span class="ui header"><div class="ui mini green label">进行中</div></span>' %>
-              <% } else { %>
-                <% tag = '<span class="ui header"><div class="ui mini grey label">已结束</div></span>' %>
-              <% } %>
-              <td><a href="<%= syzoj.utils.makeUrl(['contest', contest.id]) %>"><%= contest.title %> <%- tag %></a></td>
-              <td><%= syzoj.utils.formatDate(contest.start_time) %></td>
-            </tr>
-            <% } %>
-          </tbody>
-        </table>
-        <% } %>
-      </div>
       <% if (typeof links !== 'undefined' && links && links.length) { %>
       <h4 class="ui top attached block header font-content"><i class="ui linkify icon"></i>友情链接</h4>
       <div class="ui bottom attached segment">
