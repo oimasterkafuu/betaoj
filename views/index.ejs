@@ -15,7 +15,10 @@
           <tbody>
             <% for (let item of notices) { %>
                 <tr>
-                    <td><a href="<%= item.url %>"><%= item.title %></a></td>
+                    <td>
+                      <% if (item.new) { %><span class="ui red horizontal label">New</span><% } %>
+                      <a href="<%= item.url %>"><%= item.title %></a>
+                    </td>
                     <td><%= item.date %></td>
                 </tr>
             <% } %>

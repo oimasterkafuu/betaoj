@@ -28,7 +28,8 @@ app.get('/', async (req, res) => {
         ).map((article) => ({
             title: article.title,
             url: syzoj.utils.makeUrl(['article', article.id]),
-            date: syzoj.utils.formatDate(article.public_time, 'L')
+            date: syzoj.utils.formatDate(article.public_time, 'L'),
+            new: (syzoj.utils.getCurrentDate() - article.public_time) <= 7 * 24 * 60 * 60 * 1000
         }));
 
         let fortune = null;
