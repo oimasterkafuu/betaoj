@@ -10,7 +10,7 @@
 <div class="padding">
   <h1><%= contest.title %></h1>
   <div style="margin-bottom: 30px;"><%- contest.subtitle %></div>
-  <% let unveiled = (isSupervisior || syzoj.utils.getCurrentDate() >= contest.start_time); %>
+  <% let unveiled = /* (isSupervisior || syzoj.utils.getCurrentDate() >= contest.start_time) */ true; %>
   <% const seeResult = (isSupervisior || contest.ended); %>
   <% const seeRanklist = seeResult || (contest.allowedSeeingResult() && contest.allowedSeeingOthers()); %>
   <% let start = syzoj.utils.formatDate(contest.start_time), end = syzoj.utils.formatDate(contest.end_time); %>
@@ -29,6 +29,9 @@
         <div class="ui buttons">
           <% if(seeRanklist) { %>
             <a class="ui small blue button" href="<%= syzoj.utils.makeUrl(['contest', contest.id, 'ranklist']) %>">排行榜</a>
+          <% } %>
+          <% if (contest.isEnded()) { %>
+            <a class="ui small yellow button" href="<%= syzoj.utils.makeUrl(['contest', contest.id, 'homework']) %>">赛后补题</a>
           <% } %>
           <% let submissionsUrl = seeResult ?
             syzoj.utils.makeUrl(['submissions'], {contest: contest.id}) :

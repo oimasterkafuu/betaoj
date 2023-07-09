@@ -408,6 +408,92 @@ app.get('/contest/:id/ranklist', async (req, res) => {
     }
 });
 
+app.get('/contest/:id/homework', async (req, res) => {
+    // after-contest homework
+    // we can reuse the ranklist page, but the submission loads from main problemset
+    try {
+        let contest_id = parseInt(req.params.id);
+        let contest = await Contest.findById(contest_id);
+        const curUser = res.locals.user;
+
+        if (!contest) throw new ErrorMessage('无此比赛。');
+        // if contest is non-public, both system administrators and contest administrators can see it.
+        if (
+            !contest.is_public &&
+            (!res.locals.user ||
+                (!res.locals.user.is_admin &&
+                    !contest.admins.includes(res.locals.user.id.toString())))
+        )
+            throw new ErrorMessage('比赛未公开。');
+
+        if (
+            [
+                contest.isEnded(),
+                await contest.isSupervisior(curUser),
+            ].every((x) => !x)
+        )
+            throw new ErrorMessage('您没有权限进行此操作。');
+
+        await contest.loadRelationships();
+
+        let players_id = [];
+        for (let i = 1; i <= contest.ranklist.ranklist.player_num; i++)
+            players_id.push(contest.ranklist.ranklist[i]);
+
+        let ranklist = await players_id.mapAsync(async (player_id) => {
+            let player = await ContestPlayer.findById(player_id);
+            player = JSON.parse(JSON.stringify(player));
+            let user = await User.findById(player.user_id);
+
+            player.score = 0;
+
+            // load submission from main problemset
+            for (let problemId in player.score_details) {
+                let submission = await JudgeState.find({
+                    where: [{ user_id: user.id, problem_id: problemId }],
+                    order: { score : 'DESC' },
+                });
+
+                if (submission.length === 0) {
+                    player.score_details[problemId].judge_id = null;
+                    player.score_details[problemId].judge_state = null;
+                    player.score_details[problemId].score = player.score_details[problemId].weighted_score = 0;
+                }
+
+                submission = submission[0];
+                
+                player.score_details[problemId].judge_id = submission.id;
+                player.score_details[problemId].judge_state = submission;
+                player.score_details[problemId].score = player.score_details[problemId].weighted_score = submission.score;
+                player.score += submission.score;
+            }
+
+            return {
+                user: user,
+                player: player,
+            };
+        });
+
+        let problems_id = await contest.getProblems();
+        let problems = await problems_id.mapAsync(
+            async (id) => await Problem.findById(id),
+        );
+
+        contest.title = contest.title + ' - 赛后补题';
+
+        res.render('contest_ranklist', {
+            contest: contest,
+            ranklist: ranklist,
+            problems: problems,
+        });
+    } catch (e) {
+        syzoj.log(e);
+        res.render('error', {
+            err: e,
+        });
+    }
+});
+
 function getDisplayConfig(contest) {
     return {
         showScore: contest.allowedSeeingScore(),
