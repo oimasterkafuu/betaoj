@@ -129,5 +129,6 @@
     "renderer_cache_size": "30000",
     "divine": true,
     "hitokoto": false,
-    "blackboard": ""
+    "blackboard": "",
+    "pangu": false
 }
