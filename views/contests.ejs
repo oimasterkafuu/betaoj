@@ -9,7 +9,7 @@
       %>
       <a href="<%= syzoj.utils.makeUrl(['contest', contest.id]) %>">
         <div class="ui positive icon message" style="margin-bottom: 25px;">
-          <i class="right double angle icon"></i>
+          <i class="paper plane icon"></i>
           <div class="content">
             <div class="header">
               <%= contest.title %> 正在进行中！
@@ -25,6 +25,18 @@
           <div class="content">
             <div class="header">
               <%= contest.title %> 刚刚结束！
+            </div>
+            <p>点击进入比赛。</p>
+          </div>
+        </div>
+      </a>
+      <% } else if (contest.start_time > now && contest.start_time <= now + 24 * 60 * 60) { %>
+      <a href="<%= syzoj.utils.makeUrl(['contest', contest.id]) %>">
+        <div class="ui blue icon message" style="margin-bottom: 25px;">
+          <i class="right double angle icon"></i>
+          <div class="content">
+            <div class="header">
+              <%= contest.title %> 即将开始！
             </div>
             <p>点击进入比赛。</p>
           </div>
