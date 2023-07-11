@@ -1,6 +1,6 @@
 {
-    "name": "syzoj",
-    "version": "2.0.0",
+    "name": "betaoj",
+    "version": "3.0.0",
     "description": "An OnlineJudge System for OI",
     "main": "app.js",
     "scripts": {
@@ -12,19 +12,19 @@
     },
     "repository": {
         "type": "git",
-        "url": "git+https://github.com/syzoj/syzoj.git"
+        "url": "git+https://github.com/oimasterakioi/betaoj.git"
     },
     "keywords": [
         "onlinejudge",
         "oj",
         "express"
     ],
-    "author": "Menci",
+    "author": "oimaster",
     "license": "MIT",
     "bugs": {
-        "url": "https://github.com/syzoj/syzoj/issues"
+        "url": "https://github.com/oimasterakioi/betaoj/issues"
     },
-    "homepage": "https://github.com/syzoj/syzoj#readme",
+    "homepage": "https://github.com/oimasterakioi/betaoj#readme",
     "dependencies": {
         "@types/fs-extra": "^5.0.5",
         "@types/js-yaml": "^4.0.5",
