@@ -9,10 +9,11 @@
       <p><button class="ui blue labeled icon button" name="type" value="reset_codelen" type="submit"><i class="ui repeat icon"></i>重新计算提交代码长度</button></p>
     </form>
   </div>
-  <h4 class="ui top attached block header"><i class="ui flask icon"></i>迁移使用</h4>
+  <h4 class="ui top attached block header"><i class="ui flask icon"></i>实验室</h4>
   <div class="ui bottom attached segment">
-    <p><a class="ui labeled icon button" href-post="<%= syzoj.utils.makeUrl(['admin', 'restart'], { url: req.query['url'] || req.originalUrl }) %>"><i class="ui repeat icon"></i>重新启动 BetaOJ Web</a></p>
+    <p>警告：这里的操作<strong>很不稳定</strong>，建议<strong>先备份</strong>再运行。</p>
     <p><a href-post="/admin/sortprob" class="ui negative labeled icon button"><i class="ui repeat icon"></i>重新计算题号</a></p>
+    <p><a href-post="/admin/upgrade" class="ui positive labeled icon button"><i class="ui angle double up icon"></i>升级到最新版本</a></p>
     <p><a href-post="/admin/exportdb" class="ui blue labeled icon button"><i class="ui database icon"></i>下载数据库</a></p>
   </div>
 </div>

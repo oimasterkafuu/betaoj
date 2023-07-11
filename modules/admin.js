@@ -668,3 +668,24 @@ app.post('/admin/exportdb', async (req, res) => {
         });
     }
 });
+
+app.post('/admin/upgrade', async (req, res) => {
+    try {
+        if (!res.locals.user || !res.locals.user.is_admin) throw new ErrorMessage('您没有权限进行此操作。');
+        let cmd = 'bash ./upgrade.sh';
+        let exec = child_process.exec;
+        exec(cmd, function (err, stdout, stderr) {
+            if (err) {
+                syzoj.log(err);
+                res.render('error', {
+                    err: err
+                });
+            }
+        });
+        res.redirect('/');
+    } catch (e) {
+        res.render('error', {
+            err: e
+        });
+    }
+});
