@@ -426,12 +426,8 @@ app.get('/contest/:id/homework', async (req, res) => {
         )
             throw new ErrorMessage('比赛未公开。');
 
-        if (
-            [contest.isEnded(), await contest.isSupervisior(curUser)].every(
-                (x) => !x
-            )
-        )
-            throw new ErrorMessage('您没有权限进行此操作。');
+        if (!contest.isEnded())
+            throw new ErrorMessage('比赛尚未结束。');
 
         await contest.loadRelationships();
 
