@@ -150,7 +150,7 @@ export default class User extends Model {
             for (let s of statuses[status]) {
                 res[status] += await JudgeState.count({
                     user_id: this.id,
-                    // type: 0,
+                    type: 0,
                     status: s
                 });
             }
