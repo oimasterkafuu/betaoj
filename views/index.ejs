@@ -3,6 +3,24 @@
 <div class="padding">
   <div class="ui three column grid">
     <div class="eleven wide column">
+      <%
+      for (let contest of contests) {
+        let now = syzoj.utils.getCurrentDate();
+        if (now >= contest.start_time && now < contest.end_time) {
+      %>
+      <a href="<%= syzoj.utils.makeUrl(['contest', contest.id]) %>">
+        <div class="ui positive icon message">
+          <i class="right double angle icon"></i>
+          <div class="content">
+            <div class="header">
+              <%= contest.title %> 正在进行中！
+            </div>
+            <p>点击进入比赛。</p>
+          </div>
+        </div>
+      </a>
+      <% break; } } %>
+
       <h4 class="ui top attached block header"><i class="ui info icon"></i>公告</h4>
       <div class="ui bottom attached segment">
         <table class="ui very basic table">
