@@ -388,8 +388,8 @@ module.exports = {
         if (rating < 2300) return 'orange'; // master
         if (rating < 2400) return 'red'; // international master
         if (rating < 2600) return 'red'; // grandmaster
-        if (rating < 3000) return 'legendary'; // legendary grandmaster
+        if (rating < 3000) return 'red'; // international grandmaster
 
-        return 'legendary-grandmaster';
+        return 'legendary';
     }
 };

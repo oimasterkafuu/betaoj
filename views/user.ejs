@@ -86,7 +86,37 @@ body {
                     <img style="margin-top: -100%; " src="<%= syzoj.utils.gravatar(show_user.email, 1000) %>">
                 </div>
                 <div class="content">
-                    <div class="header"><div class="user-<%= syzoj.utils.makeUserColor(show_user.rating, show_user.is_admin) %>"><%= show_user.username %></div><% if (show_user.nameplate) { %><span class="user-tag bg-<%= syzoj.utils.makeUserColor(show_user.rating, show_user.is_admin) %>"><%- show_user.nameplate %></span><% } %> <% if (show_user.sex == 1) { %><i class="man icon"></i><% } else if (show_user.sex == -1) { %><i class="woman icon"></i><% } %></div>
+                    <div class="header">
+                        <div class="user-<%= syzoj.utils.makeUserColor(show_user.rating, show_user.is_admin) %>" style="font-size: 13px">
+                            <% if(show_user.is_admin) { %>
+                                Headquarters
+                            <% } else if(show_user.rating < 1200) { %>
+                                Newbie
+                            <% } else if(show_user.rating < 1400) { %>
+                                Pupil
+                            <% } else if(show_user.rating < 1600) { %>
+                                Specialist
+                            <% } else if(show_user.rating < 1900) { %>
+                                Expert
+                            <% } else if(show_user.rating < 2100) { %>
+                                Candidate Master
+                            <% } else if(show_user.rating < 2300) { %>
+                                Master
+                            <% } else if(show_user.rating < 2400) { %>
+                                International Master
+                            <% } else if(show_user.rating < 2600) { %>
+                                Grandmaster
+                            <% } else if(show_user.rating < 3000) { %>
+                                International Grandmaster
+                            <% } else { %>
+                                <font color="red">Legendary Grandmaster</font>
+                            <% } %>
+                        </div>
+                        <br>
+                        <div class="user-<%= syzoj.utils.makeUserColor(show_user.rating, show_user.is_admin) %>"><%= show_user.username %></div>
+                        <% if (show_user.nameplate) { %><span class="user-tag bg-<%= syzoj.utils.makeUserColor(show_user.rating, show_user.is_admin) %>"><%- show_user.nameplate %></span><% } %>
+                        <% if (show_user.sex == 1) { %><i class="man icon"></i><% } else if (show_user.sex == -1) { %><i class="woman icon"></i><% } %>
+                    </div>
                     <div class="meta">
                         <a class="group"><%= show_user.is_admin ? '管理员' : (show_user.permission ? '已验证的学生' : '普通用户') %></a>
                     </div>
