@@ -379,13 +379,17 @@ module.exports = {
     },
     makeUserColor(rating, is_admin) {
         if (is_admin) return 'admin';
-        if (rating < 1200) return 'gray';
-        else if (rating < 1400) return 'green';
-        else if (rating < 1600) return 'cyan';
-        else if (rating < 1900) return 'blue';
-        else if (rating < 2200) return 'violet';
-        else if (rating < 2400) return 'orange';
-        else if (rating < 2900) return 'red';
-        else return 'legendary'; // who will reach this first?
+
+        if (rating < 1200) return 'gray'; // newbie
+        if (rating < 1400) return 'green'; // pupil
+        if (rating < 1600) return 'cyan'; // specialist
+        if (rating < 1900) return 'blue'; // expert
+        if (rating < 2100) return 'violet'; // candidate master
+        if (rating < 2300) return 'orange'; // master
+        if (rating < 2400) return 'red'; // international master
+        if (rating < 2600) return 'red'; // grandmaster
+        if (rating < 3000) return 'legendary'; // legendary grandmaster
+
+        return 'legendary-grandmaster';
     }
 };
