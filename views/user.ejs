@@ -195,6 +195,7 @@ body {
                     <div class="column">
                         <h4 class="ui top attached block header">比赛</h4>
                         <div class="ui bottom attached segment">
+                            <div id="rating_chart" style="width: 100%; height: 300px; margin: auto auto 30px;"></div>
                             <table class="ui very basic table">
                                 <thead>
                                     <tr>
@@ -298,5 +299,84 @@ $(function () {
 
   document.getElementById('pie_chart_legend').innerHTML = pie.generateLegend();
 });
+</script>
+<script>
+    $(() => {
+        var markings = [
+            { color: '#a00', lineWidth: 1, yaxis: { from: 3000 } },
+            { color: '#f33', lineWidth: 1, yaxis: { from: 2600, to: 2999 } },
+            { color: '#f77', lineWidth: 1, yaxis: { from: 2400, to: 2599 } },
+            { color: '#ffbb55', lineWidth: 1, yaxis: { from: 2300, to: 2399 } },
+            { color: '#ffcc88', lineWidth: 1, yaxis: { from: 2100, to: 2299 } },
+            { color: '#f8f', lineWidth: 1, yaxis: { from: 1900, to: 2099 } },
+            { color: '#aaf', lineWidth: 1, yaxis: { from: 1600, to: 1899 } },
+            { color: '#77ddbb', lineWidth: 1, yaxis: { from: 1400, to: 1599 } },
+            { color: '#7f7', lineWidth: 1, yaxis: { from: 1200, to: 1399 } },
+            { color: '#ccc', lineWidth: 1, yaxis: { from: 0, to: 1199 } },
+        ];
+        var data = [
+            {
+                data: [
+                    <% for (const history of ratingHistories) { %>
+                        [<%= history.contestId %>, <%= history.value %>],
+                    <% } %>
+                ],
+                color: '#000',
+                points: { show: true },
+                lines: { show: true }
+            }
+        ];
+        var options = {
+            series: {
+                lines: { show: true },
+                points: { show: true }
+            },
+            grid: {
+                markings: markings,
+                hoverable: true,
+                clickable: true
+            },
+            xaxis: {
+                ticks: [
+                    <% for (const history of ratingHistories) { %>
+                        [<%= history.contestId %>, "<%= history.contestName %>"],
+                    <% } %>
+                ],
+                tickFormatter: function (val, axis) {
+                    return axis.ticks[val - 1].label;
+                },
+                min: 0,
+                max: <%= ratingHistories.length %>
+            },
+            yaxis: {
+                min: <% for(let i = 0; i < ratingHistories.length; i++) {
+                       if(ratingHistories[i].value != null) { %>
+                        <%= ratingHistories[i].value - 150 %>
+                        <% break; %>
+                    <% } } %>,
+                max: <% for(let i = ratingHistories.length - 1; i >= 0; i--) { 
+                       if(ratingHistories[i].value != null) { %>
+                        <%= ratingHistories[i].value + 150 %>
+                        <% break; %>
+                    <% } } %>
+            }
+        };
+        $.plot($("#rating_chart"), data, options);
+        $(window).resize(function(){
+            $.plot($("#rating_chart"), data, options);
+        });
+        $("#rating_chart").bind("plothover", function (event, pos, item) {
+            if (item && item.datapoint[0]) {
+                $(this).css('cursor', 'pointer');
+            } else {
+                $(this).css('cursor', 'default');
+            }
+        });
+        $("#rating_chart").bind("plotclick", function (event, pos, item) {
+            if (item && item.datapoint[0]) {
+                window.location.href = "<%= syzoj.utils.makeUrl(['contest', '']) %>" + item.datapoint[0];
+            }
+        });
+    });
 </script>
 <%- include('footer'); %>
