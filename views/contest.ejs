@@ -8,7 +8,12 @@
 </style>
 <%- include('header'); %>
 <div class="padding">
-  <h1><%= contest.title %></h1>
+  <h1>
+    <%= contest.title %>
+    <div class="ui orange large label" style="margin-left: 10px; vertical-align: middle; display: inline-block; margin-bottom: 2px;">
+      <%= contest.type.toUpperCase() %>
+    </div>
+  </h1>
   <div style="margin-bottom: 30px;"><%- contest.subtitle %></div>
   <% let unveiled = true; %>
   <% const seeResult = (isSupervisior || contest.ended); %>
