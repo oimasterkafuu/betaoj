@@ -349,16 +349,13 @@ $(function () {
                 max: <%= ratingHistories.length %>
             },
             yaxis: {
-                min: <% for(let i = 0; i < ratingHistories.length; i++) {
-                       if(ratingHistories[i].value != null) { %>
-                        <%= ratingHistories[i].value - 150 %>
-                        <% break; %>
-                    <% } } %>,
-                max: <% for(let i = ratingHistories.length - 1; i >= 0; i--) { 
-                       if(ratingHistories[i].value != null) { %>
-                        <%= ratingHistories[i].value + 150 %>
-                        <% break; %>
-                    <% } } %>
+                <% let minRating = 10000, maxRating = 0;
+                for (const history of ratingHistories) {
+                    minRating = Math.min(minRating, history.value);
+                    maxRating = Math.max(maxRating, history.value);
+                } %>
+                min: <%= Math.max(0, minRating - 150) %>,
+                max: <%= maxRating + 150 %>
             }
         };
         $.plot($("#rating_chart"), data, options);
