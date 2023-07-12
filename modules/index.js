@@ -29,7 +29,9 @@ app.get('/', async (req, res) => {
             title: article.title,
             url: syzoj.utils.makeUrl(['article', article.id]),
             date: syzoj.utils.formatDate(article.public_time, 'L'),
-            isNew: (syzoj.utils.getCurrentDate() - article.public_time) <= 7 * 24 * 60 * 60
+            isNew:
+                syzoj.utils.getCurrentDate() - article.public_time <=
+                7 * 24 * 60 * 60
         }));
 
         let fortune = null;

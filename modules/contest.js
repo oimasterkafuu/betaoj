@@ -426,8 +426,7 @@ app.get('/contest/:id/homework', async (req, res) => {
         )
             throw new ErrorMessage('比赛未公开。');
 
-        if (!contest.isEnded())
-            throw new ErrorMessage('比赛尚未结束。');
+        if (!contest.isEnded()) throw new ErrorMessage('比赛尚未结束。');
 
         await contest.loadRelationships();
 

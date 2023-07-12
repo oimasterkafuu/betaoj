@@ -635,11 +635,20 @@ app.get('/admin/serviceID', async (req, res) => {
 
 app.post('/admin/exportdb', async (req, res) => {
     try {
-        if (!res.locals.user || !res.locals.user.is_admin) throw new ErrorMessage('您没有权限进行此操作。');
+        if (!res.locals.user || !res.locals.user.is_admin)
+            throw new ErrorMessage('您没有权限进行此操作。');
         // use child_process to exec mysqldump
         // export db syzoj
         let filename = 'syzoj-' + syzoj.utils.getCurrentDate() + '.sql';
-        let cmd = 'mysqldump -u ' + syzoj.config.db.username + ' -p' + syzoj.config.db.password + ' ' + syzoj.config.db.database + ' > ' + filename;
+        let cmd =
+            'mysqldump -u ' +
+            syzoj.config.db.username +
+            ' -p' +
+            syzoj.config.db.password +
+            ' ' +
+            syzoj.config.db.database +
+            ' > ' +
+            filename;
 
         let exec = child_process.exec;
         exec(cmd, function (err, stdout, stderr) {

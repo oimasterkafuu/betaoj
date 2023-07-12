@@ -105,8 +105,8 @@ app.get('/api/v2/search/problems/:keyword*?', async (req, res) => {
 
         // remove the same problem in result
         let cnt = {};
-        for(let i = 0; i < result.length; i++) {
-            if(cnt[result[i].id]) {
+        for (let i = 0; i < result.length; i++) {
+            if (cnt[result[i].id]) {
                 result = result.splice(i, 1);
                 i--;
             } else {
