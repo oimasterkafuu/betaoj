@@ -317,8 +317,8 @@ $(function () {
         var data = [
             {
                 data: [
-                    <% for (const history of ratingHistories) { %>
-                        [<%= history.contestId %>, <%= history.value %>],
+                    <% for (let i = 0; i < ratingHistories.length; i++) { %>
+                        [<%= ratingHistories.length - i - 1 %>, <%= ratingHistories[i].value %>],
                     <% } %>
                 ],
                 color: '#000',
@@ -338,8 +338,8 @@ $(function () {
             },
             xaxis: {
                 ticks: [
-                    <% for (const history of ratingHistories) { %>
-                        [<%= history.contestId %>, "<%= history.contestName %>"],
+                    <% for (let i = 0; i < ratingHistories.length; i++) { %>
+                        [<%= ratingHistories.length - i - 1 %>, "<%= ratingHistories[i].contestName %>"],
                     <% } %>
                 ],
                 tickFormatter: function (val, axis) {

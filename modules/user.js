@@ -107,7 +107,6 @@ app.get('/user/:id', async (req, res) => {
         });
         const ratingHistories = [
             {
-                contestId: 0,
                 contestName: '初始积分',
                 value: syzoj.config.default.user.rating,
                 delta: null,
@@ -124,7 +123,6 @@ app.get('/user/:id', async (req, res) => {
                 ).contest_id
             );
             ratingHistories.push({
-                contestId: contest.id,
                 contestName: contest.title,
                 value: history.rating_after,
                 delta:
