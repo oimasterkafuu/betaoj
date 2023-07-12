@@ -47,7 +47,9 @@
                   <label for="type-acm">ICPC / 作业</label>
                 </div>
               </div>
+              <% if(contest.id == 0) { %>
               <font color="red">提交后不可修改。</font>
+              <% } %>
             </div>
             <div class="field">
                 <label>排行参数（格式：<code>{ "题目 ID（主题库中的）": 分值倍数 }</code>）</label>
@@ -79,10 +81,12 @@
                 <label><span style="visibility: hidden; ">　</span></label>
               </div>
             </div>
+            <% if(contest.id == 0) { %>
             <div style="text-align: center; " class="inline field">
                 <font color="red">比赛不可删除。</font>在您点击「提交」按钮前，请先确定以上内容无误。<br>
                 <font color="red">除了「赛制」以外</font>，剩下的内容您可以再修改。
             </div>
+            <% } %>
             <div style="text-align: center; "><button id="submit_button" type="submit" class="ui labeled icon blue button"><i class="ui edit icon"></i>提交</button></div>
           </div>
         </form>

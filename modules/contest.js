@@ -54,6 +54,9 @@ app.get('/contest/:id/edit', async (req, res) => {
 
             contest = await Contest.create();
             contest.id = 0;
+            contest.admins = res.locals.user.id.toString();
+            contest.is_public = true;
+            contest.hide_statistics = true;
         } else {
             // if contest exists, both system administrators and contest administrators can edit it.
             if (
@@ -140,14 +143,18 @@ app.post('/contest/:id/edit', async (req, res) => {
         if (!Array.isArray(req.body.admins))
             req.body.admins = [req.body.admins];
         contest.problems = req.body.problems.join('|');
+
         if (!req.body.admins.includes(res.locals.user.id.toString()))
             req.body.admins.push(res.locals.user.id.toString());
         contest.admins = req.body.admins.join('|');
+
         contest.information = req.body.information;
         contest.start_time = syzoj.utils.parseDate(req.body.start_time);
         contest.end_time = syzoj.utils.parseDate(req.body.end_time);
+
         contest.is_public = req.body.is_public === 'on';
         if (!res.locals.user.is_admin) contest.is_public = true;
+
         contest.hide_statistics = req.body.hide_statistics === 'on';
 
         await contest.save();
