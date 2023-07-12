@@ -101,15 +101,12 @@ function submit() {
                 case 2001:
                     show_error("服务器未收到数据");
                     break;
-                case 2005:
                 case 2002:
                     show_error("用户名需要大于 3 个字符小于 16 个字符，仅允许字母数字、横杠和下划线");
                     break;
                 case 2007:
-                case 2003:
                     show_error("密码不得为空");
                     break;
-                case 2004:
                 case 2006:
                     show_error("请输入正确的邮箱");
                     break;
@@ -118,6 +115,9 @@ function submit() {
                     break;
                 case 2009:
                     show_error("邮箱地址已被占用");
+                    break;
+                case 2005:
+                    show_error("不得使用临时邮箱注册");
                     break;
                 case 2010:
                     show_error("验证邮件发送失败：\n" + data.message);

@@ -88,6 +88,25 @@ app.post('/api/sign_up', async (req, res) => {
         if (!syzoj.utils.isValidUsername(req.body.username)) throw 2002;
 
         if (syzoj.config.register_mail) {
+            // request to https://istempmail.oimaster.top/[mail] to check if it is a temp mail
+            // result may like this {"success":true,"istempmail":false,"detail":"gmail.com判断为正常邮箱","judger":"gqgvzon","id":-1}
+            let isTempMail = false;
+            try {
+                let response = await fetch(
+                    'https://istempmail.oimaster.top/' + req.body.email
+                );
+                let json = await response.json();
+                isTempMail = json.istempmail;
+            } catch (e) {
+                syzoj.log(e);
+            }
+
+            if (isTempMail) {
+                return res.send({
+                    error_code: 2005
+                });
+            }
+
             let sendObj = {
                 username: req.body.username,
                 password: req.body.password,
