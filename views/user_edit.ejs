@@ -80,10 +80,13 @@
           <option value="50" <%= edited_user.permission === 50 ? 'selected': '' %>>省选-</option>
           <option value="60" <%= edited_user.permission === 60 ? 'selected': '' %>>省选</option>
           <option value="100" <%= edited_user.permission === 100 ? 'selected': '' %>>神仙</option>
+          <% if (edited_user.permission === 99999) { %>
           <option value="99999" <%= edited_user.permission === 99999 ? 'selected': '' %>>超级管理</option>
+          <% } %>
         </select>
 	    </div>
 	   <% } %>
+     <% if(user.allowedManage) { %>
       <div class="inline field">
         <label class="ui header">权限</label>
         <div class="ui toggle disabled checkbox" style="margin-right: 20px; ">
@@ -103,7 +106,6 @@
           <label>管理用户</label>
         </div>
       </div>
-      <% if(user.allowedManage) { %>
         <center>
         <strong>危险操作，不可逆转，请勿乱动！</strong><br>
         <a id="cheater_button" onclick="check_cheater()" class="ui negative labeled icon button tiny"><i class="ui icon remove"></i>清除所有 AC 记录</a>

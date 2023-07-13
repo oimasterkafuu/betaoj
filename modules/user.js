@@ -227,6 +227,9 @@ app.post('/user/:id/edit', async (req, res) => {
             if (req.body.permission != 'null')
                 user.permission = parseInt(req.body.permission);
             else user.permission = null;
+
+            // super admins can get 99999 as permission
+            if (user.is_admin) user.permission = 99999;
         }
 
         user.information = req.body.information;
