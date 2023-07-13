@@ -354,7 +354,10 @@ app.post('/api/switch-user/', async (req, res) => {
             // try username
             user = await User.fromName(req.body.id);
         }
-        if (!user) throw { error_code: 2 };
+        if (!user) {
+            res.send({ error_code: 2 });
+            return;
+        }
         req.session.user_id = user.id;
         setLoginCookie(user.username, user.password, res);
         res.send({ error_code: 1 });
