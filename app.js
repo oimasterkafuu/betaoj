@@ -327,7 +327,7 @@ global.syzoj = {
                 User.findById(req.session.user_id)
                     .then((user) => {
                         res.locals.user = user;
-                        if(user.username.startsWith('bannedUser'))
+                        if (user.username.startsWith('bannedUser'))
                             res.locals.user = null;
                         next();
                     })
@@ -352,7 +352,7 @@ global.syzoj = {
                                 if (!user) throw null;
                                 res.locals.user = user;
                                 req.session.user_id = user.id;
-                                if(user.username.startsWith('bannedUser')){
+                                if (user.username.startsWith('bannedUser')) {
                                     res.locals.user = null;
                                     res.locals.user.id = null;
                                 }

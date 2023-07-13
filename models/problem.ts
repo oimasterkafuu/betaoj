@@ -689,7 +689,7 @@ export default class Problem extends Model {
                 await contest.loadRelationships();
                 let ranklist = await contest.ranklist;
                 let ranking_params = ranklist.ranking_params;
-                if(ranking_params && ranking_params[this.id]){
+                if (ranking_params && ranking_params[this.id]) {
                     ranking_params[id] = ranking_params[this.id];
                     delete ranking_params[this.id];
                     ranklist.ranking_params = ranking_params;
