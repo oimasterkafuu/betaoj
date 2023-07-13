@@ -489,6 +489,11 @@ app.get('/contest/:id/homework', async (req, res) => {
             };
         });
 
+        // sort ranklist by player.score
+        ranklist.sort((a, b) => {
+            return b.player.score - a.player.score;
+        });
+
         let problems_id = await contest.getProblems();
         let problems = await problems_id.mapAsync(
             async (id) => await Problem.findById(id)
