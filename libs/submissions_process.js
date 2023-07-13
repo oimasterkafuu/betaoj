@@ -4,6 +4,8 @@ const getSubmissionInfo = (s, displayConfig) => ({
     submissionId: s.id,
     taskId: s.task_id,
     user: s.user.username,
+    userColor: syzoj.utils.makeUserColor(s.user.rating, s.user.is_admin),
+    userNameplate: s.user.nameplate,
     userId: s.user_id,
     problemName: s.problem.title,
     problemId: s.problem_id,
