@@ -44,13 +44,13 @@ if (contest) {
             <% if (problem.is_anonymous && !problem.allowedManage) { %>
               匿名
             <% } else { %>
-              <a href="<%= syzoj.utils.makeUrl(['user', problem.user_id]) %>"><div class="user-<%= syzoj.utils.makeUserColor(problem.user.rating, problem.user.is_admin) %>"><%= problem.user.username %></div></a>
+              <a href="<%= syzoj.utils.makeUrl(['user', problem.user_id]) %>"><span class="user-<%= syzoj.utils.makeUserColor(problem.user.rating, problem.user.is_admin) %>"><%= problem.user.username %></span></a>
             <% } %>
             </span>
             <% if (true && problem.allowedManage) { %>
                 <span class="ui label">公开者：
                 <% if (problem.publicizer) { %>
-                  <a href="<%= syzoj.utils.makeUrl(['user', problem.publicizer_id]) %>"><div class="user-<%= syzoj.utils.makeUserColor(problem.publicizer.rating, problem.publicizer.is_admin) %>"><%= problem.publicizer.username %></div></a>
+                  <a href="<%= syzoj.utils.makeUrl(['user', problem.publicizer_id]) %>"><span class="user-<%= syzoj.utils.makeUserColor(problem.publicizer.rating, problem.publicizer.is_admin) %>"><%= problem.publicizer.username %></span></a>
                 <% } else { %>
                   未知
                 <% } %>

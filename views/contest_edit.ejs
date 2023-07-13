@@ -23,7 +23,7 @@
                 <label>比赛管理员</label>
                 <select class="ui fluid search dropdown" multiple="" id="search_admins" name="admins">
                 <% for (let admin of admins) { %>
-                <option value="<%= admin.id %>" selected><div class="user-<%= syzoj.utils.makeUserColor(admin.rating, admin.is_admin) %>"><%= admin.username %></div></option>
+                <option value="<%= admin.id %>" selected><span class="user-<%= syzoj.utils.makeUserColor(admin.rating, admin.is_admin) %>"><%= admin.username %></span></option>
                 <% } %>
                 </select>
             </div>

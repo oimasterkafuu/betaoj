@@ -37,7 +37,7 @@
             for (let user of users) {
             %>
                 <tr>
-                    <td><a href="<%= syzoj.utils.makeUrl(['user', user.id]) %>"><div class="user-<%= syzoj.utils.makeUserColor(user.rating, user.is_admin) %>"><%= user.username %><% if (user.nameplate) { %><span class="user-tag bg-<%= syzoj.utils.makeUserColor(user.rating, user.is_admin) %>"><%- user.nameplate %></span><% } %></div></a></td>
+                    <td><a href="<%= syzoj.utils.makeUrl(['user', user.id]) %>" class="user-<%= syzoj.utils.makeUserColor(user.rating, user.is_admin) %>"><%= user.username %><% if (user.nameplate) { %><span class="user-tag bg-<%= syzoj.utils.makeUserColor(user.rating, user.is_admin) %>"><%- user.nameplate %></span><% } %></a></td>
                     <td><%= user.nickname %></td>
                     <!-- <td><a href="<%= syzoj.utils.makeUrl(['user', user.id, 'edit#permission']) %>">这里</a></td> -->
                     <td>

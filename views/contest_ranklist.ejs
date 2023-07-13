@@ -84,7 +84,7 @@
                   <%= rank %>
                   </div>
                 </td>
-                <td><a href="<%= syzoj.utils.makeUrl(['user', item.user.id]) %>"><div class="user-<%= syzoj.utils.makeUserColor(item.user.rating, item.user.is_admin) %>"><%= item.user.username %></div></a><% if (item.user.nameplate) { %><span class="user-tag bg-<%= syzoj.utils.makeUserColor(item.user.rating, item.user.is_admin) %>"><%- item.user.nameplate %></span><% } %></td>
+                <td><a href="<%= syzoj.utils.makeUrl(['user', item.user.id]) %>"><span class="user-<%= syzoj.utils.makeUserColor(item.user.rating, item.user.is_admin) %>"><%= item.user.username %></span></a><% if (item.user.nameplate) { %><span class="user-tag bg-<%= syzoj.utils.makeUserColor(item.user.rating, item.user.is_admin) %>"><%- item.user.nameplate %></span><% } %></td>
                 <% if (user && user.is_admin) { %>
                   <td><%= item.user.nickname%></td>
                 <% } %>

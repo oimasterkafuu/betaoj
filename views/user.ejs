@@ -87,7 +87,7 @@ body {
                 </div>
                 <div class="content">
                     <div class="header">
-                        <div class="user-<%= syzoj.utils.makeUserColor(show_user.rating, show_user.is_admin) %>" style="font-size: 13px">
+                        <span class="user-<%= syzoj.utils.makeUserColor(show_user.rating, show_user.is_admin) %>" style="font-size: 13px">
                             <% if(show_user.is_admin) { %>
                                 Headquarters
                             <% } else if(show_user.rating < 1200) { %>
@@ -111,9 +111,9 @@ body {
                             <% } else { %>
                                 <font color="red">Legendary Grandmaster</font>
                             <% } %>
-                        </div>
+                        </span>
                         <br>
-                        <div class="user-<%= syzoj.utils.makeUserColor(show_user.rating, show_user.is_admin) %>"><%= show_user.username %></div>
+                        <span class="user-<%= syzoj.utils.makeUserColor(show_user.rating, show_user.is_admin) %>"><%= show_user.username %></span>
                         <% if (show_user.nameplate) { %><span class="user-tag bg-<%= syzoj.utils.makeUserColor(show_user.rating, show_user.is_admin) %>"><%- show_user.nameplate %></span><% } %>
                         <% if (show_user.sex == 1) { %><i class="man icon"></i><% } else if (show_user.sex == -1) { %><i class="woman icon"></i><% } %>
                     </div>
@@ -239,7 +239,7 @@ body {
                                     <tr>
                                         <td><%= history.contestName %></td>
                                         <td><%= history.rank != null ? history.rank + (history.participants ? (" / " + history.participants) : '') : '' %></td>
-                                        <td><div class="user-<%= syzoj.utils.makeUserColor(history.value, false) %>"><%= history.value %></div> 
+                                        <td><span class="user-<%= syzoj.utils.makeUserColor(history.value, false) %>"><%= history.value %></span> 
                                             <% if(history.delta != null) { %> 
                                                 <span class="<%= history.delta >= 0 ? 'rating_up' : 'rating_down' %>">
                                                 (<%= (history.delta < 0 ? '' : '+') + history.delta %>)

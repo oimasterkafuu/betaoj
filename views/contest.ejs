@@ -67,7 +67,7 @@
           <% for(let admin of admins) { %>
         <tr>
           <td>
-              <a href="<%= syzoj.utils.makeUrl(['user', admin.id]) %>"><div class="user-<%= syzoj.utils.makeUserColor(admin.rating, admin.is_admin) %>"><%= admin.username %></div><% if (admin.nameplate) { %><span class="user-tag bg-<%= syzoj.utils.makeUserColor(admin.rating, admin.is_admin) %>"><%- admin.nameplate %></span><% } %></a>
+              <a href="<%= syzoj.utils.makeUrl(['user', admin.id]) %>"><span class="user-<%= syzoj.utils.makeUserColor(admin.rating, admin.is_admin) %>"><%= admin.username %></span><% if (admin.nameplate) { %><span class="user-tag bg-<%= syzoj.utils.makeUserColor(admin.rating, admin.is_admin) %>"><%- admin.nameplate %></span><% } %></a>
           </td>
           <td>
               <%= admin.ac_num %>

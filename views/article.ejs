@@ -22,7 +22,7 @@
   <h1><%= article.title %></h1>
  	<div style="margin-bottom: -5px; ">
 	<img style="vertical-align: middle; margin-bottom: 2px; margin-right: 2px; " src="<%= syzoj.utils.gravatar(article.user.email, 34) %>" width="17" height="17">
-	<b style="margin-right: 30px; "><a class="black-link" href="<%= syzoj.utils.makeUrl(['user', article.user_id]) %>"><div class="user-<%= syzoj.utils.makeUserColor(article.user.rating, article.user.is_admin) %>"><%= article.user.username %></div></a><% if (article.user.nameplate) { %><span class="user-tag bg-<%= syzoj.utils.makeUserColor(article.user.rating, article.user.is_admin) %>"><%- article.user.nameplate %></span><% } %></b>
+	<b style="margin-right: 30px; "><a class="black-link" href="<%= syzoj.utils.makeUrl(['user', article.user_id]) %>"><span class="user-<%= syzoj.utils.makeUserColor(article.user.rating, article.user.is_admin) %>"><%= article.user.username %></span></a><% if (article.user.nameplate) { %><span class="user-tag bg-<%= syzoj.utils.makeUserColor(article.user.rating, article.user.is_admin) %>"><%- article.user.nameplate %></span><% } %></b>
 	<b style="margin-right: 30px; "><i class="calendar icon"></i> <%= syzoj.utils.formatDate(article.public_time) %></b>
 	<% if (article.public_time !== article.update_time) { %><b style="margin-right: 30px; "><i class="edit icon"></i> <%= syzoj.utils.formatDate(article.update_time) %></b><% } %>
         <% if (article.allowedEdit) { %>
@@ -61,7 +61,7 @@
           <img src="<%= syzoj.utils.gravatar(comment.user.email, 120) %>">
         </a>
         <div class="content">
-          <a class="author" href="<%= syzoj.utils.makeUrl(['user', comment.user_id]) %>"><div class="user-<%= syzoj.utils.makeUserColor(comment.user.rating, comment.user.is_admin) %>"><%= comment.user.username %></div></a><% if (comment.user.nameplate) { %><span class="user-tag bg-<%= syzoj.utils.makeUserColor(comment.user.rating, comment.user.is_admin) %>"><%- comment.user.nameplate %></span><% } %>
+          <a class="author" href="<%= syzoj.utils.makeUrl(['user', comment.user_id]) %>"><span class="user-<%= syzoj.utils.makeUserColor(comment.user.rating, comment.user.is_admin) %>"><%= comment.user.username %></span></a><% if (comment.user.nameplate) { %><span class="user-tag bg-<%= syzoj.utils.makeUserColor(comment.user.rating, comment.user.is_admin) %>"><%- comment.user.nameplate %></span><% } %>
           <div class="metadata">
             <span class="date"><%= syzoj.utils.formatDate(comment.public_time) %></span>
           </div>

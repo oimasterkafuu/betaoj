@@ -99,7 +99,7 @@
             %>
                 <tr>
                     <td><b><%= i %></b></td>
-                    <td><a href="<%= syzoj.utils.makeUrl(['user', user.id]) %>"><div class="user-<%= syzoj.utils.makeUserColor(user.rating, user.is_admin) %>"><%= user.username %></div></a><% if (user.nameplate) { %><span class="user-tag bg-<%= syzoj.utils.makeUserColor(user.rating, user.is_admin) %>"><%- user.nameplate %></span><% } %></td>
+                    <td><a href="<%= syzoj.utils.makeUrl(['user', user.id]) %>" class="user-<%= syzoj.utils.makeUserColor(user.rating, user.is_admin) %>"><%= user.username %></a><% if (user.nameplate) { %><span class="user-tag bg-<%= syzoj.utils.makeUserColor(user.rating, user.is_admin) %>"><%- user.nameplate %></span><% } %></td>
                     <td style="font-content">
                       <script id="user-infomation-script-<%= i %>" data-cfasync="false">
                       (function () {
