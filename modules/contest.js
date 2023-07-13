@@ -36,8 +36,7 @@ app.get('/contests', async (req, res) => {
         );
 
         await contests.forEachAsync(async (x) => {
-            x.timeAgo =
-                '在 ' + timeAgo.format(new Date(x.start_time * 1000));
+            x.timeAgo = '在 ' + timeAgo.format(new Date(x.start_time * 1000));
             if (x.timeAgo == '在 现在') x.timeAgo = '';
             return x;
         });

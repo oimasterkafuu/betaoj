@@ -89,6 +89,7 @@
                   <a class="item" href="<%= syzoj.utils.makeUrl(['user', user.id, 'edit']) %>"><i class="edit icon"></i>修改资料</a>
                   <% if (user.is_admin) { %>
                     <a class="item" href="<%= syzoj.utils.makeUrl(['teach']) %>"><i class="user icon"></i>认证管理</a>
+                    <a class="item" href="<%= syzoj.utils.makeUrl(['switch-user'], { url: req.query['url'] || req.originalUrl }) %>"><i class="sync icon"></i>切换用户</a>
                     <a class="item" href="<%= syzoj.utils.makeUrl(['admin', 'info']) %>"><i class="settings icon"></i>后台管理</a>
                     <div class="ui basic modal" id="modal-restart">
                       <div class="ui icon header">

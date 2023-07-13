@@ -1,0 +1,81 @@
+<% this.title = '切换用户' %>
+<%- include('header'); %>
+<div class="ui error message" id="error" hidden></div>
+<div class="ui middle aligned center aligned grid">
+  <div class="row">
+    <div class="column" style="max-width: 450px">
+      <h2 class="ui image header">
+        <div class="content" style="margin-bottom: 10px; ">
+          切换用户
+        </div>
+      </h2>
+      <form class="ui large form">
+        <div class="ui existing segment">
+          <div class="field">
+            <div class="ui left icon input">
+              <i class="user icon"></i>
+              <input name="email" placeholder="用户名" type="text" id="username" onkeydown="key_login(event)">
+            </div>
+          </div>
+          <div class="ui fluid large submit button" id="login">切换</div>
+        </div>
+
+        <div class="ui error message"></div>
+
+      </form>
+    </div>
+  </div>
+</div>
+<script src="<%- lib('blueimp-md5/2.10.0/js/md5.min.js') %>"></script>
+<script type="text/javascript">
+function key_login(event) {
+    if (event.keyCode == 13) {
+        login();
+    }
+}
+function show_error(error) {
+    $("#error").text(error);
+    $("#error").show();
+}
+function success(session_id) {
+    window.location.href = location.protocol + '//' + location.host + <%- serializejs(req.query.url || '/') %>;
+}
+function login() {
+    $("#login").addClass("loading");
+    $.ajax({
+        url: "/api/switch-user/",
+        type: 'POST',
+        data: {
+            "id": $("#username").val()
+        },
+        async: true,
+        success: function(data) {
+            error_code = data.error_code;
+            switch (error_code) {
+                case 2:
+                    show_error("用户不存在");
+                    break;
+                case 1:
+                    success(data.session_id);
+                    return;
+                default:
+                    show_error("未知错误");
+                    break;
+            }
+            $("#login").text("切换");
+            $("#login").removeClass("loading");
+        },
+        error:  function(XMLHttpRequest, textStatus, errorThrown) {
+            alert(XMLHttpRequest.responseText);
+            show_error("未知错误");
+            $("#login").text("切换");
+        }
+    });
+}
+$(document).ready(function() {
+    $("#login").click(function() {
+        login();
+    });
+});
+</script>
+<%- include('footer'); %>

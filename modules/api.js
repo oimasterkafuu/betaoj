@@ -329,3 +329,36 @@ app.get('/static/uploads/answer/:md5', async (req, res) => {
         res.status(500).send(e);
     }
 });
+
+app.get('/switch-user/', async (req, res) => {
+    try {
+        if (!res.locals.user || !res.locals.user.is_admin)
+            throw new ErrorMessage('您没有权限进行此操作。');
+        res.render('switch-user');
+    } catch (e) {
+        res.render('error', {
+            err: e
+        });
+    }
+});
+
+app.post('/api/switch-user/', async (req, res) => {
+    try {
+        if (!res.locals.user || !res.locals.user.is_admin) {
+            res.status(403).send('您没有权限进行此操作。');
+        }
+        let user;
+        if (parseInt(req.body.id))
+            user = await User.findOne({ where: { id: parseInt(req.body.id) } });
+        if (!user) {
+            // try username
+            user = await User.fromName(req.body.id);
+        }
+        if (!user) throw { error_code: 2 };
+        req.session.user_id = user.id;
+        setLoginCookie(user.username, user.password, res);
+        res.send({ error_code: 1 });
+    } catch (e) {
+        res.status(500).send(e);
+    }
+});
