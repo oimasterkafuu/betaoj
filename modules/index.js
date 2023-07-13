@@ -48,9 +48,9 @@ app.get('/', async (req, res) => {
                 }
             )
         ).map((contest) => {
-            contest.timeAgo = timeAgo.format(
-                new Date(contest.start_time * 1000)
-            );
+            contest.timeAgo =
+                '在 ' + timeAgo.format(new Date(contest.start_time * 1000));
+            if (contest.timeAgo == '在 现在') contest.timeAgo = '';
             return contest;
         });
 

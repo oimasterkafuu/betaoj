@@ -18,7 +18,7 @@
           </div>
         </div>
       </a>
-      <% } else if (contest.end_time < now && contest.end_time >= now - 60 * 60) { %>
+      <% } else if (contest.end_time <= now && contest.end_time >= now - 60 * 60) { %>
       <a href="<%= syzoj.utils.makeUrl(['contest', contest.id]) %>">
         <div class="ui yellow icon message" style="margin-bottom: 25px;">
           <i class="lightbulb icon"></i>
@@ -36,7 +36,7 @@
           <i class="right double angle icon"></i>
           <div class="content">
             <div class="header">
-              <%= contest.title %> 即将在 <%= contest.timeAgo %>开始！
+              <%= contest.title %> 即将<%= contest.timeAgo %>开始！
             </div>
             <p>点击进入比赛。</p>
           </div>

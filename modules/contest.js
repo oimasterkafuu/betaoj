@@ -35,10 +35,12 @@ app.get('/contests', async (req, res) => {
             async (x) => (x.subtitle = await syzoj.utils.markdown(x.subtitle))
         );
 
-        await contests.forEachAsync(
-            async (x) =>
-                (x.timeAgo = timeAgo.format(new Date(x.start_time * 1000)))
-        );
+        await contests.forEachAsync(async (x) => {
+            x.timeAgo =
+                '在 ' + timeAgo.format(new Date(x.start_time * 1000));
+            if (x.timeAgo == '在 现在') x.timeAgo = '';
+            return x;
+        });
 
         res.render('contests', {
             contests: contests,
@@ -166,7 +168,8 @@ app.post('/contest/:id/edit', async (req, res) => {
         contest.is_public = req.body.is_public === 'on';
         if (!res.locals.user.is_admin) contest.is_public = true;
 
-        contest.hide_statistics = (req.body.hide_statistics === 'on') || contest.type == 'noi';
+        contest.hide_statistics =
+            req.body.hide_statistics === 'on' || contest.type == 'noi';
 
         await contest.save();
 
