@@ -87,7 +87,7 @@ body {
                 </div>
                 <div class="content">
                     <div class="header">
-                        <span class="user-<%= syzoj.utils.makeUserColor(show_user.rating, show_user.is_admin) %>" style="font-size: 13px">
+                        <span class="user-<%= syzoj.utils.makeUserColor(show_user.rating, show_user.is_admin) %>" style="font-weight: 500">
                             <% if(show_user.is_admin) { %>
                                 Headquarters
                             <% } else if(show_user.rating < 1200) { %>
@@ -112,7 +112,6 @@ body {
                                 <font color="red">Legendary Grandmaster</font>
                             <% } %>
                         </span>
-                        <br>
                         <span class="user-<%= syzoj.utils.makeUserColor(show_user.rating, show_user.is_admin) %>"><%= show_user.username %></span>
                         <% if (show_user.nameplate) { %><span class="user-tag bg-<%= syzoj.utils.makeUserColor(show_user.rating, show_user.is_admin) %>"><%- show_user.nameplate %></span><% } %>
                         <% if (show_user.sex == 1) { %><i class="man icon"></i><% } else if (show_user.sex == -1) { %><i class="woman icon"></i><% } %>
