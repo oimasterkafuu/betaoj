@@ -39,13 +39,16 @@ app.get('/', async (req, res) => {
             fortune = Divine(res.locals.user.username, res.locals.user.sex);
         }
 
-        let contests = await Contest.queryRange(
+        let contests = (await Contest.queryRange(
             [1, 5],
             { is_public: true },
             {
                 start_time: 'DESC'
             }
-        );
+        )).map((contest) => {
+            contest.timeAgo = timeAgo.format(new Date(contest.start_time * 1000));
+            return contest;
+        });
 
         let problems = (
             await Problem.queryRange(

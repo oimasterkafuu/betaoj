@@ -4,6 +4,10 @@ let ContestPlayer = syzoj.model('contest_player');
 let Problem = syzoj.model('problem');
 let JudgeState = syzoj.model('judge_state');
 let User = syzoj.model('user');
+let TimeAgo = require('javascript-time-ago');
+let zh = require('../libs/timeago');
+TimeAgo.locale(zh);
+const timeAgo = new TimeAgo('zh-CN');
 
 const jwt = require('jsonwebtoken');
 const {
@@ -30,6 +34,8 @@ app.get('/contests', async (req, res) => {
         await contests.forEachAsync(
             async (x) => (x.subtitle = await syzoj.utils.markdown(x.subtitle))
         );
+
+        await contests.forEachAsync(async (x) => (x.timeAgo = timeAgo.format(new Date(x.start_time * 1000))));
 
         res.render('contests', {
             contests: contests,
@@ -151,6 +157,7 @@ app.post('/contest/:id/edit', async (req, res) => {
         contest.information = req.body.information;
         contest.start_time = syzoj.utils.parseDate(req.body.start_time);
         contest.end_time = syzoj.utils.parseDate(req.body.end_time);
+        if(contest.start_time > contest.end_time) throw new ErrorMessage('开始时间不能晚于结束时间。');
 
         contest.is_public = req.body.is_public === 'on';
         if (!res.locals.user.is_admin) contest.is_public = true;
