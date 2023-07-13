@@ -355,6 +355,11 @@ $(function () {
                 lines: { show: true }
             }
         ];
+        var ids = {
+            <% for (let i = 0; i < ratingHistories.length; i++) { %>
+                <%= ratingHistories.length - i - 1 %>: "<%= ratingHistories[i].contestId %>",
+            <% } %>
+        };
         var options = {
             series: {
                 lines: { show: true },
@@ -400,7 +405,7 @@ $(function () {
         });
         $("#rating_chart").bind("plotclick", function (event, pos, item) {
             if (item && item.datapoint[0]) {
-                window.location.href = "<%= syzoj.utils.makeUrl(['contest', '']) %>" + item.datapoint[0];
+                window.location.href = "<%= syzoj.utils.makeUrl(['contest', '']) %>" + ids[item.datapoint[0]];
             }
         });
     });
