@@ -8,6 +8,7 @@ import File from './file';
 import JudgeState from './judge_state';
 import Contest from './contest';
 import ContestPlayer from './contest_player';
+import ContestRanklist from './contest_ranklist';
 import ProblemTag from './problem_tag';
 import ProblemTagMap from './problem_tag_map';
 import SubmissionStatistics, { StatisticsType } from './submission_statistics';
@@ -685,6 +686,15 @@ export default class Problem extends Model {
 
             if (flag) {
                 await contest.setProblemsNoCheck(problemIDs);
+                await contest.loadRelationships();
+                let ranklist = await contest.ranklist;
+                let ranking_params = ranklist.ranking_params;
+                if(ranking_params && ranking_params[this.id]){
+                    ranking_params[id] = ranking_params[this.id];
+                    delete ranking_params[this.id];
+                    ranklist.ranking_params = ranking_params;
+                    await ranklist.save();
+                }
                 await contest.save();
             }
         }
