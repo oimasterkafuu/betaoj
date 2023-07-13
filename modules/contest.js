@@ -166,7 +166,7 @@ app.post('/contest/:id/edit', async (req, res) => {
         contest.is_public = req.body.is_public === 'on';
         if (!res.locals.user.is_admin) contest.is_public = true;
 
-        contest.hide_statistics = req.body.hide_statistics === 'on';
+        contest.hide_statistics = (req.body.hide_statistics === 'on') || contest.type == 'noi';
 
         await contest.save();
 

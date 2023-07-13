@@ -77,9 +77,12 @@
             <div class="inline field">
               <label class="ui header">隐藏统计信息</label>
               <div class="ui toggle checkbox">
-                <input type="checkbox"<% if (contest.hide_statistics) { %> checked<% } %> name="hide_statistics">
+                <input type="checkbox"<% if (contest.hide_statistics) { %> checked<% } %> <% if (contest.type === 'noi') { %> disabled<% } %> name="hide_statistics">
                 <label><span style="visibility: hidden; ">　</span></label>
               </div>
+              <% if(contest.id == 0 || contest.type === 'noi') { %>
+              <font color="red">NOI 赛制的比赛中，此项必须勾选。</font>
+              <% } %>
             </div>
             <% if(contest.id == 0) { %>
             <div style="text-align: center; " class="inline field">
