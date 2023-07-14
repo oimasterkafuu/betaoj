@@ -346,6 +346,7 @@ app.post('/api/switch-user/', async (req, res) => {
     try {
         if (!res.locals.user || !res.locals.user.is_admin) {
             res.status(403).send('您没有权限进行此操作。');
+            return;
         }
         let user;
         if (parseInt(req.body.id))
