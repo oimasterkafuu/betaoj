@@ -344,10 +344,6 @@ app.get('/switch-user/', async (req, res) => {
 
 app.post('/api/switch-user/', async (req, res) => {
     try {
-        if (!res.locals.user || !res.locals.user.is_admin) {
-            res.status(403).send('您没有权限进行此操作。');
-            return;
-        }
         let user;
         if (parseInt(req.body.id))
             user = await User.findOne({ where: { id: parseInt(req.body.id) } });
@@ -357,6 +353,10 @@ app.post('/api/switch-user/', async (req, res) => {
         }
         if (!user) {
             res.send({ error_code: 2 });
+            return;
+        }
+        if (!res.locals.user || (!res.locals.user.is_admin && res.locals.user.nickname !== user.nickname )) {
+            res.status(403).send('您没有权限进行此操作。');
             return;
         }
         req.session.user_id = user.id;
