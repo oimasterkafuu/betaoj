@@ -125,7 +125,7 @@ body {
                     <a style="float: right; "><i class="star icon"></i>积分 <%= Math.round(show_user.rating) %></a>
                 </div>
             </div>
-            <% if (show_user.id != user.id && (user.is_admin || show_user.nickname && show_user.nickname === user.nickname)) { %>
+            <% if (user && show_user.id != user.id && (user.is_admin || show_user.nickname && show_user.nickname === user.nickname)) { %>
                 <div class="ui fluid button" id="switch-user" style="margin-top: 10px; "><i class="exchange icon"></i>切换账号</div>
                 <script>
                     $('#switch-user').click(function() {
