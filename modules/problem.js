@@ -4,6 +4,7 @@ let FormattedCode = syzoj.model('formatted_code');
 let Contest = syzoj.model('contest');
 let ProblemTag = syzoj.model('problem_tag');
 let Article = syzoj.model('article');
+let User = syzoj.model('user');
 
 const randomstring = require('randomstring');
 const fs = require('fs-extra');
@@ -526,6 +527,7 @@ app.get('/problem/:id/edit', async (req, res) => {
             problem.difficulty = 1600;
             problem.example = [];
             problem.permission = 20;
+            problem.managers = res.locals.user.id.toString();
         } else {
             if (!(await problem.isAllowedUseBy(res.locals.user)))
                 throw new ErrorMessage('您没有权限进行此操作。');
@@ -634,6 +636,12 @@ app.post('/problem/:id/edit', async (req, res) => {
         problem.limit_and_hint = req.body.limit_and_hint;
         problem.is_anonymous = req.body.is_anonymous === 'on';
         problem.difficulty = parseInt(req.body.difficulty);
+        
+        if(!req.body.managers) req.body.managers = [res.locals.user.id.toString()];
+        if(!Array.isArray(req.body.managers)) req.body.managers = [req.body.managers];
+        if (!req.body.managers.includes(res.locals.user.id.toString()))
+            req.body.managers.push(res.locals.user.id.toString());
+        problem.managers = req.body.managers.join('|');
 
         let isLuoguReg =
             /^https:\/\/www\.luogu\.com\.cn\/problem\/[A-Z][0-9]{1,6}$/;

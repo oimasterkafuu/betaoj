@@ -149,10 +149,11 @@ app.post('/contest/:id/edit', async (req, res) => {
         contest.subtitle = req.body.subtitle;
         if (!Array.isArray(req.body.problems))
             req.body.problems = [req.body.problems];
+        contest.problems = req.body.problems.join('|');
+        
         if (!req.body.admins) req.body.admins = [res.locals.user.id.toString()];
         if (!Array.isArray(req.body.admins))
             req.body.admins = [req.body.admins];
-        contest.problems = req.body.problems.join('|');
 
         if (!req.body.admins.includes(res.locals.user.id.toString()))
             req.body.admins.push(res.locals.user.id.toString());
