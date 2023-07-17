@@ -258,7 +258,7 @@ body > .ui.page.dimmer {
 }
 
 code {
-    font-family: "Fira Mono","Monaco","Menlo","Ubuntu Mono","Consolas","source-code-pro",monospace;
+    font-family: "Fira Code","Fira Mono","Monaco","Menlo","Ubuntu Mono","Consolas","source-code-pro",monospace;
 }
 
 /* Animated spinner */
