@@ -540,8 +540,15 @@ app.get('/problem/:id/edit', async (req, res) => {
             res.locals.user
         );
 
+        let managers = [];
+        if (problem.managers)
+            managers = await problem.managers
+                .split('|')
+                .mapAsync(async (id) => await User.findById(id));
+
         res.render('problem_edit', {
-            problem: problem
+            problem: problem,
+            managers: managers
         });
     } catch (e) {
         syzoj.log(e);

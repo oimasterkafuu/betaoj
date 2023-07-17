@@ -91,6 +91,9 @@ export default class Problem extends Model {
     @TypeORM.Column({ nullable: true, type: 'integer' })
     submit_num: number;
 
+    @TypeORM.Column({ nullable: true, type: 'text' })
+    managers: string;
+
     @TypeORM.Column({ nullable: true, type: 'integer' })
     difficulty: number;
 
