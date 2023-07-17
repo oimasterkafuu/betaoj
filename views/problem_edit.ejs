@@ -60,6 +60,13 @@
               <option value="<%= tag.id %>" selected><%= tag.name %></option>
             <% } %>
           </select>
+
+          <label style="margin-top: 15px; ">管理员</label>
+          <select class="ui fluid search dropdown" multiple="" id="search_managers" name="managers">
+            <% for (let manager of managers) { %>
+              <option value="<%= manager.id %>" selected><%= manager.username %></option>
+            <% } %>
+          </select>
           
           <label style="margin-top: 15px; ">权限</label>
           <select class="ui dropdown" name="permission">
@@ -155,6 +162,23 @@ $(function () {
         url: '/api/v2/search/tags/{query}',
         onResponse: function (response) {
           var a = $('#search_tags').val().map(function (x) { return parseInt(x) });
+          if (response.results) {
+            response.results = response.results.filter(function(x) { return !a.includes(parseInt(x.value));});
+          }
+          return response;
+        },
+        cache: false
+      }
+    });
+  
+  $('#search_managers')
+    .dropdown({
+      debug: true,
+      saveRemoteData: false,
+      apiSettings: {
+        url: '/api/v2/search/users/{query}',
+        onResponse: function (response) {
+          var a = $('#search_managers').val().map(function (x) { return parseInt(x) });
           if (response.results) {
             response.results = response.results.filter(function(x) { return !a.includes(parseInt(x.value));});
           }
