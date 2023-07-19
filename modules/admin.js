@@ -709,11 +709,13 @@ app.post('/admin/bulk_register', async (req, res) => {
     await users.forEachAsync(async (info) => {
       var user = await User.create({
         username: info.username,
+        nickname: info.username,
         password: info.password,
         email: info.email,
         is_show: syzoj.config.default.user.show,
         rating: syzoj.config.default.user.rating,
-        register_time: currentTime
+        register_time: currentTime,
+        permission: 100
       });
       await user.save();
     });

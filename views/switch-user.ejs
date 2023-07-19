@@ -1,6 +1,8 @@
 <% this.title = '切换用户' %>
 <%- include('header'); %>
-<div class="ui error message" id="error" hidden></div>
+<div class="ui error message" id="error" data-am-alert hidden style="flex-grow: 0; -webkit-flex-grow: 0;">
+  <p id="error_info"></p>
+</div>
 <div class="ui middle aligned center aligned grid">
   <div class="row">
     <div class="column" style="max-width: 450px">
@@ -20,8 +22,6 @@
           <div class="ui fluid large submit button" id="login">切换</div>
         </div>
 
-        <div class="ui error message"></div>
-
       </form>
     </div>
   </div>
@@ -34,8 +34,13 @@ function key_login(event) {
     }
 }
 function show_error(error) {
-    $("#error").text(error);
-    $("#error").show();
+    var $error = $('#error');
+    $("#error_info").text(error);
+    if ($error.is(':visible')) {
+        $error.transition('pulse');
+    } else {
+        $error.transition('scale');
+    }
 }
 function success(session_id) {
     window.location.href = location.protocol + '//' + location.host + <%- serializejs(req.query.url || '/') %>;
