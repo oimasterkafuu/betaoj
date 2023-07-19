@@ -21,6 +21,12 @@
           <label for="content">内容</label>
           <textarea rows="15" id="content" name="content" class="markdown-edit"><%= article.content %></textarea>
         </div>
+        <% if (article.id && user && user.is_admin) { %>
+          <div class="field">
+            <label for="content">题目编号</label>
+            <input type="number" id="problem_id" name="problem_id" value="<%= article.problem_id ? article.problem_id : '' %>">
+          </div>
+        <% } %>
       </div>
 
     <% if (user && user.is_admin) { %>
