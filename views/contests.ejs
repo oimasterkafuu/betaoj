@@ -3,45 +3,48 @@
 <div class="padding">
     <% if (contests.length) { %>
       <%
+      for (let i = contests.length - 1; i >= 0; --i) {
+        let contest = contests[i];
+        let now = syzoj.utils.getCurrentDate();
+        if (now >= contest.start_time && now < contest.end_time) { %>
+          <a href="<%= syzoj.utils.makeUrl(['contest', contest.id]) %>">
+            <div class="ui positive icon message" style="margin-bottom: 25px;">
+              <i class="paper plane icon"></i>
+              <div class="content">
+                <div class="header">
+                  <%= contest.title %> 正在进行中！
+                </div>
+                <p>点击进入比赛。</p>
+              </div>
+            </div>
+          </a>
+        <% } else if (contest.start_time > now && contest.start_time <= now + 24 * 60 * 60) { %>
+          <a href="<%= syzoj.utils.makeUrl(['contest', contest.id]) %>">
+            <div class="ui blue icon message" style="margin-bottom: 25px;">
+              <i class="right double angle icon"></i>
+              <div class="content">
+                <div class="header">
+                  <%= contest.title %> 即将<%= contest.timeAgo %>开始！
+                </div>
+                <p>点击进入比赛。</p>
+              </div>
+            </div>
+          </a>
+        <% } }
       for (let contest of contests) {
         let now = syzoj.utils.getCurrentDate();
-        if (now >= contest.start_time && now < contest.end_time) {
-      %>
-      <a href="<%= syzoj.utils.makeUrl(['contest', contest.id]) %>">
-        <div class="ui positive icon message" style="margin-bottom: 25px;">
-          <i class="paper plane icon"></i>
-          <div class="content">
-            <div class="header">
-              <%= contest.title %> 正在进行中！
+        if (contest.end_time <= now && contest.end_time >= now - 60 * 60) { %>
+        <a href="<%= syzoj.utils.makeUrl(['contest', contest.id]) %>">
+          <div class="ui yellow icon message" style="margin-bottom: 25px;">
+            <i class="lightbulb icon"></i>
+            <div class="content">
+              <div class="header">
+                <%= contest.title %> 刚刚结束！
+              </div>
+              <p>点击进入比赛。</p>
             </div>
-            <p>点击进入比赛。</p>
           </div>
-        </div>
-      </a>
-      <% } else if (contest.end_time <= now && contest.end_time >= now - 60 * 60) { %>
-      <a href="<%= syzoj.utils.makeUrl(['contest', contest.id]) %>">
-        <div class="ui yellow icon message" style="margin-bottom: 25px;">
-          <i class="lightbulb icon"></i>
-          <div class="content">
-            <div class="header">
-              <%= contest.title %> 刚刚结束！
-            </div>
-            <p>点击进入比赛。</p>
-          </div>
-        </div>
-      </a>
-      <% } else if (contest.start_time > now && contest.start_time <= now + 24 * 60 * 60) { %>
-      <a href="<%= syzoj.utils.makeUrl(['contest', contest.id]) %>">
-        <div class="ui blue icon message" style="margin-bottom: 25px;">
-          <i class="right double angle icon"></i>
-          <div class="content">
-            <div class="header">
-              <%= contest.title %> 即将<%= contest.timeAgo %>开始！
-            </div>
-            <p>点击进入比赛。</p>
-          </div>
-        </div>
-      </a>
+        </a>
       <% } } %>
     <% if (user) { %>
     <form class="ui mini form">

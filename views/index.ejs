@@ -4,28 +4,16 @@
   <div class="ui three column grid">
     <div class="eleven wide column">
       <%
-      for (let contest of contests) {
+      for (let i = contests.length - 1; i >= 0; --i) {
+        let contest = contests[i];
         let now = syzoj.utils.getCurrentDate();
-        if (now >= contest.start_time && now < contest.end_time) {
-      %>
+        if (now >= contest.start_time && now < contest.end_time) { %>
       <a href="<%= syzoj.utils.makeUrl(['contest', contest.id]) %>">
         <div class="ui positive icon message" style="margin-bottom: 25px;">
           <i class="paper plane icon"></i>
           <div class="content">
             <div class="header">
               <%= contest.title %> 正在进行中！
-            </div>
-            <p>点击进入比赛。</p>
-          </div>
-        </div>
-      </a>
-      <% } else if (contest.end_time <= now && contest.end_time >= now - 60 * 60) { %>
-      <a href="<%= syzoj.utils.makeUrl(['contest', contest.id]) %>">
-        <div class="ui yellow icon message" style="margin-bottom: 25px;">
-          <i class="lightbulb icon"></i>
-          <div class="content">
-            <div class="header">
-              <%= contest.title %> 刚刚结束！
             </div>
             <p>点击进入比赛。</p>
           </div>
@@ -43,6 +31,21 @@
           </div>
         </div>
       </a>
+      <% } }
+      for (let contest of contests) {
+        let now = syzoj.utils.getCurrentDate();
+        if (contest.end_time <= now && contest.end_time >= now - 60 * 60) { %>
+        <a href="<%= syzoj.utils.makeUrl(['contest', contest.id]) %>">
+          <div class="ui yellow icon message" style="margin-bottom: 25px;">
+            <i class="lightbulb icon"></i>
+            <div class="content">
+              <div class="header">
+                <%= contest.title %> 刚刚结束！
+              </div>
+              <p>点击进入比赛。</p>
+            </div>
+          </div>
+        </a>
       <% } } %>
 
       <h4 class="ui top attached block header"><i class="ui info icon"></i>公告</h4>
