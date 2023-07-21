@@ -87,33 +87,33 @@ body {
                 </div>
                 <div class="content">
                     <div class="header">
-                        <span class="user-<%= syzoj.utils.makeUserColor(show_user.rating, show_user.is_admin) %>" style="font-weight: 500">
+                        <span class="user-<%= syzoj.utils.makeUserColor(Math.round(show_user.rating), show_user.is_admin) %>" style="font-weight: 500">
                             <% if(show_user.is_admin) { %>
                                 Headquarters
-                            <% } else if(show_user.rating < 1200) { %>
+                            <% } else if(Math.round(show_user.rating) < 1200) { %>
                                 Newbie
-                            <% } else if(show_user.rating < 1400) { %>
+                            <% } else if(Math.round(show_user.rating) < 1400) { %>
                                 Pupil
-                            <% } else if(show_user.rating < 1600) { %>
+                            <% } else if(Math.round(show_user.rating) < 1600) { %>
                                 Specialist
-                            <% } else if(show_user.rating < 1900) { %>
+                            <% } else if(Math.round(show_user.rating) < 1900) { %>
                                 Expert
-                            <% } else if(show_user.rating < 2100) { %>
+                            <% } else if(Math.round(show_user.rating) < 2100) { %>
                                 Candidate Master
-                            <% } else if(show_user.rating < 2300) { %>
+                            <% } else if(Math.round(show_user.rating) < 2300) { %>
                                 Master
-                            <% } else if(show_user.rating < 2400) { %>
+                            <% } else if(Math.round(show_user.rating) < 2400) { %>
                                 International Master
-                            <% } else if(show_user.rating < 2600) { %>
+                            <% } else if(Math.round(show_user.rating) < 2600) { %>
                                 Grandmaster
-                            <% } else if(show_user.rating < 3000) { %>
+                            <% } else if(Math.round(show_user.rating) < 3000) { %>
                                 International Grandmaster
                             <% } else { %>
                                 <font color="red">Legendary Grandmaster</font>
                             <% } %>
                         </span>
-                        <span class="user-<%= syzoj.utils.makeUserColor(show_user.rating, show_user.is_admin) %>"><%= show_user.username %></span>
-                        <% if (show_user.nameplate) { %><span class="user-tag bg-<%= syzoj.utils.makeUserColor(show_user.rating, show_user.is_admin) %>"><%- show_user.nameplate %></span><% } %>
+                        <span class="user-<%= syzoj.utils.makeUserColor(Math.round(show_user.rating), show_user.is_admin) %>"><%= show_user.username %></span>
+                        <% if (show_user.nameplate) { %><span class="user-tag bg-<%= syzoj.utils.makeUserColor(Math.round(show_user.rating), show_user.is_admin) %>"><%- show_user.nameplate %></span><% } %>
                         <% if (show_user.sex == 1) { %><i class="man icon"></i><% } else if (show_user.sex == -1) { %><i class="woman icon"></i><% } %>
                     </div>
                     <div class="meta">
@@ -122,7 +122,7 @@ body {
                 </div>
                 <div class="extra content">
                     <a><i class="check icon"></i>通过 <%= show_user.ac_problems.length %> 题</a>
-                    <a style="float: right; "><i class="star icon"></i>积分 <%= Math.round(show_user.rating) %></a>
+                    <a style="float: right; "><i class="star icon"></i>积分 <%= Math.round(Math.round(show_user.rating)) %></a>
                 </div>
             </div>
             <% if (user && show_user.id != user.id && (user.is_admin || user.permission && show_user.permission && show_user.nickname && show_user.nickname === user.nickname)) { %>

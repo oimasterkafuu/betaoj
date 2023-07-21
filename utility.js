@@ -380,6 +380,8 @@ module.exports = {
     makeUserColor(rating, is_admin) {
         if (is_admin) return 'admin';
 
+        rating = Math.round(rating);
+
         if (rating < 1200) return 'gray'; // newbie
         if (rating < 1400) return 'green'; // pupil
         if (rating < 1600) return 'cyan'; // specialist
