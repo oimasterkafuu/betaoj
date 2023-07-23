@@ -15,4 +15,5 @@ updates:
       # Use Japan Standard Time (UTC +09:00)
       timezone: "Asia/Tokyo"
     labels:
-      - "npm dependencies"
+      - npm
+      - dependencies
