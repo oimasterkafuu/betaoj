@@ -70,7 +70,7 @@
             <div class="inline field">
               <label class="ui header">公开</label>
               <div class="ui toggle checkbox">
-                <input type="checkbox"<% if (contest.is_public || !user.is_admin) { %> checked<% } %> <% if (!user.is_admin) { %> disabled<% } %> name="is_public">
+                <input type="checkbox"<% if (contest.is_public) { %> checked<% } %> <% if (!user.is_admin) { %> disabled<% } %> name="is_public">
                 <label><span style="visibility: hidden; ">　</span></label>
               </div>
             </div>
