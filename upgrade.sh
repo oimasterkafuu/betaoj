@@ -1,5 +1,5 @@
 #!/bin/bash
 
 sudo git pull origin master
-npx tsc -p .
+yarn
 sudo systemctl restart syzoj-web
