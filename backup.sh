@@ -10,8 +10,10 @@ backup_file="syzoj-$(date +%Y-%m-%d-%H-%M-%S).sql"
 # 从 config.json 文件中读取数据库用户名和密码
 # 需要提前使用 sudo apt-get install jq 安装
 
-mysql_user=$(jq -r '.db.username' config.json)
-mysql_password=$(jq -r '.db.password' config.json)
+WORK_DIR=$(cd "$(dirname "$0")"; pwd)
+
+mysql_user=$(jq -r '.db.username' $WORK_DIR/config.json)
+mysql_password=$(jq -r '.db.password' $WORK_DIR/config.json)
 
 # 备份数据库的所有数据
 mysqldump -u $mysql_user -p$mysql_password syzoj > $backup_dir/$backup_file
