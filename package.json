@@ -65,7 +65,7 @@
         "object-path": "^0.11.5",
         "patch-package": "^6.4.7",
         "postinstall-postinstall": "^2.1.0",
-        "random-js": "2.1.0",
+        "random-js": "^1.0.0",
         "randomstring": "^1.1.5",
         "reflect-metadata": "^0.1.13",
         "request": "^2.74.0",
