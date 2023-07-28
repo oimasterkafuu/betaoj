@@ -214,7 +214,11 @@ app.post('/article/:id/edit', async (req, res) => {
         article.allow_comment = !(res.locals.user && res.locals.user.is_admin
             ? req.body.allow_comment !== 'on'
             : !article.allow_comment);
-        if(res.locals.user && res.locals.user.is_admin && req.body.problem_id) {
+        if (
+            res.locals.user &&
+            res.locals.user.is_admin &&
+            req.body.problem_id
+        ) {
             let problem = await Problem.findById(req.body.problem_id);
             if (!problem) throw new ErrorMessage('无此题目。');
             article.problem_id = problem.id;

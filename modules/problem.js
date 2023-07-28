@@ -636,9 +636,11 @@ app.post('/problem/:id/edit', async (req, res) => {
         problem.limit_and_hint = req.body.limit_and_hint;
         problem.is_anonymous = req.body.is_anonymous === 'on';
         problem.difficulty = parseInt(req.body.difficulty);
-        
-        if(!req.body.managers) req.body.managers = [res.locals.user.id.toString()];
-        if(!Array.isArray(req.body.managers)) req.body.managers = [req.body.managers];
+
+        if (!req.body.managers)
+            req.body.managers = [res.locals.user.id.toString()];
+        if (!Array.isArray(req.body.managers))
+            req.body.managers = [req.body.managers];
         if (!req.body.managers.includes(res.locals.user.id.toString()))
             req.body.managers.push(res.locals.user.id.toString());
         problem.managers = req.body.managers.join('|');

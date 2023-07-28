@@ -5,15 +5,15 @@
 
 version: 2
 updates:
-  - package-ecosystem: "npm" # See documentation for possible values
-    directory: "/" # Location of package manifests
-    schedule:
-      interval: "weekly"
-      # Check for npm updates on Sundays
-      day: "sunday"
-      time: "09:00"
-      # Use Japan Standard Time (UTC +09:00)
-      timezone: "Asia/Tokyo"
-    labels:
-      - npm
-      - dependencies
+    - package-ecosystem: 'npm' # See documentation for possible values
+      directory: '/' # Location of package manifests
+      schedule:
+          interval: 'weekly'
+          # Check for npm updates on Sundays
+          day: 'sunday'
+          time: '09:00'
+          # Use Japan Standard Time (UTC +09:00)
+          timezone: 'Asia/Tokyo'
+      labels:
+          - npm
+          - dependencies

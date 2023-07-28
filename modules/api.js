@@ -355,7 +355,11 @@ app.post('/api/switch-user/', async (req, res) => {
             res.send({ error_code: 2 });
             return;
         }
-        if (!res.locals.user || (!res.locals.user.is_admin && res.locals.user.nickname !== user.nickname )) {
+        if (
+            !res.locals.user ||
+            (!res.locals.user.is_admin &&
+                res.locals.user.nickname !== user.nickname)
+        ) {
             res.status(403).send('您没有权限进行此操作。');
             return;
         }

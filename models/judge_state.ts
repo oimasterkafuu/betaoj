@@ -122,7 +122,10 @@ export default class JudgeState extends Model {
     async isAllowedVisitBy(user) {
         await this.loadRelationships();
 
-        if (user && user.id === this.problem.user_id || this.problem.managers.split('|').includes(user.id.toString()))
+        if (
+            (user && user.id === this.problem.user_id) ||
+            this.problem.managers.split('|').includes(user.id.toString())
+        )
             return true;
         else if (this.type === 0)
             return (

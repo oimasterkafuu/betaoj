@@ -138,7 +138,10 @@ export default class Problem extends Model {
     async isAllowedEditBy(user) {
         if (!user) return false;
         if (await user.hasPrivilege('manage_problem')) return true;
-        return this.user_id === user.id || this.managers.split('|').includes(user.id.toString());
+        return (
+            this.user_id === user.id ||
+            this.managers.split('|').includes(user.id.toString())
+        );
     }
 
     async isAllowedUseBy(user) {
@@ -146,7 +149,10 @@ export default class Problem extends Model {
         if (!user) return false;
         if (this.is_public && this.permission <= user.permission) return true;
         if (await user.hasPrivilege('manage_problem')) return true;
-        return this.user_id === user.id || this.managers.split('|').includes(user.id.toString());
+        return (
+            this.user_id === user.id ||
+            this.managers.split('|').includes(user.id.toString())
+        );
     }
 
     async isAllowedManageBy(user) {

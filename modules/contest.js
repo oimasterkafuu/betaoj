@@ -151,12 +151,15 @@ app.post('/contest/:id/edit', async (req, res) => {
         if (!Array.isArray(req.body.problems))
             req.body.problems = [req.body.problems];
         contest.problems = req.body.problems.join('|');
-        
+
         if (!req.body.admins) req.body.admins = [res.locals.user.id.toString()];
         if (!Array.isArray(req.body.admins))
             req.body.admins = [req.body.admins];
 
-        if (!res.locals.user.is_admin && !req.body.admins.includes(res.locals.user.id.toString()))
+        if (
+            !res.locals.user.is_admin &&
+            !req.body.admins.includes(res.locals.user.id.toString())
+        )
             req.body.admins.push(res.locals.user.id.toString());
         contest.admins = req.body.admins.join('|');
 
@@ -166,7 +169,8 @@ app.post('/contest/:id/edit', async (req, res) => {
         if (contest.start_time > contest.end_time)
             throw new ErrorMessage('开始时间不能晚于结束时间。');
 
-        if (res.locals.user.is_admin) contest.is_public = req.body.is_public === 'on';
+        if (res.locals.user.is_admin)
+            contest.is_public = req.body.is_public === 'on';
 
         contest.hide_statistics =
             req.body.hide_statistics === 'on' || contest.type == 'noi';
