@@ -30,7 +30,7 @@
         "@types/js-yaml": "^4.0.5",
         "@types/lru-cache": "^5.1.0",
         "ansi-to-html": "^0.7.2",
-        "async-lock": "^1.2.0",
+        "async-lock": "^1.4.0",
         "bluebird": "^3.5.4",
         "body-parser": "^1.20.2",
         "buffer-crc32": "^0.2.13",
