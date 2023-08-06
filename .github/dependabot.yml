@@ -8,9 +8,7 @@ updates:
     - package-ecosystem: 'npm' # See documentation for possible values
       directory: '/' # Location of package manifests
       schedule:
-          interval: 'weekly'
-          # Check for npm updates on Sundays
-          day: 'sunday'
+          interval: 'monthly'
           time: '09:00'
           # Use Japan Standard Time (UTC +09:00)
           timezone: 'Asia/Tokyo'
