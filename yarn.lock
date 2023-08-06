@@ -1152,10 +1152,10 @@ diff-match-patch@^1.0.0:
   resolved "https://registry.yarnpkg.com/diff-match-patch/-/diff-match-patch-1.0.5.tgz#abb584d5f10cd1196dfc55aa03701592ae3f7b37"
   integrity sha512-IayShXAgj/QMXgB0IWmKx+rOPuGMhqm5w6jvFxmVenXKIzRqTAAsbBPT3kWQeGANj3jGgvcvv4yK6SxqYmikgw==
 
-dkim-signer@^0.2.2:
+dkim-signer@0.2.2:
   version "0.2.2"
   resolved "https://registry.yarnpkg.com/dkim-signer/-/dkim-signer-0.2.2.tgz#aa81ec071eeed3622781baa922044d7800e5f308"
-  integrity sha1-qoHsBx7u02IngbqpIgRNeADl8wg=
+  integrity sha512-24OZ3cCA30UTRz+Plpg+ibfPq3h7tDtsJRg75Bo0pGakZePXcPBddY80bKi1Bi7Jsz7tL5Cw527mhCRDvNFgfg==
   dependencies:
     libmime "^2.0.3"
 
@@ -2538,10 +2538,10 @@ lru-cache@^6.0.0:
   dependencies:
     yallist "^4.0.0"
 
-mailcomposer@^3.12.0:
+mailcomposer@3.12.0:
   version "3.12.0"
   resolved "https://registry.yarnpkg.com/mailcomposer/-/mailcomposer-3.12.0.tgz#9c5e1188aa8e1c62ec8b86bd43468102b639e8f9"
-  integrity sha1-nF4RiKqOHGLsi4a9Q0aBArY56Pk=
+  integrity sha512-zBeDoKUTNI8IAsazoMQFt3eVSVRtDtgrvBjBVdBjxDEX+5KLlKtEFCrBXnxPhs8aTYufUS1SmbFnGpjHS53deg==
   dependencies:
     buildmail "3.10.0"
     libmime "2.1.0"
@@ -3573,13 +3573,13 @@ send@0.16.2:
     range-parser "~1.2.0"
     statuses "~1.4.0"
 
-sendmail@^1.1.1:
-  version "1.4.1"
-  resolved "https://registry.yarnpkg.com/sendmail/-/sendmail-1.4.1.tgz#e0732447f5ff07270fbcecd6030d748bcb4a03cb"
-  integrity sha512-MfprntdcmRUlxZJisAJGb4sp8kL4biCbrmcLT9FJsECDATTn3Q1rYkxXyT+DFZ5fIZ5ZPJt+H/eHWUFd1xWUuw==
+sendmail@^1.6.1:
+  version "1.6.1"
+  resolved "https://registry.yarnpkg.com/sendmail/-/sendmail-1.6.1.tgz#6be92fb4be70d1d9ad102030aeb1e737bd512159"
+  integrity sha512-lIhvnjSi5e5jL8wA1GPP6j2QVlx6JOEfmdn0QIfmuJdmXYGmJ375kcOU0NSm/34J+nypm4sa1AXrYE5w3uNIIA==
   dependencies:
-    dkim-signer "^0.2.2"
-    mailcomposer "^3.12.0"
+    dkim-signer "0.2.2"
+    mailcomposer "3.12.0"
 
 seq-queue@^0.0.5:
   version "0.0.5"
