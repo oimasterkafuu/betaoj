@@ -219,6 +219,9 @@
           </div>
         </form>
       </div>
+      <% if (syzoj.config.google_adsense) { %>
+        <%- syzoj.config.google_adsense %>
+      <% } %>
       <% if (syzoj.config.hitokoto) { %>
           <h4 class="ui top attached block header"><i class="ui quote left icon"></i>一言</h4>
           <div class="ui bottom attached center aligned segment">
