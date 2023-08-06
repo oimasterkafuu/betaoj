@@ -105,12 +105,7 @@
         "ruby",
         "haskell"
     ],
-    "links": [
-        {
-            "title": "LibreOJ",
-            "url": "https://loj.ac/"
-        }
-    ],
+    "links": [],
     "session_secret": "@SESSION_SECRET@",
     "judge_token": "@JUDGE_TOKEN@",
     "email_jwt_secret": "@EMAIL_JWT_SECRET@",
@@ -131,5 +126,6 @@
     "hitokoto": false,
     "blackboard": "",
     "pangu": false,
-    "google_adsense": ""
+    "adsense_header": "",
+    "adsense_index": ""
 }
