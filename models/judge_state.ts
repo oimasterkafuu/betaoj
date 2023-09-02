@@ -113,13 +113,13 @@ export default class JudgeState extends Model {
             if (this.problem_id)
                 this.problem = await Problem.findById(this.problem_id);
             else {
-                this.problem = await Problem.create({
-                    time_limit: syzoj.config.default.problem.time_limit,
-                    memory_limit: syzoj.config.default.problem.memory_limit,
-                    type: 'traditional'
-                });
-                this.problem.id = 0;
-                this.problem.title = '';
+                this.problem = {
+                    id: 0,
+                    title: '',
+                    is_public: true,
+                    user_id: 1,
+                    permission: 10
+                };
             }
         }
     }
