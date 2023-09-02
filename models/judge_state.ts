@@ -114,7 +114,8 @@ export default class JudgeState extends Model {
                 this.problem = await Problem.findById(this.problem_id);
             else {
                 this.problem = await Problem.create({
-                    title: ''
+                    title: '',
+                    managers: ''
                 });
             }
         }
