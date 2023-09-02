@@ -113,13 +113,9 @@ export default class JudgeState extends Model {
             if (this.problem_id)
                 this.problem = await Problem.findById(this.problem_id);
             else {
-                this.problem = {
-                    id: 0,
-                    title: '',
-                    is_public: true,
-                    user_id: 1,
-                    permission: 10
-                };
+                this.problem = await Problem.create({
+                    title: ''
+                });
             }
         }
     }
