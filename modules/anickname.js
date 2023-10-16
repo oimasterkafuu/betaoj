@@ -7,6 +7,10 @@ app.post('/anickname', async (req, res) => {
         if (res.locals.user.vip === 1)
             res.send(JSON.stringify({ error_code: 1003 }));
         let nickname = req.body.nickname.toString().trim();
+        let chineseRegex = /^(?:[\u4e00-\u9fa5·]{2,16})$/;
+        if (!chineseRegex.test(nickname)) {
+            res.send(JSON.stringify({ error_code: 1005 }));
+        }
         let currUser = await User.findById(res.locals.user.id);
         if (!currUser) {
             res.send(JSON.stringify({ error_code: 1002 }));

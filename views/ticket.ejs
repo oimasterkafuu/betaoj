@@ -22,7 +22,11 @@
           <div class="ui fluid large submit button" id="submit">提交</div>
         </div>
 
-        <div class="ui message"><p>准确填写。乱搞后果自负。</p><p>如果信息有误，您将无法访问完整题库。</p><p>小号可以使用相同姓名，但后期需要额外验证。</p><p><font color="red">提交后将不可修改。</font></p></div>
+        <div class="ui message">
+          <p>准确填写。乱搞后果自负。</p>
+          <p>如果信息有误，您将无法访问完整题库。</p>
+          <p><span style="color: red;">提交后不可修改。</span></p>
+        </div>
 
       </form>
     </div>
@@ -49,6 +53,7 @@ function success() {
 }
 function submit() {
     $("#submit").addClass("loading");
+    $("#submit").prop("disabled", true);
     $.ajax({
         url: "/anickname",
         type: 'POST',
@@ -61,7 +66,7 @@ function submit() {
             data=JSON.parse(data);
             error_code = data.error_code;
             //console.log(error_code);
-	    switch (error_code) {
+	          switch (error_code) {
                 case 1002:
                     show_error("没有登录");
                     break;
@@ -70,6 +75,9 @@ function submit() {
                     break;
                 case 1004:
                     show_error("服务器内部错误");
+                    break;
+                case 1005:
+                    show_error("姓名格式错误");
                     break;
                 case 1:
                     success();
@@ -80,6 +88,7 @@ function submit() {
             }
             $("#submit").text("提交");
             $("#submit").removeClass("loading");
+            $("#submit").prop("disabled", false);
         },
         error:  function(XMLHttpRequest, textStatus, errorThrown) {
             alert(XMLHttpRequest.responseText);
