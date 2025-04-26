@@ -6,11 +6,9 @@
 <div class="ui middle aligned center aligned grid">
   <div class="row">
     <div class="column" style="max-width: 450px">
-      <h4 class="ui image header">
-        <div class="content" style="margin-bottom: 10px; ">
-          学生认证
-        </div>
-      </h4>
+      <div class="ui header">
+        学生认证
+      </div>
       <form class="ui large form">
         <div class="ui existing segment">
           <div class="field">
@@ -23,9 +21,15 @@
         </div>
 
         <div class="ui message">
-          <p>准确填写。乱搞后果自负。</p>
-          <p>如果信息有误，您将无法访问完整题库。</p>
+          <p>准确填写，后果自负。</p>
+          <p>如果信息有误，您将无法正常访问系统。</p>
           <p><span style="color: red;">提交后不可修改。</span></p>
+          <div class="ui divider"></div>
+          <p>
+            <a class="ui small red button" href-post="<%= syzoj.utils.makeUrl(['logout'], { url: '/' }) %>">
+              <i class="power icon"></i>不想认证，先登出
+            </a>
+          </p>
         </div>
 
       </form>

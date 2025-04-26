@@ -3,21 +3,26 @@
 <div class="ui error message" id="error" hidden></div>
 <div class="ui middle aligned center aligned grid">
   <div class="row">
-    <div class="column" style="max-width: 450px">
+    <div class="column" style="max-width: 750px">
       <h4 class="ui image header">
         <div class="content" style="margin-bottom: 10px; ">
-          学生认证 - 教师端<br>
+          <div class="ui header">
+            学生认证
+          </div>
           <div class="sub header">
-            请在下方选择学生的权限，选择后会自动保存。
+            请在下方选择学生的权限，选择后会自动保存。<br>
+            <span style="color: #DB2828;">注意：未审核的实名认证将在15天后自动设置为外来学生</span>
           </div>
         </div>
       </h4>
         <table class="ui very basic center aligned table" style="table-layout: fixed; ">
             <thead>
             <tr>
-                <th style="width: 150px; ">用户名</th>
-                <th style="width: 150px; ">真实姓名</th>
-                <th style="width: 250px; ">权限</th>
+                <th style="width: 120px; ">用户名</th>
+                <th style="width: 100px; ">真实姓名</th>
+                <th style="width: 150px; ">提交时间</th>
+                <th style="width: 120px; ">剩余天数</th>
+                <th style="width: 180px; ">权限</th>
             </tr>
             </thead>
         <script data-cfasync="false">
@@ -34,12 +39,57 @@
         </script>
             <tbody>
             <%
+            function formatDate(timestamp) {
+                try {
+                    if (!timestamp) return '未知';
+                    const date = new Date(timestamp * 1000);
+                    return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')} ${String(date.getHours()).padStart(2, '0')}:${String(date.getMinutes()).padStart(2, '0')}`;
+                } catch (e) {
+                    return '日期错误';
+                }
+            }
+            
+            function getRemainingDays(timestamp) {
+                try {
+                    if (!timestamp) return '未知';
+                    
+                    // 使用日期对象而不是时间戳进行计算，以避免时区问题
+                    const submitDate = new Date(timestamp * 1000);
+                    const currentDate = new Date();
+                    
+                    // 设置截止日期（提交日期 + 15天）
+                    const deadlineDate = new Date(submitDate);
+                    deadlineDate.setDate(submitDate.getDate() + 15);
+                    
+                    // 计算剩余时间（毫秒）
+                    const remainingTime = deadlineDate - currentDate;
+                    
+                    // 计算剩余天数（向上取整，至少为0）
+                    const remainingDays = Math.max(0, Math.ceil(remainingTime / (24 * 60 * 60 * 1000)));
+                    
+                    // 如果剩余天数小于等于1，显示警告
+                    if (remainingDays <= 1) {
+                        return '<span style="color: #DB2828;">即将自动审核</span>';
+                    }
+                    
+                    // 否则只显示剩余天数
+                    return `${remainingDays} 天`;
+                } catch (e) {
+                    return '计算错误';
+                }
+            }
+            
+            if (!Array.isArray(users)) users = [];
+            
             for (let user of users) {
+                try {
+                    if (!user || !user.id) continue;
             %>
                 <tr>
-                    <td><a href="<%= syzoj.utils.makeUrl(['user', user.id]) %>" class="user-<%= syzoj.utils.makeUserColor(user.rating, user.is_admin) %>"><%= user.username %><% if (user.nameplate) { %><span class="user-tag bg-<%= syzoj.utils.makeUserColor(user.rating, user.is_admin) %>"><%- user.nameplate %></span><% } %></a></td>
-                    <td><%= user.nickname %></td>
-                    <!-- <td><a href="<%= syzoj.utils.makeUrl(['user', user.id, 'edit#permission']) %>">这里</a></td> -->
+                    <td><a href="<%= syzoj.utils.makeUrl(['user', user.id]) %>" class="user-<%= user.rating ? syzoj.utils.makeUserColor(user.rating, user.is_admin) : '' %>"><%= user.username || '未知用户' %><% if (user.nameplate) { %><span class="user-tag bg-<%= user.rating ? syzoj.utils.makeUserColor(user.rating, user.is_admin) : '' %>"><%- user.nameplate %></span><% } %></a></td>
+                    <td><%= user.nickname || '未设置' %></td>
+                    <td><%= formatDate(user.nickname_time) %></td>
+                    <td><%- getRemainingDays(user.nickname_time) %></td>
                     <td>
                       <select class="ui dropdown" name="permission<%= user.id %>" id="permission<%= user.id %>">
                         <option value="null" <%= user.permission === null ? 'selected': '' %>>未设置</option>
@@ -68,7 +118,12 @@
                       </script>
                     </td>
                 </tr>
-            <% } %>
+            <% 
+                } catch(e) { 
+                    // 忽略处理单个用户时的错误，继续下一个
+                }
+            } 
+            %>
             </tbody>
         </table>
     </div>
