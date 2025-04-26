@@ -65,6 +65,7 @@
         <% } %>
         <th style="width: 10%; ">作者</th>
         <th style="width: 10%; ">回复数</th>
+        <th style="width: 10%; ">浏览量</th>
         <th style="width: 15%; ">最新回复</th>
       </tr>
     </thead>
@@ -77,6 +78,7 @@
             <% } %>
             <td><a href="<%= syzoj.utils.makeUrl(['user', article.user_id]) %>"><span class="user-<%= syzoj.utils.makeUserColor(article.user.rating, article.user.is_admin) %>"><%= article.user.username %></span></a><% if (article.user.nameplate) { %><span class="user-tag bg-<%= syzoj.utils.makeUserColor(article.user.rating, article.user.is_admin) %>"><%- article.user.nameplate %></span><% } %></td>
             <td><%= article.comments_num %></td>
+            <td><%= article.view_count %></td>
             <td><%= syzoj.utils.formatDate(article.sort_time) %></td>
         </tr>
     <% } %>

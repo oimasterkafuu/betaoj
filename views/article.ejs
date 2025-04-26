@@ -25,6 +25,7 @@
 	<b style="margin-right: 30px; "><a class="black-link" href="<%= syzoj.utils.makeUrl(['user', article.user_id]) %>"><span class="user-<%= syzoj.utils.makeUserColor(article.user.rating, article.user.is_admin) %>"><%= article.user.username %></span></a><% if (article.user.nameplate) { %><span class="user-tag bg-<%= syzoj.utils.makeUserColor(article.user.rating, article.user.is_admin) %>"><%- article.user.nameplate %></span><% } %></b>
 	<b style="margin-right: 30px; "><i class="calendar icon"></i> <%= syzoj.utils.formatDate(article.public_time) %></b>
 	<% if (article.public_time !== article.update_time) { %><b style="margin-right: 30px; "><i class="edit icon"></i> <%= syzoj.utils.formatDate(article.update_time) %></b><% } %>
+  <b style="margin-right: 30px; "><i class="eye icon"></i> <%= article.view_count %></b>
         <% if (article.allowedEdit) { %>
         <a style="margin-top: -4px; " class="ui mini right floated labeled icon button" href="<%= syzoj.utils.makeUrl(['article', article.id, 'edit']) %>"><i class="ui edit icon"></i>编辑</a>
         <a style="margin-top: -4px; margin-right: 3px; " class="ui mini red right floated labeled icon button" onclick="$('#modal-delete').modal('show')"><i class="ui trash icon"></i>删除</a>

@@ -87,6 +87,8 @@ app.get('/article/:id', async (req, res) => {
         let article = await Article.findById(id);
         if (!article) throw new ErrorMessage('无此帖子。');
 
+        await article.addViewCount();
+
         await article.loadRelationships();
         article.allowedEdit = await article.isAllowedEditBy(res.locals.user);
         article.allowedComment = await article.isAllowedCommentBy(

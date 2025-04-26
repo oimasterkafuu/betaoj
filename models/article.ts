@@ -41,6 +41,9 @@ export default class Article extends Model {
     @TypeORM.Column({ default: 0, type: 'integer' })
     comments_num: number;
 
+    @TypeORM.Column({ default: 0, type: 'integer' })
+    view_count: number;
+
     @TypeORM.Column({ default: true, type: 'boolean' })
     allow_comment: boolean;
 
@@ -83,6 +86,16 @@ export default class Article extends Model {
                         })
                     ).public_time;
                 }
+                await this.save();
+            }
+        );
+    }
+
+    async addViewCount() {
+        await syzoj.utils.lock(
+            ['Article::addViewCount', this.id],
+            async () => {
+                this.view_count++;
                 await this.save();
             }
         );
