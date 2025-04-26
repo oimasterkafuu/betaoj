@@ -31,6 +31,10 @@ module.exports = (name, sex) => {
     let random = new Random(Random.engines.mt19937().seed(h));
 
     let x = random.integer(1, 100);
+
+    if (date.getMonth() == 1 - 1 && date.getDate() == 1)
+        x = 1;
+
     if (x <= 25) res.fortune = '大吉';
     else if (x <= 50) res.fortune = '大凶';
     else if (x <= 60) res.fortune = '中平';
