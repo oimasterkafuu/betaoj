@@ -1,0 +1,21 @@
+<%- include('header'); %>
+<div class="padding">
+  <div class="ui center aligned grid">
+    <div class="row">
+      <div class="column">
+        <div class="ui segment" style="max-width: 700px; margin: 0 auto;">
+          <h2>注意</h2>
+          <div class="ui divider"></div>
+          <p>您即将访问比赛题目，一旦查看题目，您将被自动记入比赛排行榜。</p>
+          <p>如果您只是想了解比赛信息而不想参与比赛，请返回上一页。</p>
+          <div class="ui divider"></div>
+          <form action="<%= syzoj.utils.makeUrl(['contest', contest.id, 'problem', pid, 'confirm']) %>" method="post">
+            <button class="ui button primary">我已知晓，继续访问题目</button>
+            <a href="<%= syzoj.utils.makeUrl(['contest', contest.id]) %>" class="ui button">返回比赛主页</a>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<%- include('footer'); %> 

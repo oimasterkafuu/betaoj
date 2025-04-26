@@ -833,6 +833,36 @@ app.get('/contest/:id/problem/:pid', async (req, res) => {
         )
             throw new ErrorMessage('您没有权限执行此操作。');
 
+        // 判断比赛是否在进行中或已结束
+        contest.ended = contest.isEnded();
+        if (
+            !(await contest.isSupervisior(curUser)) &&
+            !(contest.isRunning() || contest.isEnded())
+        ) {
+            if (await problem.isAllowedUseBy(res.locals.user)) {
+                return res.redirect(
+                    syzoj.utils.makeUrl(['problem', problem_id])
+                );
+            }
+            throw new ErrorMessage('比赛尚未开始。');
+        }
+
+        // 如果用户已登录，比赛正在进行中，且用户未参与比赛，显示警告页面
+        if (res.locals.user && contest.isRunning()) {
+            let player = await ContestPlayer.findInContest({
+                contest_id: contest.id,
+                user_id: res.locals.user.id
+            });
+
+            if (!player && !(await contest.isSupervisior(curUser))) {
+                // 显示确认页面
+                return res.render('contest_warning', {
+                    contest: contest,
+                    pid: pid
+                });
+            }
+        }
+
         await problem.loadRelationships();
 
         problem.example = JSON.parse(problem.example);
@@ -856,19 +886,6 @@ app.get('/contest/:id/problem/:pid', async (req, res) => {
 
         problem.example = await syzoj.utils.markdown(ori);
 
-        contest.ended = contest.isEnded();
-        if (
-            !(await contest.isSupervisior(curUser)) &&
-            !(contest.isRunning() || contest.isEnded())
-        ) {
-            if (await problem.isAllowedUseBy(res.locals.user)) {
-                return res.redirect(
-                    syzoj.utils.makeUrl(['problem', problem_id])
-                );
-            }
-            throw new ErrorMessage('比赛尚未开始。');
-        }
-
         problem.specialJudge = await problem.hasSpecialJudge();
 
         await syzoj.utils.markdown(problem, [
@@ -885,8 +902,6 @@ app.get('/contest/:id/problem/:pid', async (req, res) => {
             problem.type === 'submit-answer'
         );
 
-        await problem.loadRelationships();
-
         res.render('problem', {
             pid: pid,
             contest: contest,
@@ -897,6 +912,70 @@ app.get('/contest/:id/problem/:pid', async (req, res) => {
                 : null,
             testcases: testcases
         });
+    } catch (e) {
+        syzoj.log(e);
+        res.render('error', {
+            err: e
+        });
+    }
+});
+
+// 添加新的接口处理用户确认
+app.post('/contest/:id/problem/:pid/confirm', async (req, res) => {
+    try {
+        let contest_id = parseInt(req.params.id);
+        let contest = await Contest.findById(contest_id);
+        if (!contest) throw new ErrorMessage('无此比赛。');
+        
+        // 用户必须登录
+        if (!res.locals.user) throw new ErrorMessage('请先登录。');
+        
+        // 比赛必须在进行中
+        if (!contest.isRunning()) throw new ErrorMessage('比赛未在进行中。');
+        
+        let pid = parseInt(req.params.pid);
+        let problems_id = await contest.getProblems();
+        if (!pid || pid < 1 || pid > problems_id.length)
+            throw new ErrorMessage('无此题目。');
+            
+        // 检查用户是否已经是比赛参与者
+        let player = await ContestPlayer.findInContest({
+            contest_id: contest.id,
+            user_id: res.locals.user.id
+        });
+
+        // 如果用户不是比赛参与者，将其添加到比赛中
+        if (!player) {
+            await syzoj.utils.lock(
+                ['Contest::newPlayer', res.locals.user.id],
+                async () => {
+                    // 再次检查以防锁期间已被添加
+                    player = await ContestPlayer.findInContest({
+                        contest_id: contest.id,
+                        user_id: res.locals.user.id
+                    });
+                    
+                    if (!player) {
+                        player = await ContestPlayer.create({
+                            contest_id: contest.id,
+                            user_id: res.locals.user.id,
+                            score: 0,  // 初始得分为0
+                            score_details: {},
+                            time_spent: 0
+                        });
+                        await player.save();
+                        
+                        // 更新排行榜
+                        await contest.loadRelationships();
+                        await contest.ranklist.updatePlayer(contest, player);
+                        await contest.ranklist.save();
+                    }
+                }
+            );
+        }
+        
+        // 重定向到题目页面
+        res.redirect(syzoj.utils.makeUrl(['contest', contest.id, 'problem', pid]));
     } catch (e) {
         syzoj.log(e);
         res.render('error', {
@@ -1067,4 +1146,4 @@ async function processEndedContests(checkAll = false) {
 // 每10分钟检查一次是否有比赛需要计算积分
 setInterval(() => processEndedContests(false), 10 * 60 * 1000);
 // 服务启动时检查所有已结束但未计算的比赛
-setTimeout(() => processEndedContests(true), 30 * 1000);
+setTimeout(() => processEndedContests(true), 10 * 1000);
