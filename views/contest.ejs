@@ -13,6 +13,11 @@
     <div class="ui orange large label" style="margin-left: 10px; vertical-align: middle; display: inline-block; margin-bottom: 2px;">
       <%= contest.type.toUpperCase() %>
     </div>
+    <% if (contest.rated || contest.hasRatingCalculation) { %>
+    <div class="ui red large label" style="margin-left: 5px; vertical-align: middle; display: inline-block; margin-bottom: 2px;">
+      Rated
+    </div>
+    <% } %>
   </h1>
   <div style="margin-bottom: 30px;"><%- contest.subtitle %></div>
   <% let unveiled = true; %>

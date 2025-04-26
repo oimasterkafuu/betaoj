@@ -16,6 +16,10 @@ const {
     processOverallResult
 } = require('../libs/submissions_process');
 
+const calcRating = require('../libs/rating');
+const RatingCalculation = syzoj.model('rating_calculation');
+const RatingHistory = syzoj.model('rating_history');
+
 app.get('/contests', async (req, res) => {
     try {
         let where;
@@ -30,6 +34,20 @@ app.get('/contests', async (req, res) => {
         let contests = await Contest.queryPage(paginate, where, {
             start_time: 'DESC'
         });
+
+        // 检查每个比赛是否有积分计算记录
+        for (let contest of contests) {
+            if (!contest.rated) {
+                const existingCalc = await RatingCalculation.findOne({
+                    where: {
+                        contest_id: contest.id
+                    }
+                });
+                if (existingCalc) {
+                    contest.hasRatingCalculation = true;
+                }
+            }
+        }
 
         await contests.forEachAsync(
             async (x) => (x.subtitle = await syzoj.utils.markdown(x.subtitle))
@@ -174,6 +192,12 @@ app.post('/contest/:id/edit', async (req, res) => {
 
         contest.hide_statistics =
             req.body.hide_statistics === 'on' || contest.type == 'noi';
+            
+        // 只有管理员可以设置比赛是否计入积分，且比赛未结束
+        const now = syzoj.utils.getCurrentDate();
+        if (res.locals.user.is_admin && (!contest.end_time || contest.end_time > now)) {
+            contest.rated = req.body.rated === 'on';
+        }
 
         await contest.save();
 
@@ -209,6 +233,18 @@ app.get('/contest/:id', async (req, res) => {
         contest.ended = contest.isEnded();
         contest.subtitle = await syzoj.utils.markdown(contest.subtitle);
         contest.information = await syzoj.utils.markdown(contest.information);
+        
+        // 检查比赛是否有积分计算记录，即使已经结束，有记录也视为rated比赛
+        if (!contest.rated && contest.isEnded()) {
+            const existingCalc = await RatingCalculation.findOne({
+                where: {
+                    contest_id: contest.id
+                }
+            });
+            if (existingCalc) {
+                contest.hasRatingCalculation = true;
+            }
+        }
 
         let problems_id = await contest.getProblems();
         let problems = await problems_id.mapAsync(
@@ -922,3 +958,113 @@ app.get('/contest/:id/:pid/download/additional_file', async (req, res) => {
         });
     }
 });
+
+// 添加自动计算积分功能
+async function processEndedContests(checkAll = false) {
+    try {
+        const now = syzoj.utils.getCurrentDate();
+        // 根据 checkAll 参数决定查询条件
+        let whereCondition;
+        if (checkAll) {
+            // 系统启动时，检查所有已结束但尚未计算的rated比赛
+            whereCondition = {
+                rated: true,
+                end_time: TypeORM.LessThanOrEqual(now)
+            };
+            syzoj.log('系统启动：检查所有已结束的比赛的积分计算状态');
+        } else {
+            // 定时检查，只查找在过去1小时内结束的rated比赛
+            whereCondition = {
+                rated: true,
+                end_time: TypeORM.Between(now - 60 * 60, now) // 1小时内结束的比赛
+            };
+        }
+        
+        const contests = await Contest.find({
+            where: whereCondition
+        });
+
+        syzoj.log(`找到 ${contests.length} 个需要检查积分计算的比赛`);
+
+        for (const contest of contests) {
+            // 检查是否已经计算过积分
+            const existingCalc = await RatingCalculation.findOne({
+                where: {
+                    contest_id: contest.id
+                }
+            });
+
+            if (existingCalc) {
+                syzoj.log(`比赛 ${contest.id}: ${contest.title} 的积分已经计算过了`);
+                continue;
+            }
+
+            await contest.loadRelationships();
+            
+            // 检查比赛人数是否足够
+            if (!contest.ranklist || contest.ranklist.ranklist.player_num <= 1) {
+                syzoj.log(`比赛 ${contest.id}: ${contest.title} 人数不足，跳过积分计算`);
+                continue;
+            }
+
+            syzoj.log(`开始计算比赛 ${contest.id}: ${contest.title} 的积分`);
+            
+            // 创建积分计算记录
+            const newcalc = await RatingCalculation.create({
+                contest_id: contest.id,
+                auto_calculated: true // 标记为自动计算
+            });
+            await newcalc.save();
+
+            // 收集参赛者信息
+            const players = [];
+            for (let i = 1; i <= contest.ranklist.ranklist.player_num; i++) {
+                const contestPlayer = await ContestPlayer.findById(contest.ranklist.ranklist[i]);
+                if (!contestPlayer) continue;
+                
+                const user = await User.findById(contestPlayer.user_id);
+                if (!user) continue;
+                
+                players.push({
+                    user: user,
+                    rank: i,
+                    currentRating: user.rating || syzoj.config.default.user.rating
+                });
+            }
+
+            // 确保至少有两名有效参赛者
+            if (players.length <= 1) {
+                syzoj.log(`比赛 ${contest.id}: ${contest.title} 有效参赛者不足（只有${players.length}人），跳过积分计算`);
+                await newcalc.delete(); // 删除之前创建的积分计算记录
+                continue;
+            }
+
+            // 计算新积分
+            const newRating = calcRating(players);
+            
+            // 更新用户积分
+            for (let i = 0; i < newRating.length; i++) {
+                const user = newRating[i].user;
+                user.rating = newRating[i].currentRating;
+                await user.save();
+                
+                const newHistory = await RatingHistory.create({
+                    rating_calculation_id: newcalc.id,
+                    user_id: user.id,
+                    rating_after: newRating[i].currentRating,
+                    rank: newRating[i].rank
+                });
+                await newHistory.save();
+            }
+
+            syzoj.log(`比赛 ${contest.id}: ${contest.title} 的积分计算完成，共更新 ${newRating.length} 名用户的积分`);
+        }
+    } catch (e) {
+        syzoj.log(`自动计算积分出错: ${e}`);
+    }
+}
+
+// 每10分钟检查一次是否有比赛需要计算积分
+setInterval(() => processEndedContests(false), 10 * 60 * 1000);
+// 服务启动时检查所有已结束但未计算的比赛
+setTimeout(() => processEndedContests(true), 30 * 1000);

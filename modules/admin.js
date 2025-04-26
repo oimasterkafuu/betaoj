@@ -205,6 +205,22 @@ app.get('/admin/rating', async (req, res) => {
             }
         });
         for (const calc of calcs) await calc.loadRelationships();
+        
+        // 获取所有比赛的id和它们对应的积分计算记录
+        const contestIds = contests.map(contest => contest.id);
+        const allCalcs = await RatingCalculation.find({
+            where: {
+                contest_id: TypeORM.In(contestIds)
+            }
+        });
+        
+        // 为每个比赛标记是否已经计算过积分
+        const calculatedContests = new Set(allCalcs.map(calc => calc.contest_id));
+        for (const contest of contests) {
+            if (calculatedContests.has(contest.id)) {
+                contest.hasRatingCalculation = true;
+            }
+        }
 
         res.render('admin_rating', {
             contests: contests,
@@ -285,8 +301,25 @@ app.post('/admin/rating/delete', async (req, res) => {
         });
         if (calcList.length === 0) throw new ErrorMessage('ID 不正确');
 
+        // 收集所有相关的比赛ID
+        const contestIds = new Set();
+        
         for (let i = 0; i < calcList.length; i++) {
+            await calcList[i].loadRelationships();
+            if (calcList[i].contest) {
+                contestIds.add(calcList[i].contest_id);
+            }
             await calcList[i].delete();
+        }
+        
+        // 将所有相关比赛的rated属性设置为false
+        for (const contestId of contestIds) {
+            const contest = await Contest.findById(contestId);
+            if (contest) {
+                contest.rated = false;
+                await contest.save();
+                syzoj.log(`比赛 ${contest.id}: ${contest.title} 的rated属性已设置为false`);
+            }
         }
 
         res.redirect(syzoj.utils.makeUrl(['admin', 'rating']));

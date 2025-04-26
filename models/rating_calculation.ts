@@ -14,6 +14,9 @@ export default class RatingCalculation extends Model {
     @TypeORM.Index({})
     @TypeORM.Column({ nullable: true, type: 'integer' })
     contest_id: number;
+    
+    @TypeORM.Column({ default: false, type: 'boolean' })
+    auto_calculated: boolean;
 
     contest?: Contest;
 
@@ -44,6 +47,17 @@ export default class RatingCalculation extends Model {
                 : syzoj.config.default.user.rating;
             await user.save();
         }
+        
+        // 将相关比赛的rated属性设置为false
+        if (this.contest_id) {
+            await this.loadRelationships();
+            if (this.contest) {
+                this.contest.rated = false;
+                await this.contest.save();
+                syzoj.log(`比赛 ${this.contest.id}: ${this.contest.title} 的rated属性已设置为false`);
+            }
+        }
+        
         await this.destroy();
     }
 }

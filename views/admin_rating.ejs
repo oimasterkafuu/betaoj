@@ -9,7 +9,15 @@
       <div class="default text">选择比赛</div>
       <div class="menu">
         <% for (const contest of contests) { %>
-          <div class="item" data-value="<%= contest.id %>"><%= contest.title %></div>
+          <div class="item" data-value="<%= contest.id %>">
+            <%= contest.title %>
+            <% if (contest.rated || contest.hasRatingCalculation) { %>
+              <div class="ui mini red label" style="margin-left: 5px;">Rated</div>
+            <% } %>
+            <% if (contest.hasRatingCalculation) { %>
+              <div class="ui mini blue label" style="margin-left: 5px;">已计算</div>
+            <% } %>
+          </div>
         <% } %>
       </div>
     </div>
@@ -23,6 +31,12 @@
     <% for (const calc of calcs) { %>
       <div class="item">
         <%= calc.contest.title %>
+        <% if (calc.contest.rated) { %>
+          <div class="ui mini red label" style="margin-left: 5px;">Rated</div>
+        <% } %>
+        <% if (calc.auto_calculated) { %>
+          <div class="ui mini teal label" style="margin-left: 5px;">自动计算</div>
+        <% } %>
         <button name="calc_id" value="<%= calc.id %>" type="submit" style="color: #000; padding: 0; border: none; background: none;"><i class="remove icon"></i></button>
       </div>
     <% } %>

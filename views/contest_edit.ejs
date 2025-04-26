@@ -52,7 +52,7 @@
               <% } %>
             </div>
             <div class="field">
-                <label>排行参数（格式：<code>{ "题目 ID（主题库中的）": 分值倍数 }</code>）</label>
+                <label>排行参数（格式：<code>{ "题目 ID（题库中的）": 分值倍数 }</code>）</label>
                 <input type="text" name="ranking_params" value="<%= contest.ranklist ? JSON.stringify(contest.ranklist.ranking_params) : '' %>">
             </div>
             <div class="field">
@@ -84,6 +84,23 @@
               <font color="red">NOI 赛制的比赛中，此项必须勾选。</font>
               <% } %>
             </div>
+            <% if (user.is_admin && (!contest.end_time || contest.end_time > syzoj.utils.getCurrentDate())) { %>
+            <div class="inline field">
+              <label class="ui header">计入积分</label>
+              <div class="ui toggle checkbox">
+                <input type="checkbox"<% if (contest.rated) { %> checked<% } %> name="rated">
+                <label><span style="visibility: hidden; ">　</span></label>
+              </div>
+              <font color="red">如果勾选，比赛结束后将自动计算积分。比赛结束后无法修改此选项。</font>
+            </div>
+            <% } else if (user.is_admin && contest.rated) { %>
+            <div class="inline field">
+              <label class="ui header">计入积分</label>
+              <div class="ui label red">
+                已设置为计入积分，比赛结束后将自动计算
+              </div>
+            </div>
+            <% } %>
             <% if(contest.id == 0) { %>
             <div style="text-align: center; " class="inline field">
                 <font color="red">比赛不可删除。</font>在您点击「提交」按钮前，请先确定以上内容无误。<br>
